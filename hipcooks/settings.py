@@ -10,7 +10,7 @@ SALT = "dfas86gdf87af8abf8f8ab8g8ast86qwt3812g812ebe2"
 
 URL = "localhost"
 
-SQLALCHEMY_DATABASE_URI = "mysql://root:6419148@localhost/hipcooks"
+SQLALCHEMY_DATABASE_URI = "mysql://root:123456@localhost/hipcooks"
 SQLALCHEMY_POOL_RECYCLE = 280
 SQLALCHEMY_POOL_TIMEOUT = 20
 DB_USER = "root"
