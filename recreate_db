@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cd /vagrant
+echo "drop database hipcooks; create database hipcooks;" | mysql -u root
+bzcat data/hipcooks.sql.bz2 | mysql -u root hipcooks
+/usr/local/share/python-environments/hipcooks/bin/python manage.py db upgrade
+/usr/local/share/python-environments/hipcooks/bin/python -c "from hipcooks import db; db.metadata.create_all(db.engine)"
+echo "drop database testing; create database testing;" | mysql -u root

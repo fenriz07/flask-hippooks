@@ -1,0 +1,52 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Edit Pre-Prep list{% endblock %}
+{% block header %}
+{{ super() }}
+<script>
+$(function() {
+
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="container add-edit">
+    <div class="panel panel-default">
+        <div class="panel-body">
+          <h3 class="hipcooks-script">View/Edit Pre-Prep List
+          </h3>
+            <form method="POST" id="form">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" placeholder="name" name="name" value="{{preprep_list.name}}">
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              {% for item in preprep_list.items%}
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="text_{{item.id}}" title="{{item.setup.cls.title}}">{{item.setup.cls.abbr}}</label>
+                      <textarea class="form-control rich-editor" name="text_{{item.id}}" rows="3">{{item.text}}</textarea>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <input class="btn btn-sm btn-primary" type="submit" value="Save" name="save">
+                    <input class="btn btn-sm btn-primary" type="submit" value="Save and Continue" name="save_and_continue">
+                    <a href="{{url_for('.preprep_preview', preprep_id=preprep_list.id)}}" class="btn btn-sm btn-primary" role="button">Print</a>
+                  </div>
+                </div>
+              </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{ enrich_editor("form .rich-editor") }}
+{% endblock %}

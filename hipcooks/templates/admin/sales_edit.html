@@ -1,0 +1,189 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Edit Shop Order{% endblock %}
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="/static/css/bootstrap-datepicker.min.css">
+<script src="/static/js/bootstrap-datepicker.min.js"></script>
+<script>
+    $(function() {
+
+        $("#delete_btn").click(function(e) {
+            if (!confirm("Are you sure you want to delete this order?")) {
+                e.preventDefault();
+            } else {
+              var input = $("<input>").attr("type", "hidden").attr("name", "delete").val("delete");
+              $('#form').append($(input));
+              $('#form').submit();
+            }
+        });
+
+        $(".date").datepicker({
+            format: "mm/dd/yyyy",
+            autoclose: true,
+            startDate: new Date()
+        });
+
+        function addItem(e) {
+            e.preventDefault()
+            $("#blank-item")
+                .find("tr")
+                .clone()
+                .insertAfter($("#itemlist tr:last"));
+            $("#itemlist tr:last").find(".product-name").chosen();
+            $(".remove-item").off().click(removeItem);
+        }
+
+        function removeItem(e) {
+            e.preventDefault();
+            $(e.target)
+                .parents("tr")
+                .remove();
+        }
+
+
+        function checkHasNumericalValue(element) {
+
+          if (!$(element).val().match(/^(?:\d+\s+)?\d+\s*\/\s*\d+$/) &&
+              !$(element).val().match(/^\d*\.?\d+$/)) {
+              $(element).addClass("inputfield_error");
+              return true;
+          } else {
+              $(element).removeClass("inputfield_error");
+              return false;
+          }
+        }
+
+        $(".add-item").click(addItem);
+        $(".remove-item").click(removeItem);
+
+        $("#form").submit(function(e) {
+
+            var errors = false;
+
+            $("#itemlist tr.item").each(function(i, obj) {
+                var idEl = $(obj).find("input[name=item_id]")[0];
+                var qty_el = $(obj).find("input[name=item_qty]")[0];
+                var total_el = $(obj).find("input[name=item_total]")[0];
+                var shipping_el = $(obj).find("input[name=item_shipping]")[0];
+                var tax_el = $(obj).find("input[name=item_tax]")[0];
+
+                qtyErr = checkHasNumericalValue(qty_el);
+
+                if (qtyErr) {
+                  errors = true;
+                }
+
+                if ($(idEl).val()) {
+                  total_err = checkHasNumericalValue(total_el);
+                  shipping_err = checkHasNumericalValue(shipping_el);
+                  tax_err = checkHasNumericalValue(tax_el);
+
+                  if(total_err || shipping_err || tax_err) {
+                    errors = true;
+                  }
+                }
+
+            });
+
+            if (errors) {
+                e.preventDefault();
+            }
+
+        });
+
+    });
+</script>
+<style>
+    input[type="text"].form-control {
+        width: 100%;
+    }
+    #itemlist input[type="text"].form-control {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="row add-edit">
+          <h3 class="hipcooks-script">Edit Sale</h3>
+            <form method="POST" class="add-edit" id="form">
+                {% for field in form %}
+                    {% if field.name == "csrf_token" %}
+                        {{field}}
+                    {% else %}
+                        {% if field.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="text-danger">{{field.errors[0]}}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-2">
+                                {{field.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-10">
+                                {{field(class_="form-control")}}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <table id="itemlist" class="table">
+                    <thead>
+                        <tr>
+                            <th hidden>id</th>
+                            <th width="40%"><strong>Product</strong></th>
+                            <th width="10%"><strong>Quantity</strong></th>
+                            <th><strong>Total amount</strong></th>
+                            <th><strong>Shipping</strong></th>
+                            <th><strong>Tax</strong></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in order.items %}
+                        <tr class="item">
+                            <td hidden><input type="text" class="form-control" name="item_id" value="{{item.id}}" /></td>
+                            <td><input readonly type="text" class="form-control" name="product" value="{{item.product.name}} {% if item.product.type %}({{item.product.type}}){% endif %}" /></td>
+                            <td><input type="text" class="form-control" name="item_qty" id="item_qty" value="{{item.quantity}}" /></td>
+                            <td><input type="text" class="form-control" name="item_total" id="item_total" value="{{item.discounted_subtotal}}" /></td>
+                            <td><input type="text" class="form-control" name="item_shipping" id="item_shipping" value="{{item.shipping}}" /></td>
+                            <td><input type="text" class="form-control" name="item_tax" id="item_tax" value="{{item.tax}}" /></td>
+                            <td><a href="#" class="remove-item btn">x</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="col-md-5">
+                    <a href="#" class="add-item btn btn-primary btn-sm">Add Item<i class="glyphicon glyphicon-plus"></i></a>&nbsp;
+                    <input class="btn btn-primary btn-sm" type="submit" name="save" value="Save & Exit">&nbsp;
+                    <input class="btn btn-primary btn-sm" type="submit" name="continue" value="Save & Continue">&nbsp;
+                    <a class="delete-link" id="delete_btn" name="delete" value="Delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete</a>
+                </div>
+            </form>
+            </div>
+        </div>
+      </div>
+</div>
+<table id="blank-item" class="hidden">
+    <tr class="item">
+        <td hidden><input type="text" class="form-control" name="item_id" value="" /></td>
+        <td>
+          <select name="product" class="form-control product-name">
+              <option value="">--Select--</option>
+              {% for product, inventory in studio_products %}
+              <option value="{{product.id}}">{{product.name}}{% if product.type %} ({{product.type}}){% endif %} - {{inventory.quantity_stocked}} available</option>
+              {% endfor %}
+          </select>
+        </td>
+        <td><input type="text" class="form-control" name="item_qty" value="" /></td>
+        <td><input readonly type="text" class="form-control" name="item_total" value="" /></td>
+        <td><input readonly type="text" class="form-control" name="item_shipping" value="" /></td>
+        <td><input readonly type="text" class="form-control" name="item_tax" value="" /></td>
+        <td><a href="#" class="remove-item btn">x</a></td>
+    </tr>
+</table>
+{% endblock %}

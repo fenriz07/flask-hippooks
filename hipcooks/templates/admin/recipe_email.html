@@ -1,0 +1,49 @@
+{% extends "/admin/base.html" %}
+{% from "macros.html" import enrich_editor %}
+{% block title %}Hipcooks: Class Recipes{% endblock %}
+{% block head %}
+{{super()}}
+{% endblock %}
+
+{% macro show_field(field) %}
+    {% if field.errors|length > 0 %}
+    <div class="row">
+        <div class="col-md-12">
+            <span class="text-danger">{{field.errors[0]}}</span>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-2">
+            {{field.label(class_="control-label")}}
+        </div>
+        <div class="col-md-10">
+            {{field(class_="form-control")}}
+        </div>
+    </div>
+{% endmacro %}
+
+{% block content %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form method=POST>
+                {{form.csrf_token}}
+                <div class="row">
+                    {{show_field(form.from_)}}
+                </div>
+                <div class="row">
+                    {{show_field(form.to)}}
+                </div>
+                <div class="row">
+                    {{show_field(form.subject)}}
+                </div>
+                <div class="row">
+                    <input type="submit" class="btn" value="Send">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{ enrich_editor() }}
+{% endblock %}

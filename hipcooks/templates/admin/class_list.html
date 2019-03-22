@@ -1,0 +1,84 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Classes{% endblock %}
+{% block content %}
+<style>
+    .menu-list {
+        padding-left: 15px;
+    }
+    .shopping-list {
+      margin-top: 3px;
+    }
+</style>
+<script>
+    $(function() {
+        $("div.search button").click(function() {
+            var search_text = $("div.search input").val();
+
+            window.location.href = "{{url_for('.class_list')}}?q=" + search_text;
+        });
+
+        $("div.search input").keypress(function(e) {
+            if (e.which == 13) {
+                $("div.search button").click();
+            }
+        });
+    });
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2 class="hipcooks-script">Classes</h2>
+              {% if user.can_update('class') %}
+              <div>
+                <a class="script-link-btn noprint" role="button" href="{{url_for('.class_edit')}}">Add New Class</a>
+              </div>
+              {% endif %}
+        </div>
+        <div class="col-sm-4 search-top">
+            <br>
+            <div class="input-group search">
+                <input class="form-control" placeholder="Search..." type="text" value="{{searched_field}}">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button">&nbsp;<i class="glyphicon glyphicon-search"></i></button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    {% for class in pagination.items %}
+    <div class="row bg-info">
+        <div class="col-md-6">
+            <h4>{{class.title}} (<a href="{{url_for('.class_edit', id=class.id)}}">{{class.abbr}}</a>)</h4>
+        </div>
+        <div class="col-md-4">
+            <h4>Menu</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {{class.description}}
+        </div>
+        <div class="col-md-4">
+            <ul class="menu-list">
+                {{class.menu|nl2li}}
+            </ul>
+        </div>
+        <div class="col-md-2">
+            <br>
+            {% if user.can_view('class_recipes') %}
+            <a class="script-link-btn hipcooks-script noprint" role="button" href="{{url_for('.recipe_edit', id=class.id)}}">Recipes</a>
+            {% endif %}
+            {% if user.can_view('class_setups') %}
+            | <a class="script-link-btn hipcooks-script noprint" role="button" href="{{url_for('.setup_edit', id=class.id)}}">Set-up</a>
+            {% endif %}
+            {% if user.can_view('class_shoplists') %}
+            <br>
+            <a class="script-link-btn hipcooks-script noprint" role="button" href="{{url_for('.shopping_list_edit', id=class.id)}}">Shopping List</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {{ macros.render_pagination(pagination, "admin.class_list", label='class') }}
+</div>
+{% endblock %}

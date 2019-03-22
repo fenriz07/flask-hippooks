@@ -1,0 +1,102 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Newsletter Subscribers{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/css/admin-sm-table-print.css">
+<script src="/static/js/bootbox.min.js"></script>
+<style>
+    .menu-list {
+        padding-left: 15px;
+    }
+    .hipcooks-data-wrapper {
+        margin: 0;
+        border: 1px solid #DADADA;
+        background-color: white;
+    }
+    .hipcooks-data {
+        padding-left: 0;
+        padding-right: 0;
+    }
+</style>
+<script>
+    $(function() {
+        $("div.search button").click(function() {
+            var search_text = $("div.search input").val();
+
+            window.location.href = "{{url_for('.subscriber_list')}}?q=" + search_text;
+        });
+
+        $("div.search input").keypress(function(e) {
+            if (e.which == 13) {
+                $("div.search button").click();
+                e.preventDefault();
+            }
+        });
+
+        $("#subscriber_delete").click(function(e) {
+
+            bootbox.confirm("Are you sure you want to delete these newsletter subscribers?", function(result) {
+              if (result === true) {
+                $('#form').append('<input type="hidden" name="delete" value="Delete Selected" /> ');
+                $('#form').submit();
+              }
+            });
+
+        });
+    });
+</script>
+<form method="POST" action="{{url_for('.subscriber_delete')}}" id="form">
+    <div class="container-fluid">
+        <div class="row hipcooks-data-header">
+            <div class="row hipcooks-title">
+                <div class="col-md-12">
+                    <h2 class="hipcooks-script">Newsletter Subscribers</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-9 col-md-8 button-row">
+                    {% if user.can_update('subscriber_list') %}
+                    <a class="script-link-btn noprint" role="button" href="{{url_for('.subscriber_edit')}}">New Subscriber</a> |
+                    {% endif %}
+                    <a class="script-link-btn noprint" role="button" href="{{url_for('.subscriber_export')}}">Export Subscribers</a>
+                    {% if user.can_update('subscriber_list') %}
+                    | <a class="script-link-btn noprint" role="button" value="Delete Selected" id="subscriber_delete" href="#">Delete</a>
+                    {% endif %}
+                </div>
+                <div class="col-lg-3 col-md-4 search-top noprint">
+                    <div class="input-group search">
+                        <input class="form-control" placeholder="Search..." type="text" value="{{searched_field}}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button">&nbsp;<i class="glyphicon glyphicon-search"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row hipcooks-data-wrapper">
+            <div class="col-sm-12 hipcooks-data">
+                <div class="data-inner auto-width">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th><th>Email</th><!--th>Date Added</th--><th>Studio</th><th>Subscribe Reason</th><th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        {% for subscriber in pagination.items %}
+                        <tr>
+                            <td>{{subscriber.name}}</td>
+                            <td><a href="{{url_for('.subscriber_edit', id=subscriber.id)}}">{{subscriber.email}}</a></td>
+                            <!--td>{{subscriber.created}}</td-->
+                            <td>{{subscriber.campus.name}}</td>
+                            <td>{{subscriber.subscribe_reason}}</td>
+                            <td>{% if user.can_update('subscriber_list') %}<input name="ids" value="{{subscriber.id}}" type="checkbox" />{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                {{ macros.render_pagination(pagination, "admin.subscriber_list") }}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

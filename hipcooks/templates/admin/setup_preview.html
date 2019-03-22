@@ -1,0 +1,130 @@
+{% extends "/admin/base.html" %}
+{% block title %}Setup{% endblock %}
+{% block header %}
+<script type="text/javascript">
+$(function() {
+    var toggle = function(e) {
+        $(this).parent().parent().siblings(".hideable").children().toggle();
+        $(this).parent().parent().toggleClass('no-print');
+        $(this).parent().parent().siblings(".hideable").toggleClass('no-print');
+    };
+
+    var roundToggle = function(e) {
+        $(this).parent().parent('.row').next('.round-details').toggle();
+        $(this).parent().parent('.row').next('.round-details').toggleClass('no-print');
+        $(this).parent().parent('.row').toggleClass('no-print');
+    };
+
+    var pointToggle = function(e) {
+        $(this).parent().parent().next('.round-points').find('.teaching-point').toggle();
+        $(this).parent().parent().next('.round-points').find('.teaching-point').toggleClass('no-print');
+        $(this).parent().parent().siblings(".hideable").toggleClass('no-print');
+    };
+
+    $(".toggle-button").click(toggle);
+    $(".round-button").click(roundToggle);
+    $(".tp-button").click(pointToggle);
+    $(".print-button").click(function(){
+        window.print();
+    } )
+});
+</script>
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Karla:400,400italic,700,700italic);
+
+    .print-button {
+        margin: 10px;
+    }
+    .panel-body {
+        border: none;
+    }
+    @media print {
+        .no-print {
+            display: none;
+        }
+    }
+
+    body {
+        font-family: Karla, "Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size: 16px;
+    }
+
+    .print-panel p {
+        padding: 0;
+    }
+
+</style>
+{% endblock %}
+{% macro toggle_button() %}
+    <button class="btn btn-secondary toggle-button btn-sm no-print">+/-</button>
+{% endmacro %}
+{% macro segment(title, body) %}
+<div class="segment">
+    <div class="row print-title">
+        <div class="col-md-12">
+            {{title|safe}}
+            {{toggle_button()}}
+        </div>
+    </div>
+    <div class="row print-panel hideable">
+        <div class="col-md-12">
+            {{body|safe}}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+{% block content %}
+<div class="container">
+    <div class="printable-panel">
+        <h3>{{setup.cls.title}}</h3>
+        <button type="button" class="btn btn-primary print-button no-print pull-right">Print this page</button>
+        <div class="panel-body">
+            {{segment("Pre Prep", setup.pre_prep)}}
+            {{segment("Prep", setup.prep)}}
+            {{segment("Setup", setup.setup)}}
+            {{segment("Class Intro", setup.class_intro)}}
+            {{segment("Menu Intro", setup.menu_intro)}}
+            {% for round in setup.rounds %}
+              <div class="row print-title"    >
+                  <div class="col-md-12">
+                      Round {{round.round_number+1}}
+                      <button class="btn btn-secondary round-button btn-sm no-print">+/-</button>
+                  </div>
+              </div>
+              <div class="round-details">
+                  <div class="row">
+                      <div class="col-md-12 hideable">
+                          {{round.round_intro|safe}}
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-xs-6">
+                          <h4>Action Points</h4>
+                      </div>
+                      <div class="col-xs-6">
+                          <h4 style="display: inline-block;">Teaching Points</h4>
+                          <button class="btn btn-secondary tp-button btn-sm no-print">+/-</button>
+                      </div>
+                  </div>
+                  <div class="round-points">
+                  {% for point in round.points %}
+                      {% if point.action_point != "" %}
+                        <div class="row">
+                            <div class="col-xs-6">
+                                {{point.action_point|safe}}
+                            </div>
+                            <div class="col-xs-6 hideable teaching-point">
+                                {{point.teaching_point|safe}}
+                            </div>
+                        </div>
+                      {% endif %}
+                  {% endfor %}
+                  </div>
+              </div>
+            {% endfor %}
+            </div>
+            <button type="button" class="btn btn-primary print-button no-print pull-right">Print this page</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

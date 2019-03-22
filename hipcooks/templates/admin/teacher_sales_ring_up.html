@@ -1,0 +1,64 @@
+{% extends "/admin/base.html" %}
+{% block title %}Sales{% endblock %}
+{% block head %}
+{{ super() }}
+<style>
+    form {
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+        <!--div class="panel-heading">
+            <div class="panel-title">Sales order ring up</div>
+        </div-->
+        <h3 class="hipcooks-script">Receipt</h3>
+        <div class="panel-body">
+            <div class="row add-edit">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <!--th></th-->
+                        <th>Name</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </thead>
+                    <tbody>
+                        {% for product, quantity in products %}
+                            <tr>
+                                <!--td><img src="{{product.thumbnail_url}}"></td-->
+                                <td><span class="JandaQuickNote-normal">{{product.name}}</span></td>
+                                <td>${{product.price}}</td>
+                                <td>{{quantity}}</td>
+                                <td>${{"{:0.2f}".format(product.base_price(quantity))}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-md-offset-9 col-md-3"><b>Subtotal: </b>${{amount}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-offset-9 col-md-3"><b>Tax: </b>${{tax}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-offset-9 col-md-3"><b>Discount: </b>-${{discount}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-offset-9 col-md-3"><b>Total: </b>${{total}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-offset-9 col-md-3">
+                        <form method="POST">
+                            <input name="csrf_token" value="{{csrf_token()}}" hidden>
+                            <button class="btn btn-primary btn-sm">Confirm Purchase</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

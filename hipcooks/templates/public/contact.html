@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% from "macros.html" import div_field %}
+{% block title %}Hipcooks: Contact Us{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    #contact_form label {
+        text-transform: uppercase;
+    }
+
+    #contact_form .col-sm-8 {
+        width: 395px;
+    }
+
+    #contact_form .col-sm-3 {
+        width: 60px;
+        padding-right: 0px;
+    }
+
+    #midsection {
+        width: 490px;
+        padding: 0;
+        margin-left: 34px;
+    }
+
+    .rightsection {
+        min-width: 300px;
+        padding-left: 10px;
+        line-height: 18px;
+    }
+
+    .location {
+        padding-left: 35px;
+    }
+
+    #contact_form input[type="text"], #contact_form textarea {
+        width: 408px;
+    }
+    .form-group {
+        margin: 0;
+    }
+
+    input.form_box, textarea.form_box {
+        margin: 1px 0;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div>
+    <div class="col-sm-6" id="midsection">
+        <p class="JandaQuickNote-normal text16">We'd prefer an emailed note over a phone call.</p>
+        <p class="JandaQuickNote-normal text14">The phone is tricky for us since we are often shopping or in the kitchen prepping!</p>
+        <p class="JandaQuickNote-normal text14">If you would rather have us call you, please send us an email with your phone number and the best time to call.</p>
+        <form method="POST" class="form-horizontal" id="contact_form">
+            <div class="form_box">
+                {{ form.csrf_token }}
+                {{ div_field(form.name, class_="form_box form-control blue_border") }}
+                {{ div_field(form.email, class_="form_box form-control blue_border") }}
+                {{ div_field(form.note, class_="form_box form-control blue_border", extra_field_args={"rows": 10}) }}
+            </div>
+            <input name="form-submit" type=submit value="Send" class="form_button inverted pull-right">
+        </form>
+        <br>
+        <br>
+        <span class="JandaQuickNote-normal blue_text text16 pull-right">New classes are posted on the first of each month. Please stay tuned!</span>
+    </div>
+    <div class="col-sm-3 rightsection">
+        <div class="JandaQuickNote-normal text20" style="margin-bottom: 15px;"><img src="/static/img/jacks3.png"> Locations</div>
+    {% for loop_campus in campuses %}
+        {% if loop_campus.id == campus.id %}
+        <p class="location text16">
+            <span class="orange_text text18">Hipcooks {{loop_campus.name}}<br></span>
+            {{loop_campus.address}}<br>
+            {{loop_campus.city}}, {{loop_campus.state}} {{loop_campus.zipcode}}<br>
+            Phone: {{loop_campus.phone}}
+        </p>
+        {% endif %}
+    {% endfor %}
+    {% for loop_campus in campuses %}
+        {% if loop_campus.id != campus.id %}
+        <p class="location text16">
+            <span class="blue_text text18">Hipcooks {{loop_campus.name}}<br></span>
+            {{loop_campus.address}}<br>
+            {{loop_campus.city}}, {{loop_campus.state}} {{loop_campus.zipcode}}<br>
+            Phone: {{loop_campus.phone}}
+        </p>
+        {% endif %}
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+<style>
+    #recipes_class_title {
+        position: inherit;
+        bottom: inherit;
+        display: block;
+        margin-top: 10px;
+        border-bottom: 1px solid #03abd0;
+        padding-bottom: 5px;
+    }
+
+    a.form_button {
+        padding-bottom: 26px;
+        display: block;
+        margin-top: -16px;
+    }
+
+    #recipe_menu ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    #recipe_menu ul li {
+        background: url("/static/img/jacks_small.png") no-repeat 0px -2px;
+        padding-left: 20px;
+        padding-top: 2px;
+        margin: 0 0 7px 0;
+        line-height: 16px;
+        min-height: 16px;
+    }
+
+    .to_taste {
+      padding-left: 20px;
+    }
+
+
+    @media print {
+        body {
+            padding: 20px;
+        }
+        .noprint {
+            visibility: hidden;
+        }
+    }
+</style>
+<div id="recipes_class_title">
+    <span class="JandaQuickNote-normal orange_text text18">{{recipe_set.cls.title}}</span>
+    {% if class_id is defined %}
+        <span class="pull-right">
+            <a href="{{url_for('.recipes_preview', class_id=class_id)}}" class="form_button noprint">Print Recipe</a>
+        </span>
+    {% endif %}
+</div>
+<div id="recipe_intro">
+    <p>
+        {{recipe_set.intro|safe}}
+    </p>
+</div>
+<div id="recipe_menu">
+    <div class="text16 JandaQuickNote-normal" style="margin-top: 10px; padding-left: 20px;">Menu</div>
+    <ul class="jack_bullets">
+    {% for item in recipe_set.cls.menu.split('\n') %}
+    <li>{{item}}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% for recipe in recipe_set.ordered_recipes %}
+    <div class="row">
+        <div class="recipe_card">
+            <div class="text18 JandaQuickNote-normal">{{recipe.title}}</div>
+            {{recipe.intro|safe}}
+            <p>
+                <i>
+                    {{recipe.serves}}
+                </i>
+            </p>
+            <div class="blue_text">
+                {{recipe.ingredients|safe}}
+            </div>
+            {{recipe.instructions|safe}}
+        </div>
+    </div>
+{% endfor %}

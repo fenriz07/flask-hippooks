@@ -1,0 +1,48 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Set-ups{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2 class="hipcooks-script">Set-ups
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            {% if user.can_update('class_setups') %}
+            <a class="script-link-btn noprint" role="button" href="{{url_for('.class_list')}}">View & add classes</i></a>
+            {% endif %}
+        </div>
+    </div>
+    <table class="table table-striped table-hover" border=0>
+        <thead>
+            <tr>
+                <th>Class Abbr</th>
+                <th>View Setup</th>
+                <th>Last Updated</th>
+                <!-- <th>Email Setup</th> -->
+                {% if user.can_update('class_setups') %}
+                    <th>Edit Setup</th>
+                    <th>Edit Class</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for setup in pagination.items %}
+                <tr>
+                    <td title="{{setup.cls.title}}" class="expand-cell">{{setup.cls.abbr}}</td>
+                    <td class="expand-cell"><a href="{{url_for('.setup_preview', id=setup.id)}}">View Setup</a></td>
+                    <td class="expand-cell">{% if setup.last_updated %}{{setup.last_updated.strftime("%-m/%d/%y")}}{% endif %}</td>
+                    <!-- <td>Email</td> -->
+                    {% if user.can_update('class_setups') %}
+                        <td class="expand-cell"><a href="{{url_for('.setup_edit', id=setup.id)}}">Edit Setup</a></td>
+                        <td class="expand-cell"><a href="{{url_for('.class_edit', id=setup.id)}}">Edit Class</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

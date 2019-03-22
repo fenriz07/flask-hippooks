@@ -1,0 +1,8 @@
+{% from "/macros.html" import active_category with context %}
+<div id='cssmenu' class="uppercase nowrap">
+    <ul>
+        <li {{ active_category("about-hipcooks") }}><a href="{{url_for('.about_hipcooks')}}">Hipcooks</a></li>
+        <li {{ active_category("about-monika") }}><a href="{{url_for('.about_monika')}}">Monika</a></li>
+        <li {{ active_category("about-teachers") }}><a href="{{url_for('.about_teachers')}}">Teachers</a></li>
+    </ul>
+</div>

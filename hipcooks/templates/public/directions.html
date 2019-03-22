@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "macros.html" import div_field %}
+{% block title %}Hipcooks: Directions{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    address {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    #directions {
+        width: 235px;
+        display: inline-block;
+        float: left;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div>
+    <div id="content_div">
+        <div id="directions">
+            <p><span class="blue_text text18">ADDRESS:</span></p>
+            <p>
+                <address>
+                    {{campus.address}}<br>
+                    {{campus.city}}, {{campus.state}} {{campus.zipcode}}
+                </address>
+            </p>
+            <br>
+            <p><span class="blue_text text18">DIRECTIONS:</span></p>
+            <p class="text16">{{campus.directions|safe}}</p>
+        </div>
+        <div class="col-sm-6">
+            <br>
+            <iframe src="{{campus.embed_url}}" width="562" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+            <br><br>
+            <img src="/static/img/directions/{{ campus.tab_name|replace(" ","") }}.jpg">
+            <br><br>
+        </div>
+    </div>
+</div>
+{% endblock %}

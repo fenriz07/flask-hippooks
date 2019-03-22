@@ -1,0 +1,184 @@
+{% extends "/base.html" %}
+{% block title %}Hipcooks: My Hipcooks{% endblock %}
+{% block head %}
+<script src="../../static/js/autosize.js"></script>
+<script src="/static/js/bootbox.min.js"></script>
+<script>
+$(function() {
+
+  autosize($('#notes'));
+
+  $("#notes-save").click(function(e) {
+    $.post("{{ url_for('.mynotes') }}", {
+        "notes": $("#notes").val(),
+        "csrf_token": "{{ csrf_token() }}"
+      }, function(e) {
+        $("#notes-results").html("Successfully updated notes");
+      }).fail(function(e) {
+        $("#notes-results").html("Error updating notes");
+      });
+  });
+
+  if (window.location.href.indexOf('orderCompleted=True') > 0) {
+    bootbox.alert('<h3 class="JandaQuickNote-normal text-center">\
+                      Thank you! We’ll email you a confirmation!<br>\
+                  </h3>\
+                  <div>\
+                      <img class="modal-image" src="/static/img/checkout_thanks.jpg">\
+                  </div>');
+  }
+
+});
+</script>
+{% endblock %}
+{% block content %}
+<style>
+    #update-info {
+        display: inline-block;
+    }
+    .jacks {
+        margin-left: 0;
+    }
+    .info_table th.class_name {
+        width: 250px;
+    }
+    .info_table th.reservation_code {
+        width: 100px;
+    }
+</style>
+<div class="row my_hipcooks_panel">
+    <!-- <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div> -->
+    <div class="col-sm-10 col-sm-offset-1">
+        <div class="row">
+            <div class="col-sm-6">
+                <div id="nametag">
+                    <div class="tag_header">HELLO Hip Cook</div>
+                    <div class="JandaQuickNote-normal tag_name">
+                        {{ user.first_name }} {{ user.last_name }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div id="contact-info">
+                    {{ user.email }}
+                    <br>
+                    <a id="update-info" class="form_button" role="button" href="{{url_for('.update_info')}}">Update My Info</a>
+                    <br>
+                    {% if user.phone_number %}
+                    {{ user.phone_number }}
+                    <br>
+                    {% endif %}
+                    <a href="{{url_for('.logout')}}">Sign Out</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-12">
+
+                <h3 class="JandaQuickNote-normal info-header"><img src="/static/img/jacks1.png" class="jacks"> Upcoming Classes</h3>
+                <div id="upcoming">
+                    <table class="info_table upcoming_classes">
+                        <thead>
+                            <tr>
+                                <th class="nowrap">Location</th>
+                                <th class="class_name">Class</th>
+                                <th>Date</th>
+                                <th class="small_mid"># of Spots</th>
+                                <th class="reservation_code">Reservation code</th>
+                                <th class="blank_col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in future_orders if order.active_members %}
+                            <tr>
+                                <td class="nowrap">{{order.schedule.campus.name}}</td>
+                                <td>{{order.schedule.cls.title}}</td>
+                                <td class="nowrap">{{order.schedule.formatted_date}}</td>
+                                <td class="small_mid">{{order.active_members}}</td>
+                                <td class="nowrap">{{order.code}}</td>
+                                <td class="blank_col">
+                                    <a class="form_button" role="button" href="{{url_for('.cancel_class', order_code=order.code)}}">Cancel</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="JandaQuickNote-normal info-header"><img src="/static/img/jacks2.png" class="jacks"> Classes Attended</h3>
+                <div id="attended">
+                    <table class="info_table">
+                        <thead>
+                            <tr>
+                                <th class="class_name">Class</th>
+                                <th class="class_date">Date</th>
+                                <th>Location</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in past_orders if order.active_members %}
+                            <tr>
+                                <td>{{order.schedule.cls.title}}</td>
+                                <td>{{order.schedule.formatted_date_year}}</td>
+                                <td>{{order.schedule.campus.name}}</td>
+                                <td>
+                                    <a href="{{url_for('.recipes', class_id=order.schedule.cls.id)}}">Get the recipes!</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-6">
+                <h3 class="JandaQuickNote-normal info-header"><img src="/static/img/jacks3.png" class="jacks"> Gift Certificates/Makeup codes</h3>
+                <div id="gift-codes">
+                    <table class="info_table codes_table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th style="width:105px">Amount Left</th>
+                            </tr>
+                        </thead>
+                        {% for cert, amount in gift_certs_amounts %}
+                        <tbody>
+                            <tr>
+                                <td>{{cert.code}}</td>
+                                <td>${{amount}}</td>
+                        </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="JandaQuickNote-normal info-header"><img src="/static/img/jacks4.png" class="jacks"> My Notes</h3>
+                <div id="my-notes">
+                    Here's a place for you to record reminders! Classes you want to take, or food you want to make!
+                    <br>
+                    <textarea id="notes" class="form-control notes_box">{% if user.notes %}{{ user.notes.notes|default("") }}{% endif %}</textarea>
+                    <input type="button" id="notes-save" class="pull-left" role="button" href="#" value="Save">
+                    <div id="notes-results"></div>
+                    <br>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Great Markets{% endblock %}
+{% block content %}
+<style>
+    ul.specialties_list {
+        padding-left: 0px;
+    }
+
+    table.markets_list {
+        margin-bottom: 8px;
+    }
+
+    .markets_list td {
+        border: solid 2px #BBEFFB;
+    }
+
+    td.market_name {
+        padding-bottom: 0px !important;
+        padding-top: 13px !important;
+        line-height: 10px !important;
+        background-color: #bbeffb;
+    }
+
+    td.specialties, td.market_address {
+        width: 25%;
+    }
+
+    .specialties, .market_address, .market_description {
+        font-size: 12px;
+    }
+
+    .specialties_list li.diy {
+        color: #f195aa;
+        list-style-image: url("/static/img/bullet_lilac.png");
+    }
+
+    .specialties_list li.farmers {
+        color: #9c67aa;
+        list-style-image: url("/static/img/bullet_purple.png");
+    }
+
+    .specialties_list li.meat {
+        color: #147fb5;
+        list-style-image: url("/static/img/bullet_dark_blue.png");
+    }
+
+    .specialties_list li.spices {
+        color: #f5b50b;
+        list-style-image: url("/static/img/bullet_gold.png");
+    }
+
+    .specialties_list li.alcohol {
+        color: #00b3c4;
+        list-style-image: url("/static/img/bullet_blue.png");
+    }
+
+    .specialties_list li.produce {
+        color: #8cb050;
+        list-style-image: url("/static/img/bullet_green.png");
+    }
+
+    .specialties_list li.ethnic {
+        color: #ec618a;
+        list-style-image: url("/static/img/bullet_pink.png");
+    }
+
+    .specialties_list li {
+        margin-left: 20px;
+        font-size: 12px;
+    }
+    .specialties_list li span {
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    input.form-control, select {
+        border: solid 1px #03ABD0 !important;
+        border-radius: 0px;
+    }
+
+</style>
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'resources_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-12">
+                <span class="form-inline pull-right">
+                    {{form.search_by.label()}}
+                    {{form.search_by(class="form-control")}}
+                </span>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-12">
+                {% for market in markets %}
+                    <table class="table all markets_list {{" ".join(market.classes)}}">
+                        <tr>
+                            <td class="JandaQuickNote-normal market_name" colspan="3">
+                                {{market.name}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="market_address">
+                                {{market.address}}
+                            </td>
+                            <td class="market_description">
+                                {{market.description}}
+                            </td>
+                            <td class="specialties">
+                                <ul class="specialties_list">
+                                    {% for class, display in market.market_data %}
+                                        <li class="{{class}}">{{display}}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+<br>
+<script>
+    $("#search_by").on("change", function(event) {
+        var type = $("#search_by").val();
+        $(".all").hide();
+        $("."+type).show();
+    })
+</script>
+{% endblock %}

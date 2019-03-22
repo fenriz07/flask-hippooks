@@ -1,0 +1,82 @@
+<div id="my_hipcooks_social_icons" class="text-center">
+    <a target="_blank" href="{{campus.facebook_url}}" class="sidebar_social">
+        <img src="/static/img/circle_facebook.png">
+    </a>
+    <a target="_blank" href="{{campus.instagram_url}}" class="sidebar_social">
+        <img src="/static/img/circle_instagram.png">
+    </a>
+    <a target="_blank" href="{{campus.google_plus_url}}" class="sidebar_social">
+        <img src="/static/img/circle_google_plus.png">
+    </a>
+    <a target="_blank" href="{{campus.yelp_url}}" class="sidebar_social">
+        <img src="/static/img/circle_yelp.png">
+    </a>
+</div>
+<div id="newsletter_top" class="text-center">
+    <span class="Teen-normal">
+        get our monthly newsletter
+    </span>
+</div>
+<script>
+$(function () {
+    var emailRE = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    $("#newsletter_top").on("click", function(){
+        $("#newsletter_form").toggleClass("hide");
+    });
+    $("#subscribe_button").click(function(e){
+        e.preventDefault();
+        var hasErrors = false;
+        var form = $(this).closest('form');
+        form.find(':input').each(function(){
+          if (!$(this).val()) {
+            $(this).addClass('newsletter-subscribe-error');
+            hasErrors = true;
+          }
+          if ($(this).attr('id') === 'newsletter_email' && !emailRE.test($(this).val())) {
+            $(this).addClass('newsletter-subscribe-error');
+            hasErrors = true;
+          }
+        })
+        if (!hasErrors) {
+          $.post(form.attr("action"), form.serialize());
+          $("#newsletter_form").toggleClass("hide");
+          form.find(':input').each(function(){
+            $(this).removeClass('newsletter-subscribe-error');
+          })
+        }
+    });
+});
+</script>
+
+<div id="newsletter_form" class="text-center hide">
+    <form action="{{url_for('.subscribe_to_newsletter')}}" method="POST">
+        <input type="text" name="newsletter_name" id="newsletter_name" placeholder="your name" class="Teen-normal newsletter_form_input">
+        <input type="text" name="newsletter_email" id="newsletter_email" placeholder="your email address" class="Teen-normal newsletter_form_input">
+        <input type="button" id="subscribe_button" name="subscribe" value="Subscribe" class="Teen-normal">
+    </form>
+</div>
+
+<div id="rotating_ads" class="text-center">
+    {% set cookbook = get_content("/ad/sidebar/1") %}
+    <a href="{{cookbook.title}}">{{cookbook.body|safe}}
+</div>
+
+<div id="sidebar_menu" class="class_box text-center">
+    <a href="{{url_for('.class_list')}}">
+        <img src="/static/img/class_signup.png">
+        <br>
+        SIGN UP FOR A CLASS
+    </a>
+    <br><br>
+    <a href="{{url_for('.class_private')}}">
+        <img src="/static/img/class_private.png">
+        <br>
+        PRIVATE CLASSES
+    </a>
+    <br><br>
+    <a href="{{url_for('.class_gift')}}">
+        <img src="/static/img/class_gift.png">
+        <br>
+        GIFT A CLASS
+    </a>
+</div>

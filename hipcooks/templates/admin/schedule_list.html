@@ -1,0 +1,283 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Class Schedule{% endblock %}
+{% block head %}
+{{ super() }}
+<script src="/static/js/moment.js"></script>
+<script src="/static/js/admin-styles.js"></script>
+<script src="/static/js/bootstrap-daterangepicker-master/daterangepicker.js"></script>
+<link rel="stylesheet" href="/static/js/bootstrap-daterangepicker-master/daterangepicker.css">
+<style type="text/css">
+    #daterange { position: relative; }
+    #rangecal {
+      position: absolute; bottom: 10px; right: 24px; top: auto; cursor: pointer;
+    }
+    .col-30 {
+      width: 30% !important;
+    }
+    .borderless td, .borderless th {
+        border: none !important;
+    }
+</style>
+{% endblock %}
+{% macro date_offset(start_delta, end_delta) %}
+["{{(today + start_delta).strftime('%m/%d/%Y')}}", "{{(today + end_delta).strftime('%m/%d/%Y')}}"]
+{% endmacro %}
+
+{% macro date_offset_ymd(start_delta, end_delta) %}
+["{{(today + start_delta).strftime('%Y-%m-%d')}}", "{{(today + end_delta).strftime('%Y-%m-%d')}}"]
+{% endmacro %}
+
+{% block content %}
+<script>
+var ranges = {
+    "lastweek": {{date_offset_ymd(rdelta(weekday=MO(-2)), rdelta(weekday=MO(-1)))}},
+    "thisweek": {{date_offset_ymd(rdelta(weekday=MO(-1)), rdelta(weekday=MO(1), days=1))}},
+    "nextweek": {{date_offset_ymd(rdelta(weekday=MO(1), days=1), rdelta(weekday=MO(2), days=1))}},
+    "lastmonth": {{date_offset_ymd(rdelta(months=-1, day=1), rdelta(months=0, day=1))}},
+    "thismonth": {{date_offset_ymd(rdelta(day=1), rdelta(months=1, day=1))}},
+    "nextmonth": {{date_offset_ymd(rdelta(months=1, day=1), rdelta(months=2, day=1))}},
+    "monthafternext": {{date_offset_ymd(rdelta(months=2, day=1), rdelta(months=3, day=1))}},
+    "all": [undefined]
+}
+{% for name, rg in date_range %}
+ranges["{{name}}"] = ["{{rg[0]}}", "{{rg[1]}}"];
+{% endfor %}
+{% if date_back %}
+ranges["{{date_back[0]}}"] = ["{{date_back[1][0]}}", "{{date_back[1][1]}}"];
+{% endif %}
+
+$(function() {
+    $("div.search button").click(function() {
+        var search_text = $("div.search input").val();
+
+        window.location.href = "{{url_for('.schedule_list')}}?q=" + search_text;
+    });
+
+    $("div.search input").keypress(function(e) {
+        if (e.which == 13) {
+            $("div.search button").click();
+        }
+    });
+
+    $(".toggle-visible").click(function(e) {
+        $(e.target).next().toggle();
+    });
+
+    $("#update-campus").click(function(e) {
+        e.preventDefault();
+        $('#select').submit();
+    });
+
+    // choose range on click
+    $(".has-range").click(function(e) {
+        e.preventDefault();
+        var myrange = ranges[$(this).parent().attr("data")];
+        if (!myrange) {
+            myrange = ranges[$(this).attr("data")];
+        }
+        $(".range-btn").removeClass("active");
+        $(this).addClass("active");
+        window.location.href = "{{url_for(".schedule_list")}}/page/1/" + myrange[0] + "/" + myrange[1] + "?{{args|urlencode|safe}}";
+    })
+
+    // make selected range button active
+    $(".range-btn").each(function() {
+        var href = window.location.href;
+        var myrange = ranges[$(this).parent().attr("data")];
+        if (!myrange) {
+            myrange = ranges[$(this).attr("data")];
+        }
+
+        obj = $(this);
+
+        if (href.substr(href.lastIndexOf('/')) == "/schedules" && obj.html() === 'This Month') {
+          $(".range-btn").removeClass("active");
+          obj.addClass("active");
+        } else if (href.substr(href.lastIndexOf('/')) == "/all" && obj.html() === 'All') {
+          $(".range-btn").removeClass("active");
+          $(this).addClass("active");
+        } else if (myrange) {
+          if ((href.indexOf(myrange[0]) > -1) && (href.indexOf(myrange[1]) > -1)) {
+              $(this).addClass("active");
+          }
+        }
+    })
+
+    function setScheduleTypeFilter() {
+      var href = window.location.href;
+      $("#schedule-type-filter").children("li").each(function() {
+          var query = $(this).text().toLowerCase();
+          if (href.indexOf(query) > -1) {
+              $("#schedule-type-filter").children("li").removeClass("active");
+              $(this).addClass("active");
+          }
+      });
+    }
+
+    function setDeletedFilter () {
+      var href = window.location.href;
+      if (href.indexOf("deleted=true") > -1) {
+          $("#not-deleted-link").removeClass("active");
+          $("#deleted-link").addClass("active");
+      }
+    }
+
+  setScheduleTypeFilter();
+  setDeletedFilter();
+  sortButtonMacro();
+})
+filterFormat("#deleted-filter");
+</script>
+<div class="container-fluid">
+    <div class="row hipcooks-data-header">
+        <div class="row hipcooks-title">
+            <div class="col-md-12">
+                <h2><span class="hipcooks-script">Class Schedule</span></h2>
+                <div>
+                    {% if user.can_update('schedule') %}
+                        <a class="script-link-btn noprint" href="{{url_for('.schedule_edit')}}">Add New Class</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="date-ranges">
+                    <ul>
+                        <li><a data="lastweek"><div class="JandaQuickNote-normal range-btn has-range noprint">Last Week</div></a></li>
+                        <li><a data="thisweek"><div class="JandaQuickNote-normal range-btn has-range noprint">This Week</div></a></li>
+                        <li><a data="nextweek"><div class="JandaQuickNote-normal range-btn has-range noprint">Next Week</div></a></li>
+                        <li><a data="lastmonth"><div class="JandaQuickNote-normal range-btn has-range noprint">Last Month</div></a></li>
+                        <li><a data="thismonth"><div class="JandaQuickNote-normal range-btn has-range noprint">This Month</div></a></li>
+                        <li><a data="nextmonth"><div class="JandaQuickNote-normal range-btn has-range noprint">Next Month</div></a></li>
+                        <li><a data="monthafternext"><div class="JandaQuickNote-normal range-btn has-range noprint">Month After Next</div></a></li>
+                        <li><a href="/admin/schedules/page/1/all/all"><div class="JandaQuickNote-normal range-btn noprint">All</div></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 search-top noprint">
+                <div class="input-group search">
+                    <input class="form-control" placeholder="Search..." type="text" value="{{searched_field}}">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button">&nbsp;<i class="glyphicon glyphicon-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row hipcooks-data-wrapper">
+        <div class="col-sm-12 hipcooks-data hipcooks-data-small-sidebar">
+            <div class="data-inner">
+                <div id="day-select" class="date-ranges noprint">
+                    <table  class="table borderless">
+                    {% for x in date_lists %}
+                      {% set outer_loop = loop %}
+                      <tr>
+                      {% for y in x %}
+                        {% if date_back and outer_loop.index == 1 and loop.index == 1 %}
+                          <td><a data="{{y[0][0]}}" class="has-range date-back"><i class="glyphicon glyphicon-chevron-left"></i>{{y[0][0]}}</a></td>
+                        {% else %}
+                          {% if show_dates %}
+                            <td><a data="{{y[0]}}"><div class="has-range">{{y[0]}}</div></a></td>
+                          {% endif %}
+                        {% endif %}
+                      {% endfor %}
+                      </tr>
+                    {% endfor %}
+                    </table>
+                </div>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            {% set page = pagination.page %}
+                            <th>{{ macros.column_sort_toggle("Date", ".schedule_list", "date", page=page, start=start, end=end) }}</th>
+                            <th>{{ macros.column_sort_toggle("Times", ".schedule_list", "time", page=page, start=start, end=end) }}</th>
+                            <th>{{ macros.column_sort_toggle("Class", ".schedule_list", "abbr", page=page, start=start, end=end) }}</th>
+                            <th>Pub/Priv<br>/Event</th>
+                            <th>{{ macros.column_sort_toggle("Studio", ".schedule_list", "studio", page=page, start=start, end=end) }}</th>
+                            <th>{{ macros.column_sort_toggle("Spaces", ".schedule_list", "spaces", page=page, start=start, end=end) }}</th>
+                            <th>Avail</th>
+                            <th>Wait</th>
+                            <th>Teachers</th>
+                            <th>Assistants</th>
+                            <th class="comments col-30">Comments</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for schedule in pagination.items %}
+                      <tr>
+                        <td class="nowrap"><a href="{{ url_for('.schedule_edit', id=schedule.id) }}">{{ schedule.date.strftime('%a') }} {{ schedule.date.strftime('%-m/%d') }}</a></td>
+                        <td class="nowrap text-lowercase">{{schedule.time_range}}</td>
+                        <td><a href="{{ url_for('.schedule_edit', id=schedule.id) }}" style="color: {{schedule.color}}">{{schedule.cls.admin_name}}</a></td>
+                        <td>{% if schedule.is_an_event %}Event{% elif schedule.is_public %}Public{% else %}Private{% endif %}</td>
+                        <td>{{ schedule.campus.domain }}</td>
+                        <td align="center">{% if schedule.is_an_event %}{% else %}{{ schedule.spaces }}{% endif %}</td>
+                        <td align="center">{% if schedule.is_an_event %}{% else %}{{ schedule.remaining_spaces() }}{% endif %}</td>
+                        <td align="center">{{ schedule.waitlists | length() }}</td>
+                        <td>
+                            {% for teacher in schedule.teachers %}
+                              {{ teacher.user.first_name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ schedule.assistants | join(', ') }}</td>
+                        <td class="col-30">{{ schedule.comments }}</td>
+                        <td><a style="font-weight: normal;" href="{{ url_for('.schedule_reservations', id=schedule.id) }}">Reserv</a></td>
+                        {% if user.can_view('schedule_report') %}
+                        <td><a style="font-weight: normal;" href="{{ url_for('.schedule_report', id=schedule.id) }}">Report</a></td>
+                        {% endif %}
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+            </div>
+            {{ macros.render_pagination(pagination, "admin.schedule_list", start=start, end=end, show_all=show_all, count=schedule_count, label='schedule') }}
+        </div>
+        <div class="col-sm-3 sidebar hipcooks-side hipcooks-side-small noprint">
+            <div class="nav nav-sidebar">
+                <div class="well">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="messages">
+                            {% for type, message in messages %}
+                                <div class="message_{{type}}">{{message}}</div>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <p>
+                        {% if active_campuses | length > 0 %}
+                            <form method=POST action="{{url_for('.set_campus')}}" id="select" class="form-inline">
+                                {{campus_select_form.csrf_token}}
+                                <div class="form-group">
+                                    {{campus_select_form.header_campuses}}
+                                </div>
+                                <br>
+                                <a href="#" id="update-campus" class="hipcooks-script">Update</a>
+                            </form>
+                        {% else %}
+                            No Allowed Campuses
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="filter">
+                    <ul id="schedule-type-filter">
+                        <li class="active hipcooks-link"><a href="{{url_for('.schedule_list', page=1, start=start, end=end, deleted=deleted)}}">All</a></li>
+                        <li class="hipcooks-link" ><a href="{{url_for('.schedule_list', page=1, start=start, end=end, schedule_type='public', deleted=deleted)}}">Public</a></li>
+                        <li class="hipcooks-link"><a href="{{url_for('.schedule_list', page=1, start=start, end=end, schedule_type='private', deleted=deleted)}}">Private</a></li>
+                        <li class="hipcooks-link"><a href="{{url_for('.schedule_list', page=1, start=start, end=end, schedule_type='event', deleted=deleted)}}">Event</a></li>
+                    </ul>
+                </div>
+                <div class="filter">
+                    <ul id="deleted-filter">
+                        <!--li class="active hipcooks-link" id="not-deleted-link"><a href="{{url_for('.schedule_list', page=1, start=start, end=end, schedule_type=schedule_type, deleted='false')}}">Not Deleted</a></li>
+                        <li class="hipcooks-link" id="deleted-link"><a href="{{url_for('.schedule_list', page=1, start=start, end=end, schedule_type=schedule_type, deleted='true')}}">Deleted</a></li-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

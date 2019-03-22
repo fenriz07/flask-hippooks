@@ -1,0 +1,88 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Check-In List{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<script src="/static/DataTables/datatables.min.js"></script>
+<script>
+    $(function() {
+
+        $("#itemlist").DataTable( {
+            "bInfo": false,
+            "paging": false,
+            "searching": false,
+            "order": [[ 4, "asc" ], [ 1, "asc" ], [ 5, "asc" ]],
+            "columns": [
+                { "orderable": false },
+                null,
+                { "orderable": false },
+                { "orderable": false },
+                null,
+                null,
+                { "orderable": false },
+            ],
+        });
+
+        function checkInItem(e) {
+            var v = $(e.target)
+                .closest("tr");
+
+            if ($(this).prop("checked")) {
+                v.addClass("gotit");
+            } else {
+                v.removeClass("gotit");
+            }
+        }
+
+        $("input[name=checkins]").click(checkInItem);
+    });
+</script>
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+        <div class="panel-body">
+          <h3 class="hipcooks-script">Check-In List</h3>
+            <form method="POST" id="select" class="shopping-list">
+                <div class="form-group">
+                    <table id="itemlist" class="checkin-table">
+                      <thead>
+                        <tr>
+                          <th hidden></th>
+                          <th>Studio</th>
+                          <th>Qty</th>
+                          <th>Unit</th>
+                          <th>Item</th>
+                          <th>Classes</th>
+                          <th>Check</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for item in items %}
+                        <tr class="item {% if item.checked_in %}gotit{% endif %}">
+                            <td hidden><input type="text" name="item_id" class="form-control" value="{{item.id}}"></td>
+                            <td>{{item.campus.name}}</td>
+                            <td><input type="text" name="qty" class="form-control" value="{{item.number|mixed}}" style="width: 50%;"></td>
+                            <td>{{item.unit}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.classes_no_items|join(', ')}}</td>
+                            <td><input type="checkbox" name="checkins" value="{{item.id}}" {% if item.checked_in %}checked{% endif %} /></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                        {% if user.can_update('shoplist_check') %}
+                        <tr>
+                          <td colspan=6>
+                            <input class="btn btn-primary generate" name="remove_checkins" type="submit" value='Remove Checked-in Items' />&nbsp;
+                            <input class="btn btn-primary generate" type="submit" value="Save & Update">
+                            <button class="btn btn-primary generate" name="go_shopping" type="submit" value="Go Shopping">Back to Go Shopping</button>
+                          </td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Testimonials{% endblock %}
+{% block content %}
+<style>
+    .side_margin {
+        margin-left:20px;
+        margin-right: 20px;
+    }
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 25px;
+        display: inline-block;
+    }
+    .text18 {
+        letter-spacing: 1px;
+    }
+
+    #testimonial_1 {
+        display: inline-block;
+        margin-top: 20px;
+        width: 305px;
+        float: left;
+    }
+
+    #testimonial_1_photo {
+        display: inline-block;
+        margin-left: 25px;
+        margin-top: 40px;
+    }
+
+    #testimonial_2 {
+        width: 625px;
+        display: inline-block;
+        margin-top: 50px;
+    }
+
+    #testimonial_2_photo {
+        margin-left: 65px;
+        margin-top: 25px;
+        margin-bottom: 50px;
+        width: 370px;
+        float: left;
+    }
+
+    #testimonial_3 {
+        display: inline-block;
+        width: 310px;
+        margin-left: 65px;
+        float: left;
+    }
+    #testimonial_3_photos {
+        position: absolute;
+        margin-left: 433px;
+        top: 230px;
+    }
+
+    #photo_4 {
+        margin-left: 104px;
+    }
+
+    #testimonial_4 {
+        margin-left: 430px;
+        width: 580px;
+    }
+
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'media_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="blue_text JandaQuickNote-normal text18" id="testimonial_1">
+                What an Amazing meal you helped me create! THANK YOU!!!! We were absolutely dazzled! From your Oy Vey Class, I made the herbed matzoh ball soup, beet salad, warm fish terrine & beef brisket. The brisket was incredible, it shredded apart on its own & was so tasty! The warm fish terrine was LOVED so much that my parents took it home for left overs ~ &amp; I was told I can make it 'anytime'! :-) By all who attended it was an A+ meal!
+            </div>
+            <div class="blue_text JandaQuickNote-normal text18" id="testimonial_1_photo">
+                <img src="/static/img/testimonial1.jpg" class="pull-right">
+            </div>
+        </div>
+        <div class="row">
+            <br>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="orange_text JandaQuickNote-normal text18" id="testimonial_2_photo">
+                <img src="/static/img/testimonial2.jpg">
+            </div>
+            <div class="orange_text JandaQuickNote-normal text18" id="testimonial_2">
+                Thank you, Monika, for wonderful food and a wonderful time! I really enjoyed your recipes, the time you spent with us, and your obvious skill and knowledge in the kitchen that you shared. By the way, thanks to you, I've since cleaned my iron skillet properly, and have splurged on a quality knife for my kitchen - Sonya
+            </div>
+        </div>
+        <div class="row">
+            <div class="orange_text JandaQuickNote-normal text18" id="testimonial_3">
+                I started to list the good things, but I will just say the entire experience was great. I will be looking for the recipes and signing up probably later today for more classes…thanks again! Vince
+            </div>
+            <div id="testimonial_3_photos">
+                <img src="/static/img/testimonial3.jpg" id="photo_3">
+                <img src="/static/img/testimonial4.jpg" id="photo_4">
+            </div>
+        </div>
+        <div class="row">
+            <div class="blue_text text18 JandaQuickNote-normal" id="testimonial_4">
+                What an Amazing meal you helped me create! THANK YOU!!!! We were absolutely dazzled! From your Oy Vey Class, I made the herbed matzoh ball soup, beet salad, warm fish terrine & beef brisket. The brisket was incredible, it shredded apart on its own & was so tasty! The warm fish terrine was LOVED so much that my parents took it home for left overs ~ & I was told I can make it 'anytime'! :-) By all who attended it was an A+ meal!
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+{% endblock %}

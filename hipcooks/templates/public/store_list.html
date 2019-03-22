@@ -1,0 +1,76 @@
+{% extends "/base.html" %}
+{% block title %}Hipcooks: Store{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    #product_table {
+        width: 100%;
+    }
+
+    #product_table td{
+        width: 20%;
+        max-width: 20%;
+    }
+
+    #product_table td img {
+        border: #03ABD0 solid 1px;
+        max-width: 100%
+        max-height: 152px;
+        margin-bottom: 3px;
+    }
+
+    #product_table td img:hover {
+        border-color: black;
+    }
+
+    .product_price {
+        margin-bottom: 15px;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="product_table">
+                    <tbody>
+                        {% for row in product_grid %}
+                        <tr>
+                            {% for product in row %}
+                            <td>
+                                {% if product is not none %}
+                                    <div class="text-center">
+                                        <a href="{{url_for('.store_product', product_id=product.id)}}"><img src="{{product.thumbnail_url}}" style="border: 0;">
+                                        <br>
+                                        {{product.name}}
+                                        <br>
+                                        <div class="product_price">${{product.price}}</div></a>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br><br>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

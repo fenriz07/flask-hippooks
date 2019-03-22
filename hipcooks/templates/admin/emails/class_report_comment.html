@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>New Comment on {{report.schedule.teachers[0]}}'s Class Report: {{report.schedule.cls.abbr}} on {{report.schedule.date.strftime('%m/%d/%y')}} @ {{report.schedule.campus}}</title>
+</head>
+<body>
+<p>{{comment.teacher}} made the following comment on {{report.schedule.teachers[0]}}'s Class Report: {{report.schedule.cls.abbr}} on {{report.schedule.date.strftime('%m/%d/%y')}} @ {{report.schedule.campus}}:</p>
+<p>
+<blockquote>
+{{comment.comment}}
+</blockquote>
+</p>
+<p>
+    <a href="{{report_url}}">I would like to comment on this report!</a>
+</p>
+</body>
+</html>

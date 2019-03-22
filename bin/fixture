@@ -1,0 +1,10 @@
+#!/home/fen/Freelancer/Clientes/hipcooks/proyect/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'fixture==1.5.2','console_scripts','fixture'
+__requires__ = 'fixture==1.5.2'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('fixture==1.5.2', 'console_scripts', 'fixture')()
+    )

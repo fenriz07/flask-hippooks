@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: About Our Teachers{% endblock %}
+{% block content %}
+<style>
+.teacher_pic {
+    margin-right:15px;
+    margin-left: -4px;
+    width: 186px;
+    height: 186px;
+}
+
+.teacher_name {
+    font-size: 16px;
+}
+
+.teacher_bio {
+    font-size: 14px;
+    line-height: 22px;
+}
+
+#sidebar_div {
+    width: 215px;
+    display: inline-block;
+}
+
+#content_div {
+    width: 830px;
+    display: inline-block;
+    float: right;
+}
+
+#content_div .bio_text {
+    display: inline-block;
+    margin-left: -6px;
+    width: 590px;
+}
+
+#content_div .bio_pic {
+    display: inline-block;
+    width: 233px;
+    float: left;
+}
+
+#cssmenu { /* not sure why this moves just on this one page but here is a fix */
+    margin-left: 30px;
+}
+
+</style>
+<div class="row">
+    <div id="sidebar_div">
+        {% include 'about_sidebar.html' %}
+    </div>
+    <div id="content_div">
+        {% for teacher in teachers %}
+            <div class="row" id="{{teacher.user.id}}">
+                <div class="bio_pic">
+                    <img src="{{teacher.pic_url}}" class="teacher_pic">
+                </div>
+                <div class="bio_text">
+                    <div class="JandaQuickNote-normal teacher_name uppercase">
+                        <img src="/static/img/jacks3.png" class="jacks">
+                        {{teacher.user.first_name}}
+                    </div>
+                    <div class="teacher_bio">
+                        {{teacher.bio|safe}}
+                    </div>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+</div>
+<br>
+
+{% endblock %}

@@ -1,0 +1,949 @@
+a {
+  color: #00ADCD;
+}
+.JandaQuickNote-normal {
+    font-family: JandaQuickNote;
+    font-weight: normal;
+    font-style: normal;
+}
+.navbar {
+    margin-bottom: 5px;
+}
+.hipcooks-data-header {
+    padding-right: 225px;
+    margin: 0;
+}
+.hipcooks-title h2 {
+    margin-top: 10px;
+}
+.title-link {
+    margin-bottom: 3px;
+}
+.title-link h2 {
+    margin-bottom: 5px;
+}
+.button-row {
+    margin-bottom: 10px;
+}
+
+
+/*DATE RANGE BUTTONS*/
+.date-ranges ul {
+    padding: 0;
+}
+.date-ranges li {
+    display: inline-block;
+}
+.date-ranges li:hover {
+    cursor: pointer;
+    cursor: hand;
+}
+.date-ranges a {
+    text-decoration: none;
+}
+.glyphicon-chevron-left {
+    font-size: 10px;
+}
+.range-btn {
+    padding: 3px 6px;
+    margin: 3px 2px 3px 0;
+}
+.range-btn:hover, .range-btn.active, .range-btn:focus {
+    border-bottom: 1px solid #00ADCD;
+}
+#day-select {
+    background: #F8F8F8;
+    border: 1px solid #E7E7E7;
+}
+#day-select ul {
+    margin: 0;
+}
+#day-select li {
+    padding: 1px 20px 1px 10px;
+    font-size: 13px;
+    font-weight: bold;
+}
+#day-select a {
+    color: #607388;
+}
+#day-select a.date-back {
+    color: #888;
+}
+#day-select a:hover, #day-select a:hover, #day-select a:focus, #day-select a.date-back:hover, #day-select a.date-back:hover, #day-select a.date-back:focus {
+    color: #0055B7;
+}
+
+/*ADMIN HOME PAGE*/
+.hipcooks-title h2 {
+    margin-top: 10px;
+}
+.dashboard {
+    padding: 12px;
+}
+.dashboard-header {
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 10px;
+    padding-bottom: 22px;
+    /*background: url("/static/img/recipeheadergraphic.png") no-repeat left;
+    background-size: 250px;*/
+}
+.dashboard-header .row {
+    /*border-bottom: 2px solid #00ADCD;*/
+    margin: 0;
+}
+.dashboard-header h4 {
+    margin: 0 0 -4px;
+    color: #00ADCD;
+}
+.dashboard-logo {
+    padding: 0;
+}
+.dashboard-logo img {
+    width: 290px;
+    /*position: absolute;*/
+}
+.dashboard-content {
+    padding: 0 70px;
+}
+
+#menu-title h3 {
+    color: #00ADCD;
+}
+#team-notes {
+    border-color: #00ADCD;
+    border-radius: 0px;
+    background-color: #d0effa;
+    padding-top: 15px;
+}
+#team-notes .row {
+    border: none;
+}
+#team-notes h3 {
+    color: #00ADCD;
+    border-bottom: 2px solid #00ADCD;
+}
+#team-notes p {
+    padding: 10px 16%;
+    color: #00ADCD;
+    font-size: 16px;
+}
+#team-notes .panel-body {
+    border: none;
+}
+textarea.form-control.owner-notes {
+    height: 120px;
+}
+#edit-team-notes, #view-team-notes {
+    border: 1px solid #00ADCD;
+    background-color: #EFEFEF;
+    padding: 7px 9px 0;
+    margin-left: 15px;
+    font-size: 16px;
+}
+#edit-team-notes:hover, #view-team-notes:hover {
+    border: 1px solid #00748A;
+    background-color: #F3F3F3;
+    text-decoration: none;
+}
+
+.dashboard-content h4, .dashboard-content a {
+    font-family: JandaQuickNote;
+    font-weight: normal;
+    font-style: normal;
+}
+.dashboard-menu {
+    padding-top: 15px;
+}
+.dashboard-menu a {
+    padding: 4px 5px;
+    font-size: 18px;
+    color: #F47B27;
+}
+.dashboard-menu a:hover, .dashboard-menu a:active, .dashboard-menu a:focus {
+    color: #00ADCD;
+    background-color: transparent;
+}
+.menu-row h4 {
+    text-align: right;
+    color: #00ADCD;
+    margin-top: 5px;
+}
+.list-group-item {
+    border: none;
+    width: 190px;
+}
+.dashboard-footer {
+    margin: 40px 0 0;
+}
+.dashboard-footer .nav>li>a {
+    color: #F47B27;
+    font-size: 16px;
+    padding: 0;
+}
+.dashboard-footer .nav>li {
+    border-left: 1px solid #00ADCD;
+}
+.dashboard-footer .nav>li:first-child {
+    border-left: none;
+}
+
+
+/*ADMIN LISTS AND ADD EDIT VIEWS*/
+.panel-default>.panel-heading {
+    background: linear-gradient(to bottom, rgb(103, 154, 208) 0%, rgba(92,130,171,1) 51%);
+}
+.container.add-edit-page {
+    margin-top: 45px;
+}
+.add-edit-page .panel {
+    border-radius: 0;
+}
+.add-edit-page .panel-default>.panel-heading,
+.dashboard-page .panel-default>.panel-heading {
+    background-color: #337AB7;
+    border-radius: 0;
+}
+.add-edit-page.report {
+    position: relative;
+}
+.panel-heading {
+    padding: 3px 6px;
+}
+.panel-title {
+    /*font-size: 14px;*/
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFF;
+}
+.panel-body {
+    padding: 0;
+    border: 1px solid #337AB7;
+}
+form.add-edit .panel-body {
+    margin-bottom: 12px;
+}
+.add-edit-page .panel-default {
+    border: none;
+}
+.sort-button {
+    font-size: 16px;
+    padding: 0 1px;
+}
+.sort-button.desc {
+    font-size: 18px;
+}
+a.sort-button-toggle {
+    color: #333;
+    text-decoration: none;
+}
+a.sort-button-toggle:hover {
+    color: #286090;
+}
+.sort-button-toggle span {
+    padding-left: 5px;
+    display: none;
+}
+.sort-button-toggle.is-sorted span {
+    display: inline;
+}
+.table-striped th .sort-button-toggle span {
+    color: #666;
+}
+th.comments {
+    width: 20%;
+}
+thead {
+    border-top: 1px solid #DDD;
+}
+.table>thead>tr>th {
+    border: 1px solid #DDD;
+    font-size: 12px;
+}
+.table>tbody>tr>td {
+    font-size: 12px;
+    border: 1px solid #DDD;
+}
+.table>tbody>tr>td a {
+    font-weight: 600;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 3px;
+}
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #EDF3FE;
+}
+.panel-body .row {
+    margin: 5px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #DDD;
+}
+.panel-body .row.add-edit {
+    border-bottom: none;
+}
+form.add-edit .chosen-container-single .chosen-single {
+    height: 25px;
+    line-height: 25px;
+}
+form.add-edit .chosen-container-single .chosen-single div b {
+    background-position: 0 3px;
+}
+form.add-edit .form-control, .form-inline.add-edit .form-control {
+    width: auto;
+    height: auto;
+    padding: 5px 5px;
+    border-color: #AAA;
+}
+form.add-edit .form-control, form.add-edit .chosen-choices, form.add-edit .chosen-single {
+    border-color: #CCC;
+}
+form.add-edit .form-control#description, form.add-edit .form-control#menu {
+    width: 100%;
+    height: 65px;
+}
+#reason {
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    list-style-type: none;
+}
+.table-striped th span {
+    color: black;
+}
+.form-control#color_code {
+    width: 132px;
+    padding: 4px 5px;
+    border-top-right-radius : 0;
+    border-bottom-right-radius : 0;
+}
+#color_code {
+    display: inline-block;
+}
+.activation, .giftcard-False {
+    position: relative;
+    color: #B90000;
+    width: 50px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 2px 2px;
+}
+.activation, .activation:hover, .activation:focus {
+    text-decoration: none;
+    color: #B90000;
+}
+.activation.assistant-active, .giftcard-True {
+    color: #016D01;
+}
+.activation:before, .giftcard-False:before {
+    content:"\e082";
+    font-family:"Glyphicons Halflings";
+    font-size: 10px;
+    line-height:1;
+    padding-right: 8px;
+    display:inline-block;
+}
+.activation.assistant-active:before, .giftcard-True:before {
+    content:"\e084";
+    font-family:"Glyphicons Halflings";
+    font-size: 10px;
+    line-height:1;
+    padding-right: 8px;
+    display:inline-block;
+}
+.giftcard-False:before, .giftcard-True:before {
+    font-size: 12px;
+}
+
+/*SIDEBAR STUDIO FILTER*/
+#header_campuses label {
+    margin-bottom: 0;
+}
+
+
+/*PRINTABLE PAGES*/
+.printable-panel {
+    margin-top: 20px;
+    border: none;
+}
+.printable-panel .row {
+    border: 1px solid #DDD;
+    border-radius: 3px;
+    padding-top: 5px;
+}
+.printable-panel .row.print-title {
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 0;
+    padding: 5px 5px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+.printable-panel .row.print-title h3 {
+    text-decoration: underline;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+.print-panel p {
+    padding: 10px 5px 5px;
+}
+.print-panel h4 {
+    font-weight: bold;
+}
+.point-edit {
+    margin-top: 12px;
+}
+.add-point {
+    margin: 15px 0 8px 15px;
+}
+
+
+/*CLASS REPORT*/
+form.class-report li {
+    list-style: none;
+}
+form.class-report input[type='checkbox'], form.class-report input[type='radio'] {
+    display: inline-block;
+    margin-right: 10px;
+}
+form.class-report h4 {
+    color: #337ab7;
+}
+ul#attendance_rating_list {
+    padding: 0;
+}
+i.glyphicon.glyphicon-plus {
+    margin-left: 2px;
+}
+.hipcooks-title .search-top {
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+.search-top {
+    margin-bottom: 10px;
+    padding-right: 0;
+}
+.search-top .search {
+    max-width: 450px;
+}
+.hipcooks-title .search-baseline {
+    margin-bottom: 5px;
+    margin-top: 30px;
+    padding-right: 0;
+}
+.form-control#pacing_rating, .form-control#tasting_rating, .form-control#preprep_rating, .form-control#breakage_rating, .form-control#ingredients_problems, .form-control#sales_rating {
+    border: none;
+    box-shadow: none;
+}
+form.class-report textarea.form-control {
+    width: 250px;
+    height: 80px;
+}
+form.class-report tr.substitute .form-control {
+    width: 100%;
+}
+
+/*SIDE NAV*/
+.hipcooks-side {
+    position: absolute;
+    right: 14px;
+    max-width: 201px;
+    min-height: 500px;
+    z-index: 1000;
+    display: block;
+    padding: 17px 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.add-edit-page.report .hipcooks-side {
+    max-width: 292px;
+    padding: 30px 0 0;
+}
+.hipcooks-side h5 {
+    font-weight: bold;
+    font-color: #555;
+}
+.hipcooks-side .filter {
+    padding-left: 9px;
+}
+.hipcooks-side ul {
+    list-style: none;
+    padding: 0;
+}
+.hipcooks-side ul li a {
+    color: #F47B27;
+    font-family: JandaQuickNote;
+}
+.hipcooks-side .nav-sidebar {
+    padding: 3px;
+    background-color: #EEE;
+}
+.hipcooks-side-small {
+  max-width: 100px;
+}
+.add-edit-page.report .hipcooks-side .nav-sidebar {
+    min-height: 100px;
+}
+.add-edit-page.report #add_comment {
+    margin-top: 20px;
+}
+.side-comment {
+    border: none;
+    padding: 0;
+}
+.side-title {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    font-size: 16px;
+    padding: 1px 5px;
+    margin-bottom: 4px;
+    background: #337AB7;
+    color: white;
+}
+.add-edit-page.report .side-title {
+    border: 1px solid #ddd;
+    height: 36px;
+}
+.hipcooks-side textarea {
+    border-radius: 5px;
+    width: 100%;
+    height: 200px;
+    resize: vertical;
+}
+.hipcooks-side .well {
+    padding: 8px;
+}
+.well .btn {
+    margin-top: 6px;
+}
+.well #select {
+    margin-bottom: 5px;
+}
+.filter li.active {
+    border-left: 3px solid #337ab7;
+    padding-left: 3px;
+}
+.filter li.active a {
+    font-weight: bold;
+}
+#save_btns select.form-control {
+    width: 250px;
+    height: 95px;
+}
+
+
+
+/*ADD EDIT CLASS*/
+/*
+#new_image_form input#new_image {
+    margin-top: 8px;
+}
+*/
+.class-edit textarea {
+    resize: vertical;
+    margin-bottom: 5px;
+}
+
+/*TABLE FORMAT*/
+
+.hipcooks-data-wrapper {
+    margin: 0;
+    border: 1px solid #DADADA;
+    border-right: none;
+    background-color: #EEE;
+}
+.hipcooks-data {
+    padding-left: 0;
+    padding-right: 200px;
+}
+.hipcooks-data-small-sidebar {
+  padding-right: 100px;
+}
+.hipcooks-data-no-sidebar {
+  padding-right: 0px;
+}
+.hipcooks-data.report {
+    padding-right: 15px;
+}
+.data-inner {
+    background: white;
+    border-bottom: 1px solid #DDD;
+}
+.data-inner.auto-width {
+    border-right: 1px solid #DDD;
+}
+.hipcooks-data .table {
+    background-color: white;
+    margin-bottom: 0;
+}
+.data-inner.auto-width .table {
+    width: auto;
+}
+.hipcooks-data .table.auto-width {
+
+}
+.hipcooks-data .table>thead {
+    border-top: none;
+}
+.hipcooks-data .table>tbody>tr>td, .hipcooks-data .table>thead>tr>th {
+    border-left: none;
+}
+.hipcooks-data .table>tbody>tr>td:last-child {
+    padding-right: 5px;
+}
+.hipcooks-data .table>tbody>tr:last-child>td {
+    border-bottom: none;
+}
+.pagination {
+    padding: 10px;
+    margin: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, #FFF, #EEE);
+    border-radius: 0;
+    border-right: 1px solid #DADADA;
+}
+.table.text-middle tbody>tr>td {
+    vertical-align: middle;
+    font-weight: bold;
+    padding: 3px 5px;
+}
+
+/*PRODUCT SALES*/
+#product-table tr.table-striped td {
+    border-top-color: #337AB7;
+    border-bottom-color: #337AB7;
+}
+#product-table tr.table-striped td:first-child {
+    border-left-color: #337AB7;
+}
+#product-table tr.table-striped td:last-child {
+    border-right-color: #337AB7;
+}
+.product-title {
+    min-height: 49px;
+    padding: 7px 10px;
+    border-radius: 4px;
+    background-color: #337AB7;
+    color: #FFF;
+}
+.product-image-row {
+    min-height: 150px;
+}
+.product-image {
+    margin: 10px auto 0;
+    height: 150px;
+    border: 1px solid #03abd0;
+}
+.product-image:hover {
+    border: 1px solid black;
+}
+.product {
+    position: relative;
+    padding: 0 3px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    font-weight: bold;
+    color: #444;
+}
+.product label {
+    position: absolute;
+    left: 5px;
+    min-height: 36px;
+    width: 70%;
+    display: table;
+}
+.product label div {
+    display: table-cell;
+    vertical-align: middle;
+}
+form.add-edit .product input.form-control {
+    float: right;
+}
+
+/*SHOPPING LIST*/
+.shopping-list .form-group {
+    padding: 8px 8px 0;
+}
+.shopping-list th {
+    padding-right: 12px;
+}
+
+.shopping-list tr td a {
+    margin: 10px 0;
+}
+
+.shopping-list tr td a.remove:active {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    color: #337ab7;
+}
+
+.shopping-list input.number-input {
+    width: 80px;
+}
+
+.shopping-list input.units-input {
+    width: 135px;
+}
+
+.shopping-list .form-control {
+    font-weight: 700;
+}
+.shopping-list table {
+    width: 100%;
+}
+.shopping-list table#itemlist.check-list .form-control {
+    padding: 7px 5px 0;
+}
+.shopping-list table.check-list .form-control {
+    font-size: 12px;
+}
+.shopping-list table.check-list td {
+    /*vertical-align: top;*/
+}
+.shopping-list table.check-list td:first-child, .shopping-list table.check-list td:nth-child(2) {
+    width: 1%;
+    margin-top: 5px;
+}
+.shopping-list table#itemlist.check-list td:nth-child(3) {
+    width: 13%;
+}
+.shopping-list td.shopping-qty {
+    width: 80px;
+}
+.shopping-list table.check-list td:nth-child(5) {
+    width: 180px;
+}
+.shopping-list table#itemlist.check-list tr td:nth-child(6) {
+    /*padding-top: 18px;*/
+}
+.shopping-list table#itemlist.check-list tr td textarea {
+    overflow: hidden;
+    height: 34px;
+}
+.shopping-list table.check-list td:nth-child(7) {
+    width: 13%;
+}
+
+table#itemlist td {
+    padding: 0 5px;
+}
+table#itemlist th, table.create-shop-list th {
+    padding-left: 7px;
+}
+table#itemlist tr:nth-child(2) td {
+    padding-top: 10px;
+}
+table#itemlist tr td {
+    padding-top: 6px;
+}
+table#itemlist.checkin-table tr td {
+    padding-top: 15px;
+}
+table#itemlist td .form-control, table.create-shop-list td .form-control {
+    padding-left: 10px;
+    width: 100%;
+}
+table.create-shop-list td .form-control {
+    min-width: 105px;
+}
+.shop-ext-btns {
+    width: 315px;
+}
+td.shop-ext-btns a {
+    margin: 0 1%;
+}
+.shop-list-btn {
+    min-width: 162px;
+}
+#shop-list_filter {
+    display: none;
+}
+#itemlist_wrapper div.col-sm-12 {
+    padding: 0;
+}
+#itemlist_wrapper div.row {
+    border: none;
+}
+#itemlist_wrapper thead {
+    border: none;
+}
+#itemlist_wrapper th:first-child {
+    min-width: 95px;
+}
+#itemlist_wrapper th span {
+    color: #BBB;
+}
+#itemlist_wrapper th.sorting_asc span, #itemlist_wrapper th.sorting_desc span {
+    color: #777;
+}
+.shop-studio {
+    max-width: 220px;
+}
+.list-market table tbody>tr>th:first-child {
+    width: 20%;
+}
+.list-market table tbody>tr>th:nth-child(2) {
+    width: 25%;
+}
+.list-market table tbody>tr>th:nth-child(3) {
+    width: 10%;
+}
+.list-market table tbody>tr>th:nth-child(4) {
+    width: 15%;
+}
+.list-market table tbody>tr>th:nth-child(5) {
+    width: 30%;
+}
+
+.shopping-list .generate {
+    margin-top: 8px;
+}
+
+.shopping-list select[name="item_categories"] {
+    width: 180px;
+}
+
+.shopping-list input[name="item_nums"] {
+    width: 85px;
+}
+
+.shopping-list input[name="item_units"] {
+    width: 125px;
+}
+
+.shopping-list-link {
+    margin-bottom: 10px;
+}
+
+#market-select-modal .form-control {
+    margin-bottom: 12px;
+}
+
+.list-market .table>tbody>tr>td {
+    border: none;
+}
+
+/*CONTENT STATIC PAGES*/
+#content-images h2 {
+    color: #337AB7;
+}
+#content-images .row {
+    margin-top: 15px;
+}
+#content-images .row div {
+    height: 200px;
+    width: 200px;
+    border: 1px solid #337AB7;
+    border-radius: 2px;
+    padding: 10px;
+    margin: 6px;
+}
+#content-images .row div a img {
+    display: block;
+    margin: 0 auto;
+}
+#content-images .row div a span {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+}
+
+
+/*SPECTRUM CUSTOM STYLING*/
+div.sp-replacer {
+    margin-bottom: 2px;
+    top: 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-color: #AAA;
+}
+div.sp-preview {
+    border-radius: 2px;
+}
+div.sp-palette {
+    max-width: 85px;
+}
+@media print {
+  a[href]:after {
+    content: none;
+  }
+  .hipcooks-data-wrapper {
+      border-bottom: none;
+  }
+  .panel-default {
+      border: none;
+  }
+  .panel-body {
+      border: none;
+  }
+}
+
+.gotit {
+    text-decoration: line-through;
+    color: #337ab7;
+}
+
+.gotit input, .gotit textarea {
+    text-decoration: line-through;
+    color: #337ab7;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    resize: none;
+}
+
+div.modal-dialog {
+    background-color: #ffffff;
+}
+
+.large-input {
+  width: 50% !important;
+}
+.center-text {
+  text-align: center;
+}
+.expand-cell {
+  white-space: nowrap !important;
+}
+.hipcooks-script {
+  font-family: JandaQuickNote;
+  color: #F47B27;
+}
+.delete-link {
+  color: #d9534f;
+  padding-left: 10px;
+  cursor: pointer;
+}
+.script-link-btn {
+  font-family: JandaQuickNote;
+  cursor: pointer;
+}
+h3.hipcooks-script {
+  padding-left: 10px;
+}
+.header-new {
+  font-size: 75%;
+}
+.date-create-row {
+  padding-top: 10px;
+}
+.left-pad {
+  padding-left: 10px;
+}
+.borderless td, th {
+  border: none !important;
+}
+input.full-width-input[type=text] {
+  width: 100% !important;
+}
+.shoppinglist-row {
+  margin: 0px 0px !important;
+}
+.shoppinglist-header {
+  margin-left: 5px;
+}
+input.expanded-input[type=text], input[type=password] {
+  width: 250px !important;
+}

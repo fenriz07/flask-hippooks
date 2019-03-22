@@ -1,0 +1,97 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Edit Product Inventory Log For {{product_inventory.campus.name}} {{product_inventory.product.name}} {{product_inventory.product.type}}{% endblock %}
+{% block head %}
+{{ super() }}
+<script src="/static/js/spectrum.js"></script>
+<link rel="stylesheet" href="/static/css/spectrum.css">
+<script>
+$(function () {
+    $("#color_code").spectrum({
+        preferredFormat: "hex3",
+        showInput: true,
+        showPalette: true,
+        hideAfterPaletteSelect:true,
+        palette: [["black", "gray", "silver", "white", "DarkTurquoise", "lightblue", "blue", "darkblue", "red", "purple", "lime", "green", "magenta", "orange", "brown", "yellow"]]
+    });
+    $("#color_code").show();
+
+    function check_reason() {
+        if ($("#reason-1").prop("checked")) {
+            $("#dest_campus").closest("div.row").removeClass("hidden");
+        } else {
+            $("#dest_campus").closest("div.row").addClass("hidden");
+            $("#dest_campus").val("");
+        }
+    }
+
+    var reason = "{{form.reason.data}}";
+    if (reason) {
+      $('#reason-'+reason).prop("checked", true);
+    }
+
+    $("input[name=reason]").click(check_reason);
+    check_reason();
+
+});
+</script>
+{{ enrich_editor() }}
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="row add-edit">
+          <h3 class="hipcooks-script">Edit Product Inventory Log For {{product_inventory.campus.name}} {{product_inventory.product.name}} {{product_inventory.product.type}}</h3>
+            <form method="POST" class="add-edit inventory-adj">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label class="control-label">Amount In Stock</label>
+                    </div>
+                    <div class="col-md-10">
+                        {{product_inventory.quantity_stocked}}
+                    </div>
+                </div>
+                {% for field in form %}
+                    {% if field.name == "csrf_token" %}
+                        {{field}}
+                    {% else %}
+                        {% if field.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="text-danger">{{field.errors[0]}}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if field.name != "dest_campus" %}
+                        <div class="row {% if field.name == "dest_campus" %}hidden{% endif %}">
+                            <div class="col-md-2">
+                                {{field.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-10">
+                                {{field(class_="form-control")}}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="row {% if field.name == "dest_campus" %}{% endif %}">
+                            <div class="col-md-2">
+                                {{field.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-3 col-sm-5 col-xs-10">
+                                {{field(class_="form-control")}}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                <div class="col-md-2">
+                    {% if user.can_update('product') %}
+                    <input class="btn btn-primary btn-sm" type="submit" value="Save">
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}

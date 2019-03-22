@@ -1,0 +1,274 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor, div_field, div_unlabeled_field %}
+{% block title %}Setup Edit{% endblock %}
+{% block header %}
+{{ super() }}
+{{ enrich_editor() }}
+<script>
+$(function() {
+    var csrf_token = "{{ csrf_token() }}";
+    var round_count = {{ setup_form.rounds | length }};
+
+    var submitActor = null;
+    var $form = $("#form");
+    var $submitActors = $form.find("input[type=submit]");
+    $submitActors.click(function(event) {
+      submitActor = this;
+    });
+
+
+    $(".add-round").click(function (e) {
+        e.preventDefault();
+
+        round_count += 1;
+        $("#blank-round")
+            .children()
+            .clone(true)
+            .appendTo($("#rounds"))
+            .find(".round-num")
+            .html(round_count)
+            .end().end()
+            .find("textarea")
+            .ckeditor();
+    });
+
+    $(".add-point").click(function (e) {
+        e.preventDefault();
+        $("#blank-point")
+            .children()
+            .clone(true)
+            .appendTo($(e.target).parent().prev())
+            .find("textarea")
+            .ckeditor();
+    });
+
+    $(".add-point-after").click(function (e) {
+        e.preventDefault();
+        var addBtn = $(this);
+        $("#blank-point")
+            .children()
+            .clone(true)
+            .insertAfter(addBtn.closest('.point'))
+            .find("textarea")
+            .ckeditor();
+    });
+
+    $(".remove-round").click(function (e) {
+        e.preventDefault();
+
+        var form_div = $(e.target).closest("div.round-form");
+        form_div
+            .nextAll()
+            .find(".round-num")
+            .html(function (_, old_round_num) {return old_round_num - 1;});
+        round_count -= 1;
+        form_div.remove();
+    });
+
+    $(".remove-point").click(function (e) {
+        e.preventDefault();
+        $(e.target).closest("div.point").remove();
+    });
+
+    var hidden_input = function (name, value) {
+        return $("<input></input>").attr({
+            type: "hidden",
+            name: name,
+            value: value,
+        });
+    };
+
+    $("#form").submit(function (e) {
+        e.preventDefault();
+
+        if (null === submitActor) {
+          submitActor = $submitActors[0];
+        }
+
+        var form = $('<form></form>')
+            .attr({method: "post"})
+            .append(hidden_input("rounds", round_count))
+        form.append($(submitActor).attr("type", "hidden"));
+        $("#setup :input").each(function (_, elem) {
+                form.append(hidden_input(elem.name, $(elem).val()));
+            });
+        $("#rounds > .round-form").each(function (i, round_elem) {
+            $(round_elem).find(":input").map(function (_, elem) {
+                form.append(hidden_input(i + "-" + elem.name, $(elem).val()));
+            });
+        });
+        $(document.body).append(form);
+        form.submit();
+    });
+});
+</script>
+<style>
+    .remove-round {
+        vertical-align: baseline;
+    }
+
+    .remove-point {
+        margin-top: 12px;
+    }
+
+    .point textarea {
+        margin-bottom: 8px;
+    }
+</style>
+
+{% endblock %}
+
+{% macro draw_point_form(point, extra_field_args={}) %}
+    {% set extra_args_with_cols = dict(rows=10, **extra_field_args) %}
+    <div class="point">
+        <div class="col-md-5 point-edit">
+            {{ div_unlabeled_field(point.action_point, extra_args_with_cols) }}
+        </div>
+        <div class="col-md-5 point-edit">
+            {{ div_unlabeled_field(point.teaching_point, extra_args_with_cols) }}
+        </div>
+        <div class="col-md-2 text-center">
+            {% if user.can_update('class_setups') %}
+            <a href="#" class="add-point-after btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Add Point</a>
+            <a href="#" class="remove-point btn btn-primary" title="Remove Point"><i class="glyphicon glyphicon-remove"></i> Remove</a>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+{% macro draw_round_form(round_form, round_num, extra_field_args={}) %}
+    <div class="round-form">
+        <div class="row round well">
+            <div class="col-md-12">
+                <h3>Round <span class="round-num">{{round_num}}</span> {% if user.can_update('class_setups') %}<a href="#" class="remove-round btn btn-primary" title="Delete Round"><i class="glyphicon glyphicon-remove"></i></a>{% endif %}</h3>
+                {{ div_field(round_form.round_intro, extra_field_args) }}
+            </div>
+
+            <div class="col-md-offset-2 col-md-10">
+                <div class="row">
+                    <div class="col-md-5 text-center">
+                        <h4>Action Points</h4>
+                    </div>
+                    <div class="col-md-5 text-center">
+                        <h4>Teaching Points</h4>
+                    </div>
+                </div>
+                <div class="points row">
+                    {% for point in round_form.points %}
+                        {{ draw_point_form(point, extra_field_args) }}
+                    {% endfor %}
+                </div>
+                <div class="row">
+                {% if user.can_update('class_setups') %}
+                    <a href="#" class="add-point btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Add Point</a>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="hipcooks-script">Add/Edit Setup</h3>
+            {% if id is not none %}
+            <a href="{{url_for('.setup_preview', id=id)}}" target="_blank">[Print Preview]</a>
+            {% endif %}
+        </div>
+    </div>
+    <form method="POST" id="form" class="form-horizontal">
+        <div id="setup">
+            {{setup_form.csrf_token}}
+            {% for field in setup_form if field.name != "csrf_token" %}
+                {{ div_field(field) }}
+            {% endfor %}
+        </div>
+        <div id="rounds" class="col-md-12">
+            {% for round_form in setup_form.rounds %}
+                {{ draw_round_form(round_form, loop.index) }}
+            {% endfor %}
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {% if user.can_update('class_setups') %}
+                <a href="#" class="add-round btn btn-default"><i class="glyphicon glyphicon-plus"></i> Add Round</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                {% if user.can_update('class_setups') %}
+                <input class="btn btn-lg btn-primary" type="submit" value="Save" name="save">
+                <input class="btn btn-lg btn-primary" type="submit" value="Save and Clean" name="clean">
+                <input class="btn btn-lg btn-primary" type="submit" value="Save and Continue" name="save_and_continue">
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="blank-round" hidden>
+    <div class="round-form">
+        <div class="row round well">
+            <div class="col-md-12">
+                <h3>Round <span class="round-num">0</span>{% if user.can_update('class_setups') %} <a href="#" class="remove-round btn btn-primary" title="Delete Round"><i class="glyphicon glyphicon-remove"></i></a>{% endif %}</h3>
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="round_intro">Round Setup</label>
+                    <div class="col-md-10">
+                        <textarea class="form-control" id="" name="round_intro" rows="15"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <div class="row">
+                    <div class="col-md-5 text-center">
+                        <h4>Action Points</h4>
+                    </div>
+                    <div class="col-md-5 text-center">
+                        <h4>Teaching Points</h4>
+                    </div>
+                </div>
+                <div class="points row">
+                    <div class="point">
+                        <div class="col-md-5">
+                            <textarea class="form-control" id="" name="action_point" rows="15"></textarea>
+                        </div>
+                        <div class="col-md-5">
+                            <textarea class="form-control" id="" name="teaching_point" rows="15"></textarea>
+                        </div>
+                        <div class="col-md-2 text-center">
+                        {% if user.can_update('class_setups') %}
+                            <a href="#" class="remove-point btn btn-primary" title="Remove Point"><i class="glyphicon glyphicon-remove"></i> Remove</a>
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    {% if user.can_update('class_setups') %}
+                    <a href="#" class="add-point btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Add Point</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="blank-point" hidden>
+  <div class="point">
+    <div class="col-md-5 point-edit">
+        <textarea class="form-control" id="action_point" name="action_point" rows="15"></textarea>
+    </div>
+    <div class="col-md-5 point-edit">
+        <textarea class="form-control" id="teaching_point" name="teaching_point" rows="15"></textarea>
+    </div>
+    <div class="col-md-2 text-center">
+        {% if user.can_update('class_setups') %}
+        <a href="#" class="add-point-after btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Add Point</a>
+        <a href="#" class="remove-point btn btn-primary" title="Remove Point"><i class="glyphicon glyphicon-remove"></i> Remove</a>
+        {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

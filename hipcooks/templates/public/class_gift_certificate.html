@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% from "/macros.html" import div_field %}
+{% block title %}Hipcooks: Gift Certificates{% endblock %}
+
+{% macro show_error(error) %}
+    {% if error %}
+        <div class="form-group">
+            <div class="col-sm-12">
+                <span class="text-danger">
+                    {{error}}
+                </span>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro show_field(field) %}
+    {{ show_error(field.errors[0]) }}
+    <div class="form-group">
+        <label class="col-sm-3 control-label uppercase">{{field.label(class_="control-label")}}</label>
+        <div class="col-sm-9">
+            {{field(class_="form-control")}}
+        </div>
+    </div>
+{% endmacro %}
+
+{% block head %}
+{{ super() }}
+<script type="text/javascript">
+$(function () {
+    var class_cost = {{campus.base_cost}};
+    $("#spots").change(function (e) {
+        if ($(e.target).val() != "other") {
+            $("#amount_to_give").val($(e.target).val()*class_cost)
+        }
+    });
+    $("#amount_to_give").change(function (e) {
+        amount = $(e.target).val();
+        if (amount % class_cost === 0) {
+            $("#spots").val(amount / class_cost);
+        } else {
+            $("#spots").val("other");
+        }
+    })
+    $("#delivery-info :radio").change(function (e) {
+        $("#email-info").toggle(true);
+    })
+    $("#delivery_method-0,#delivery_method-1").change(function () {
+        $("#mailing-info").toggle(false);
+    });
+    $("#delivery_method-2").change(function (e) {
+        $("#mailing-info").toggle(true);
+    });
+    $("#delivery-info :checked").change();
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    input.form-control, select {
+        border: solid 1px #03ABD0 !important;
+        border-radius: 0px;
+    }
+    #gc_policy {
+        position: absolute;
+        width: 400px;
+        height: 300px;
+        background: white;
+        bottom: 25px;
+        right: 90px;
+        border: solid 1px #03ABD0;
+        padding: 10px;
+        overflow-y: scroll;
+        display: none;
+    }
+    #gc_policy h2 {
+        font-size: 20px;
+    }
+    input[type="text"], #campus_id {
+        width: 325px;
+    }
+    .form-group {
+        margin-bottom: 2px;
+    }
+    #spots {
+        width: 228px;
+        display: inline-block;
+    }
+    #amount_to_give {
+        display: inline-block;
+        width: 94px;
+    }
+    #city {
+        display: inline-block;
+        width: 160px;
+    }
+    #state {
+        display: inline-block;
+        width: 40px;
+        padding: 6px 9px;
+    }
+    #zip_code {
+        display: inline-block;
+        width: 119px;
+    }
+    .section_number {
+        margin-bottom: -28px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'classes_sidebar.html' %}
+        <br><br><br>
+        <img src="/static/img/gc_sidebar.jpg">
+        <br><br><br>
+        <img src="/static/img/gc_sidebar.jpg">
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-12">
+                <span class="JandaQuickNote-normal section_intro">
+                    Gift Certificates are available for your nearest and dearest. Gift any amount you'd like, redeemable for instruction at any Hipcooks studio. The recipient simply signs up for an available class, provides the Gift Certificate number and "voilà," we're cooking! Our gift certificates never expire. There are loads of classes to choose from, with new classes posted each month!
+                </span>
+            </div>
+        </div>
+        <br>
+        <form method="POST" class="form-horizontal">
+            {{gift_cert_form.csrf_token}}
+            <div id="delivery-info" class="form_box">
+                <div class="row">
+                    <div class="col-sm-1">
+                        <span class="orange_text gc_section_number">1</span>
+                    </div>
+                    <div class="col-sm-11">
+                        <span class="uppercase gc_section_title">First choose the delivery method</span>
+                    </div>
+                </div>
+                {{ show_error(gift_cert_form.delivery_method.errors[0]) }}
+                {% for field in gift_cert_form.delivery_method %}
+                    <div class="row">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="radio">
+                                {{field(class_="form-control gc_checkbox")}}
+                                {{field.label(class_="radio-inline control-label gc_radio_label")}}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <br>
+            </div>
+            <div id="email-info" class="form_box" hidden>
+                <div class="row">
+                    <div class="col-sm-12 section_number">
+                        <span class="orange_text gc_section_number">2</span>
+                    </div>
+                </div>
+                {{show_field(gift_cert_form.sender_name)}}
+                {{show_field(gift_cert_form.sender_email)}}
+                {{show_field(gift_cert_form.sender_phone)}}
+                {{show_error(gift_cert_form.campus_id.errors[0])}}
+                {{show_field(gift_cert_form.campus_id)}}
+                {{show_error(gift_cert_form.amount_to_give.errors[0])}}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label uppercase">Amount Giving</label>
+                    <div class="col-sm-9">
+                        <select id="spots" class="form-control">
+                            {% for i in range(1, 5) %}
+                                <option value="{{i}}" {% if i == 2 %}selected{% endif %}>
+                                    {{i}} Spots (good for {{i}} people)
+                                </option>
+                            {% endfor %}
+                            <option value="other">Other</option>
+                        </select>
+                        <input class="form-control" name="amount_to_give" id="amount_to_give" value="{{2*campus.base_cost}}">
+                    </div>
+                </div>
+                {{show_field(gift_cert_form.recipient_name)}}
+                {{show_field(gift_cert_form.recipient_email)}}
+                {{show_field(gift_cert_form.message)}}
+            </div>
+            <div id="mailing-info" class="form_box" hidden>
+                <div class="row">
+                    <div class="col-sm-12 section_number">
+                        <span class="orange_text gc_section_number">3</span>
+                    </div>
+                </div>
+                {{show_field(mailing_info_form.name_on_envelope)}}
+                {{show_field(mailing_info_form.street_address)}}
+                {{show_error(mailing_info_form.city.errors[0])}}
+                {{show_error(mailing_info_form.state.errors[0])}}
+                {{show_error(mailing_info_form.zip_code.errors[0])}}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label uppercase">City, State, Zip</label>
+                    <div class="col-sm-9">
+                        {{mailing_info_form.city(class_="form-control")}}
+                        {{mailing_info_form.state(class_="form-control")}}
+                        {{mailing_info_form.zip_code(class_="form-control")}}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <label for="agreed" id="agreed_label" class="control-label blue_text gc_orange_radio_label">I've read and agree to the <a href="#" class="orange_text" id="policy_link">gift certificate policy</a></label>
+                    {{show_error(gift_cert_form.agreed.errors[0])}}
+                    {{gift_cert_form.agreed(class="form-control gc_orange_checkbox")}}
+                    <div id="gc_policy">
+                      <a href="#" id="policy_close" class="pull-right"><span class="glyphicon glyphicon-remove"></span></a>
+                      {{include_content("/terms/gift-certificate/body")}}
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <input name="form-submit" type=submit value="Add to Cart" class="form_button pull-right">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<br>
+<script>
+    $("#agreed").change(function(){
+        $("#agreed_label").toggleClass("checked");
+        $("#gc_policy").hide();
+    })
+    $("#policy_link").on('click', function(event){
+        event.preventDefault();
+        $("#gc_policy").show();
+    });
+    $("#policy_close").on('click', function(event){
+        event.preventDefault();
+        $("#gc_policy").hide();
+    });
+</script>
+{% endblock %}

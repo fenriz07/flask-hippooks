@@ -1,0 +1,37 @@
+Metadata-Version: 1.1
+Name: fixture
+Version: 1.5.2
+Summary: fixture is a python module for loading and referencing test data
+Home-page: http://farmdev.com/projects/fixture/
+Author: Kumar McMillan
+Author-email: kumar dot mcmillan / gmail.com
+License: GNU Lesser General Public License (LGPL)
+Description: It provides several utilities for achieving a *fixed state* when testing
+        Python programs.  Specifically, these utilities setup / teardown databases and
+        work with temporary file systems.
+        
+        You may want to start by reading the `End User Documentation`_.
+        
+        .. _End User Documentation: http://farmdev.com/projects/fixture/docs/
+        
+        If you are reading this from a `source checkout`_ then you may want to build the documentation locally.  Install `Sphinx`_ then run::
+        
+            cd /path/to/fixture/source
+            cd docs
+            make html
+        
+        Then open ``build/html/index.html`` in your web browser.  If that fails, you can read the reST files starting at ``docs/source/index.rst``
+        
+        .. _source checkout: http://fixture.googlecode.com/hg/#egg=fixture-dev
+        .. _Sphinx: http://sphinx.pocoo.org/
+Keywords: test testing tools unittest fixtures setup teardown database stubs IO tempfile
+Platform: UNKNOWN
+Classifier: Environment :: Other Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Testing
+Classifier: Topic :: Software Development :: Quality Assurance
+Classifier: Topic :: Utilities

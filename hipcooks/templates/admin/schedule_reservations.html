@@ -1,0 +1,155 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Reservations{% endblock %}
+{% block head %}
+{{super()}}
+{{enrich_editor()}}
+<script type="text/javascript">
+$(function() {
+    $("#email-editor-toggle").click(function(e) {
+        e.preventDefault();
+        $("#email-editor").toggle();
+    });
+
+    $("#email-form").submit(function(e) {
+        e.preventDefault();
+        form = $(this);
+        $.post(form.attr("action"), form.serialize())
+            .done(function() {
+                $("#email-editor").toggle(false);
+                $("#email-success").toggle(true);
+                $("#email-failure").toggle(false);
+            })
+            .error(function() {
+                $("#email-failure").toggle(true);
+            });
+    });
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="row">
+        <h3 class="hipcooks-script">Reservations</h3>
+				<div class="col-md-12">
+					<h3><span title="{{schedule.cls.title}}">{{schedule.cls.abbr}}</span> on {{schedule.date.strftime("%A %B %d")}} from {{schedule.time_range}} </h3>
+					<div class="col-md-1"><a href="{{url_for('.schedule_class_list', schedule_id=schedule.id)}}">Class List</a></div>
+	                <a id="email-editor-toggle" href="#">Email all class members</a>
+	                <div id="email-success" hidden>
+	                    <b>Successfully sent email</b>
+	                </div>
+	                <div id="email-editor" class="col-md-11" hidden>
+	                    <form id="email-form" action="{{url_for('.schedule_email', schedule_id=schedule.id)}}" method="POST">
+	                        {{email_form.csrf_token}}
+	                        {% for field in email_form if field.short_name != "csrf_token" %}
+	                            {% if field.errors|length > 0 %}
+	                            <div class="row">
+	                                <div class="col-md-12">
+	                                    <span class="text-danger">{{field.errors[0]}}</span>
+	                                </div>
+	                            </div>
+	                            {% endif %}
+	                            <div class="row">
+	                                <div class="col-md-2">
+	                                    {{field.label(class_="control-label")}}
+	                                </div>
+	                                <div class="col-md-10">
+	                                    {{field(class_="form-control")}}
+	                                </div>
+	                            </div>
+	                        {% endfor %}
+	                        <input class="btn btn-primary" type="submit" value="Send">
+	                        <div id="email-failure" hidden>
+	                            There was an error sending the emails
+	                        </div>
+	                    </form>
+	                </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<h4>Teachers</h4>
+				</div>
+			</div>
+			{% for teacher in schedule.teachers %}
+				<div class="row">
+					<div class="col-md-12">
+						{{teacher.user.first_name}} {{teacher.user.last_name}}
+					</div>
+				</div>
+			{% endfor %}
+			<div class="row">
+				<div class="col-md-12">
+					<h4>Assistants</h4>
+				</div>
+			</div>
+			{% for assistant in schedule.assistants %}
+				<div class="row">
+					<div class="col-md-3">
+						{{assistant.user.first_name}} {{assistant.user.last_name}}
+					</div>
+					<div class="col-md-3">
+						{{assistant.email}}
+					</div>
+					<div class="col-md-3">
+						{{assistant.mobile_phone}}
+					</div>
+				</div>
+			{% endfor %}
+			<div class="row">
+				<div class="col-md-12">
+					<h4>Students</h4>
+				</div>
+			</div>
+			{% for order in orders %}
+				<div class="row">
+					<div class="col-md-3">
+						<a href="{{url_for('.order', id=order.id)}}">{{order.first_name}} {{order.last_name}}{% if order.active_guests %} +{{ order.active_guests|length }} {% endif %}</a>
+					</div>
+					<div class="col-md-3">
+						{{order.email}}
+					</div>
+					<div class="col-md-3">
+						{{order.phone}}
+					</div>
+				</div>
+			{% endfor %}
+			<div class="row">
+				<div class="col-md-12">
+					<a href="{{url_for('.order', schedule_id=schedule.id)}}">
+						Add a new reservation
+					</a>
+				</div>
+			</div>
+      <div class="row">
+        <div class="col-md-12">
+          <h4>Wait List</h4>
+        </div>
+      </div>
+      {% if waitlists|length %}
+        {% for waitlist in waitlists %}
+          <div class="row">
+            <div class="col-md-3">
+              {{waitlist.name}} {% if waitlist.guests %} +{{ waitlist.guests }} {% endif %}
+            </div>
+            <div class="col-md-3">
+              {{waitlist.email}}
+            </div>
+            <div class="col-md-3">
+              {{waitlist.phone}}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+      <div class="row">
+        <div class="col-md-3">
+          No one is on the wait list.
+        </div>
+      </div>
+    {% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}

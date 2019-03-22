@@ -1,0 +1,41 @@
+{% from "/macros.html" import active_category with context %}
+<style>
+    #cssmenu ul ul {
+        top: 0px;
+        left: 172px;
+    }
+</style>
+
+<div id='cssmenu' class="uppercase nowrap">
+    <ul>
+        <li {{ active_category("media") }}>
+            <a href='/media'><span>In the Media</span></a>
+        </li>
+        <li {{ active_category("media-photos") }}>
+            <a href='/media/photos'><span>Photo Gallery</span></a>
+        </li>
+        <li {% if category and category.startswith("media-about") %}class="active"{% endif %}>
+            <a href='#'><span>More About Hipcooks</span></a>
+            <ul>
+                <li {{ active_category("media-about-mission") }}>
+                    <a href='/media/about/mission'><span>Mission Statement</span></a>
+                </li>
+                <li {{ active_category("media-about-monika") }}>
+                    <a href='/media/about/monika'><span>Monika's Story</span></a>
+                </li>
+                <li {{ active_category("media-about-hipcooks") }}>
+                    <a href='/media/about/hipcooks'><span>Hipcooks Story</span></a>
+                </li>
+            </ul>
+        </li>
+        <!--li {{ active_category("media-video") }}>
+            <a href='/media/video'><span>Video Archive</span></a>
+        </li-->
+        <li {{ active_category("media-testimonials") }}>
+            <a href='/media/testimonials'><span>Testimonials</span></a>
+        </li>
+        <li {{ active_category("media-press") }}>
+            <a href='/media/press_login'><span>For the Press</span></a>
+        </li>
+    </ul>
+</div>

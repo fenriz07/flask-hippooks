@@ -1,0 +1,82 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Pre-Prep Lists{% endblock %}
+{% block content %}
+<script src="/static/DataTables/datatables.min.js"></script>
+<link rel="stylesheet" href="/static/DataTables/datatables.css">
+<script>
+$(function() {
+
+    $("a.delete_button").click(function(e) {
+        e.preventDefault();
+        var id = $(this).attr("data-id");
+        $("input#delete_shopping_list_id").val(id);
+        $("#delete-modal").modal("show");
+    });
+
+
+    // DataTable sorting
+    var table = $('#table').DataTable( {
+        "bInfo": false,
+        "paging": false,
+        "searching": false,
+        "pageLength": 100,
+        "columns": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            { "orderable": false },
+        ],
+    });
+
+});
+sortButtonMacro();
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2 class="hipcooks-script">Pre-Prep Lists
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+          {% if user.can_update('preprep_generate') %}
+          <a class="JandaQuickNote-normal noprint"href="{{url_for('.preprep_list_create')}}">What classes you got?</a>
+          {% endif %}
+        </div>
+    </div>
+    <table class="table table-striped table-hover" id="table">
+        <thead>
+            <tr>
+                <th>List name</th>
+                <th>Classes</th>
+                <th>Created By</th>
+                <th>Date Created</th>
+                <th>Date Modified</th>
+                <th>Pre-Prep List Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for preprep_list, user, classes in items %}
+                <tr>
+                    <td>{{preprep_list.name}}</td>
+                    <td>{% for cls in classes%}<span title="{{cls.title}}">{{cls.abbr}}</span>{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                    <td>{{user.first_name}}</td>
+                    <td>{{preprep_list.created.strftime("%m/%d/%Y")}}</td>
+                    <td>{% if preprep_list.last_updated %}{{preprep_list.last_updated.strftime("%m/%d/%Y")}}{% endif %}</td>
+                    {% if user.can_update('preprep') %}
+                        <td>
+                          <a class="hipcooks-script" href="{{url_for('.preprep_list_edit', preprep_id=preprep_list.id)}}">View/Edit</a>
+                          <a class="delete-link" href="{{url_for('.preprep_list_delete', preprep_id=preprep_list.id)}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

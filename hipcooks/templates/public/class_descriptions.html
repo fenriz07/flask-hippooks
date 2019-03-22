@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Class Descriptions{% endblock %}
+{% block head %}
+{{ super() }}
+<script type="text/javascript">
+$(function() {
+    $("#filter_select").change(function (e) {
+        $("#filter_form").submit();
+    });
+});
+</script>
+{% endblock %}
+{% block content %}
+
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    .to_taste {
+      padding-left: 15px;
+    }
+
+    .class_details_table td.class_description {
+        width: 355px;
+    }
+
+    .class_details_table td.menu_list {
+        width: 285px;
+    }
+
+    .class_details_table td.skills_list {
+        width: 189px;
+    }
+
+    .class_details_table td.skills_list ul {
+        padding-left: 12px;
+        font-size: 20px;
+        line-height: 15px;
+    }
+
+    .class_details_table td.skills_list li span {
+        font-size: 12px;
+        vertical-align: top;
+    }
+
+    input.form-control, select {
+        border: solid 1px #03ABD0 !important;
+        border-radius: 0px;
+    }
+
+
+</style>
+
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'classes_sidebar.html' %}
+    </div>
+    <div class="col-sm-8" id="content_div">
+        <div class="row">
+            <div class="col-sm-12">
+                <form id="filter_form" method="GET">
+                    <span class="form-inline pull-right">
+                        <label for="filter_select">SEARCH BY: </label>
+                        <select class="form-control" name="filter_select" id="filter_select">
+                          {% for option, name in Class.BASIC_CATEGORIES %}
+                              <option value="{{option}}" {% if filter_select == option %}selected{% endif %}>{{name}}</option>
+                          {% endfor %}
+                        </select>
+                    </span>
+                </form>
+            </div>
+        </div>
+        <br>
+        {% for class in classes %}
+            <table class="class_details_table">
+                <thead>
+                    <tr>
+                        <th class="class_title">
+                            <h4 class="JandaQuickNote-normal">{{class.title}}</h4>
+                        </th>
+                        <th>
+                            <h4>Menu</h4>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="class_description">
+                            {{class.description}}
+                        </td>
+                        <td class="menu_list">
+                            <ul class="menu-list jack_bullets">
+                                {{class.menu|nl2li}}
+                            </ul>
+                            {% if class.wine %}To taste: {{class.wine}}{% endif %}
+                        </td>
+                        <td class="menu_list">
+                            <ul class="menu-list">
+                                <li class="menu-list jack_bullets"><span>{{class.knife}}</span></li>
+                                <li class="menu-list jack_bullets"><span>{{class.veggie}}</span></li>
+                                <li class="menu-list jack_bullets"><span>{{class.wheat}}</span></li>
+                                <li class="menu-list jack_bullets"><span>{{class.dairy}}</span></li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+            <br>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

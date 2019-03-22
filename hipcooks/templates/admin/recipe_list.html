@@ -1,0 +1,41 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Recipes{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2 class="hipcooks-script">Recipes
+            </h2>
+        </div>
+    </div>
+    <table class="table table-striped table-hover" border=0>
+        <thead>
+            <tr>
+                <th>Class Abbr</th>
+                <th>View Recipe</th>
+                <th>Last Updated</th>
+                <!--th>Email Recipes</th-->
+                {% if user.can_update('class_recipes') %}
+                    <th>Edit Recipe</th>
+                    <!--th>Edit Description</th-->
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for recipe_set in pagination.items %}
+                <tr>
+                    <td title="{{recipe_set.cls.title}}" class="expand-cell">{{recipe_set.cls.abbr}}</td>
+                    <td class="expand-cell"><a href="{{url_for('.recipe_preview', id=recipe_set.id)}}">View Recipe</a></td>
+                    <td class="expand-cell">{% if recipe_set.last_updated %}{{recipe_set.last_updated.strftime("%-m/%d/%y")}}{% endif %}</td>
+                    <!--td class="expand-cell"><a href="{{url_for('.recipe_email', id=recipe_set.id)}}">Email</a></td-->
+                    {% if user.can_update('class_recipes') %}
+                        <td class="expand-cell"><a href="{{url_for('.recipe_edit', id=recipe_set.id)}}">Edit Recipe</a></td>
+                        <!--td class="expand-cell"><a href="{{url_for('.class_edit', id=recipe_set.id)}}">Description</a></td-->
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

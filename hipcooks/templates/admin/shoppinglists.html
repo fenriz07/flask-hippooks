@@ -1,0 +1,118 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Create New Shopping List{% endblock %}
+{% block head %}
+{{ super() }}
+<script>
+$(function() {
+    function addItem(e) {
+        if (e) {
+            e.preventDefault();
+        }
+
+        $("#blank-item")
+            .find("tr")
+            .clone()
+            .insertBefore($("#item-end"));
+        $(".remove-item").off().click(removeItem);
+        // $("#itemlist input[type=submit]").attr("disabled", false);
+    }
+
+    function removeItem(e) {
+        e.preventDefault();
+
+        $(e.target)
+            .parents("tr")
+            .remove();
+
+        if ($("#itemlist tr").length == 3) {
+            // $("#itemlist input[type=submit]").attr("disabled", true);
+        }
+    }
+
+    $(".add-item").click(addItem);
+    $(".remove-item").click(removeItem);
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+          <h3 class="hipcooks-script">What classes you got?</h3>
+          <div class="row add-edit">
+                {% if classes %}
+                <form method="POST" id="select" class="form-inline shopping-list">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label for="name">List Name:&nbsp;
+                                <input class="form-control" type="text" name="name" placeholder="Enter a Name" />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <table id="itemlist" class="create-shop-list">
+                            <tr><th>Studio</th><th>Class</th><th>How Many</th><th>&nbsp;</th></tr>
+                            <tr class="item">
+                                <td>
+                                    <select name="campuses" class="form-control">
+                                        {% for campus in campuses %}
+                                        <option {% if campus.id == current_campus %}selected{% endif %} value="{{campus.id}}">{{campus.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="classes" class="form-control">
+                                        {% for class in classes %}
+                                        <option value="{{class.id}}">{{class.abbr}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="qtys" class="form-control">
+                                        {% for num in range(1,21) %}
+                                        <option value="{{num}}">{{num}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td><a href="#" class="remove-item btn remove">Remove</a></td>
+                            </tr>
+                            <tr id="item-end"><td colspan=4><a href="#" class="add-item btn btn-primary shop-list-btn">Add Shopping List <i class="glyphicon glyphicon-plus"></i></a></td></tr>
+                            <tr id="create-list"><td colspan=4><input class="btn btn-primary shop-list-btn" type="submit" value="Create the Shop List"></td><td>&nbsp</td></tr>
+                        </table>
+                    </div>
+                </form>
+                {% else %}
+                    <h4>There are no classes with shopping lists at present. You might need to add some.</h4>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<table id="blank-item" class="hidden">
+    <tr class="item">
+        <td>
+            <select name="campuses" class="form-control">
+                {% for campus in campuses %}
+                <option {% if campus.id == current_campus %}selected{% endif %} value="{{campus.id}}">{{campus.name}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="classes" class="form-control">
+                {% for class in classes %}
+                <option value="{{class.id}}">{{class.abbr}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="qtys" class="form-control">
+                {% for num in range(1,21) %}
+                <option value="{{num}}">{{num}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td><a href="#" class="remove-item btn remove">Remove</a></td>
+    </tr>
+</table>
+{% endblock %}

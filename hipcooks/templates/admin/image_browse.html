@@ -1,0 +1,30 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Content Edit{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<div class="container-fluid" id="content-images">
+	<h2 class="hipcooks-script">Uploaded Images</h2>
+	<div class="row">
+	    {% for image in images %}
+	    <div class="col-xs-2">
+	    	<a class="use" href="{{image.url}}" >
+	    		<img src="{{image.thumburl}}" />
+	    		<span>{{image.filename}}</span>
+	    	</a>
+	    </div>
+	    {% endfor %}
+	</div>
+</div>
+<script>
+$(function() {
+    $(".use").click(function(e) {
+        e.preventDefault();
+        var url = $(this).attr("href");
+
+        window.opener.CKEDITOR.tools.callFunction({{funcnum}}, url);
+        window.close();
+    });
+});
+</script>
+{% endblock %}

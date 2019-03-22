@@ -1,0 +1,161 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}{% if slist.id %}Edit{% else %}Add{% endif %} Shopping List for {{cls.title}}{% endblock %}
+{% block header %}
+{{ super() }}
+<script>
+$(function() {
+    function addItem(e) {
+        if (e) {
+            e.preventDefault();
+        }
+
+        $("#blank-item")
+            .find("tr")
+            .clone()
+            .insertBefore($("#item-end"));
+        $(".remove-item").off().click(removeItem);
+    }
+
+    function removeItem(e) {
+        e.preventDefault();
+
+        $(e.target)
+            .parents("tr")
+            .remove();
+    }
+
+    $("#add-item").click(addItem);
+    $(".remove-item").click(removeItem);
+    $("#form").submit(function(e) {
+        var errors = false;
+
+        $("#itemlist tr.item").each(function(i, obj) {
+            var num_el = $(obj).find("input[name=item_nums]")[0];
+            var name_el = $(obj).find("input[name=item_names]")[0];
+            var category_el = $(obj).find("select[name=item_categories]")[0];
+
+            if (!$(num_el).val().match(/^(?:\d+\s+)?\d+\s*\/\s*\d+$/) &&
+                !$(num_el).val().match(/^\d*\.?\d+$/)) {
+                $(num_el).addClass("inputfield_error");
+                errors = true;
+            } else {
+                $(num_el).removeClass("inputfield_error");
+            }
+            if ($(name_el).val() == "") {
+                $(name_el).addClass("inputfield_error");
+                errors = true;
+            } else {
+                $(name_el).removeClass("inputfield_error");
+            }
+            if ($(category_el).val() == "") {
+                $(category_el).addClass("inputfield_error");
+                errors = true;
+            } else {
+                $(category_el).removeClass("inputfield_error");
+            }
+        });
+
+        if (errors) {
+            e.preventDefault();
+        }
+    });
+
+    if (!($("#itemlist input[type=text]").length)) {
+        addItem();
+    }
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="container add-edit">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <form method="POST" id="form" class="shopping-list">
+                <div class="row add-edit">
+                    <h3 class="hipcooks-script">Add/Edit Shopping List</h3>
+                    <form enctype="multipart/form-data" class="add-edit" method="POST">
+                        {% for field in form %}
+                            {% if field.name == "csrf_token" %}
+                                {{field}}
+                            {% else %}
+                                {% if field.errors|length> 0 %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <span class="text-danger">{{field.errors[0]}}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <!--div class="row">
+                                    <div class="col-md-2">
+                                        {{field.label(class_="control-label")}}
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{field(class_="form-control")}}
+                                    </div>
+                                </div-->
+                            {% endif %}
+                        {% endfor %}
+                    </form>
+                    <div class="row add-edit">
+                        <div class="form-group">
+                            <table id="itemlist">
+                                <tr><th>Category</th><th>Qty</th><th>Unit</th><th>Item</th><th>Market</th><th>Notes</th><th>&nbsp;</th></tr>
+                                {% for item in slist.category_ordered_items %}
+                                <tr class="item">
+                                    <td>
+                                        <select class="form-control" name="item_categories">
+                                            <option value="">--Select--</option>
+                                            {% for key, value in shoppinglist_categories.items() %}
+                                            <option {% if item.category == key %}selected{% endif %} value="{{key}}">{{value}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="item_nums" value="{{item.number}}" /></td>
+                                    <td><input type="text" class="form-control" name="item_units" value="{{item.unit}}" /></td>
+                                    <td><input type="text" class="form-control" name="item_names" value="{{item.name}}" /></td>
+                                    <td><input type="text" class="form-control" name="item_markets" value="{{item.market}}" /></td>
+                                    <td><input type="text" class="form-control" name="item_notes" value="{{item.notes}}" /></td>
+                                    <td>{% if user.can_update('class_shoplists') %}<a href="#" class="remove-item btn">x</a>{% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                                {% if user.can_update('class_shoplists') %}
+                                <tr id="item-end"><td colspan=4> </td></tr>
+                                <tr>
+                                  <td colspan=4>
+                                    <button type="button" class="btn btn-sm btn-primary" id="add-item">Add item</button>
+                                    <input class="btn btn-sm btn-primary" type="submit" value="Save" name="save">
+                                    <input class="btn btn-sm btn-primary" type="submit" value="Save and Continue" name="save_and_continue">
+                                  </td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<table id="blank-item" class="hidden">
+    <tr class="item">
+        <td>
+            <select name="item_categories" class="form-control">
+                <option value="">--Select--</option>
+                {% for key, value in shoppinglist_categories.items() %}
+                <option value="{{key}}">{{value}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td><input type="text" name="item_nums"  class="form-control" value="" /></td>
+        <td><input type="text" name="item_units"  class="form-control" value="" /></td>
+        <td><input type="text" name="item_names"  class="form-control" value="" /></td>
+        <td><input type="text" name="item_markets"  class="form-control" value="" /></td>
+        <td><input type="text" name="item_notes"  class="form-control" value="" /></td>
+        {% if user.can_update('class_shoplists') %}
+        <td><a href="#" class="remove-item btn remove">x</a></td>
+        {% endif %}
+    </tr>
+</table>
+{{ enrich_editor("form .rich-editor") }}
+{% endblock %}

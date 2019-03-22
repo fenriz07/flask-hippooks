@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: About Hipcooks{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    #about_text {
+        font-size: 24px;
+        line-height: 48px;
+        letter-spacing: 1px;
+        font-weight: normal;
+    }
+
+    .rose_text {
+        color: #e64d78;
+    }
+
+    .dark_blue_text {
+        color: #1c7da8;
+    }
+
+    .green_text {
+        color: #77af42;
+    }
+
+    .pink_text {
+        color: #e57979;
+    }
+
+    .purple_text {
+        color: #8f5f9b;
+    }
+
+    .gold_text {
+        color: #f8a626;
+    }
+
+    .tan_text {
+        color: #cead8f;
+    }
+
+    .brick_text {
+        color: #a21d22;
+    }
+
+    .cream_gold_text {
+        color: #f4a428;
+    }
+
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'about_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="JandaQuickNote-normal" id="about_text">
+                Welcome to <span class="rose_text">Hipcooks</span>!
+                Our philosophy is all about putting the <span class="dark_blue_text">fun</span>
+                back into food and getting you <span class="green_text">in touch with your inner chef</span>.
+                We love to cook without recipes or inhibitions, and we love to <span class="purple_text">teach you mad skills</span>!
+                Of course, we share recipes after class, but we love it when you learn to wing it! In your own kitchens,
+                you can be <span class="gold_text">as exacting</span>
+                or <span class="blue_text">as free-form as you like</span>.
+                Why use measuring cups when you can use your hands instead?
+                They say that when food is delicious, it is because the person preparing it has
+                <span class="tan_text">sweet hands</span>.
+                <br><br>
+                Always taste along the way, and <span class="blue_text">insert your own personality into the food</span>.
+                Have fun with the process. <span class="brick_text">More spicy? Go for it!</span>
+                <span class="cream_gold_text">A swirl of cream?</span> Absolutely!
+                <br><br>
+                Our motto: cooking is always <span class="pink_text">yummiest when it comes from the heart</span>.
+            </p>
+        </div>
+    </div>
+</div>
+<br>
+
+{% endblock %}

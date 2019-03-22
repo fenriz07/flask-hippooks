@@ -1,0 +1,53 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}{% if product.id %}Edit{% else %}Add{% endif %} Product{% endblock %}
+{% block head %}
+{{super()}}
+<script type="text/javascript">
+$(function () {
+    var update_resource_name = function () {
+        $("#resource_name").prop("disabled", !$("#is_resource").is(":checked"));
+    };
+    $("#is_resource").click(function (e) {
+        update_resource_name();
+    });
+    update_resource_name();
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h3 class="hipcooks-script">{% if product.id %}Edit{% else %}Add{% endif %} Product</h3>
+        <form method="POST" enctype=multipart/form-data>
+            <table class="table" border=0>
+                {% for field in form %}
+                {% if field.name == "csrf_token" %}
+                {{field}}
+                {% else %}
+                {% if field.errors|length > 0 %}<tr><td colspan=2>{{field.errors[0]}}</td></tr>{% endif %}
+                <tr>
+                    <td>{{field.label}}</td>
+                    <td>
+                      {% if field.name == 'image' and product.url %}
+                        <img src="{{product.url}}" />&nbsp;
+                      {% endif %}
+                      {% if field.name == 'thumbnail_image' and product.thumbnail_url %}
+                        <img src="{{product.thumbnail_url}}" />&nbsp;
+                      {% endif %}
+                      {{field}}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                {% if user.can_update('product') %}
+                <tr><td colspan=2><input type="submit" value="Save">
+                {% endif %}
+            </table>
+        </form>
+      </div>
+    </div>
+</div>
+{{ enrich_editor("form .rich-editor") }}
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: For the Press{% endblock %}
+{% block content %}
+
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'media_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-12 blue_text">
+                <h4>Download Press Sheet</h4>
+                <a href="#"><img src="/static/img/press_sheet.jpg"></a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 blue_text">
+                <h4>Download Hi Res Files</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <a href="#"><img src="/static/img/press_photo_link_1.jpg"></a>
+                <br><br><br>
+                <a href="#"><img src="/static/img/press_photo_link_3.jpg"></a>
+            </div>
+            <div class="col-sm-6 text-center">
+                <a href="#"><img src="/static/img/press_photo_link_2.jpg"></a>
+            </div>
+        </div>
+
+    </div>
+</div>
+<br>
+
+{% endblock %}

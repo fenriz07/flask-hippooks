@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Class List{% endblock %}
+{% block content %}
+
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'classes_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-11">
+                <span class="JandaQuickNote-normal text16">
+                    Classes are 3 hours long and cost ${{campus.base_cost}} unless otherwise noted. Pre-registration only! (No walk-ins.)
+                    <br>
+                    <br>
+                    If you’re sad that the class you want is full, sign up for the wait list. Click "Details/Sign Me Up" and the waitlist
+                    will automatically show up!
+                    <br>
+                    <br>
+                    New classes are posted around the 1st of the month. If there’s a class that’s not listed or a class you'd like to take on a different day, then <a href="mailto:{{campus.email}}">email us</a> a suggestion!
+                </span>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-striped info_table" id="class_list_table">
+                    <thead>
+                        <tr class="JandaQuickNote-normal">
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Teacher</th>
+                            <th>Spaces</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for class in scheduled_classes %}
+                        <tr>
+                            <td>{{class.formatted_date}}</td>
+                            <td class="nowrap">{{class.time_range}}</td>
+                            <td>{% if 'Private' not in class.cls.title %}<a href="{{url_for('.class_details', schedule_id=class.id)}}" class="{{class.color}}" style="color:{{class.class_color}}">{% endif %}{{class.cls.title}}</a></td>
+                            <td>
+                              {% for teacher in class.teachers %}
+                              {% if teacher.user.id == 1 %}
+                                <a href="{{ url_for('.about_monika', id=teacher.user_id) }}">{{ teacher.user.first_name }}</a>
+                              {% else %}
+                                <a href="{{ url_for('.about_teachers') }}#{{teacher.user.id}}">{{ teacher.user.first_name }}</a>
+                              {% endif %}
+                              {% if not loop.last %}, {% endif %}
+                              {% endfor %}
+                            </td>
+                            <td>
+                            {% if 'Private' not in class.cls.title %}
+                                {% set spaces = class.floored_remaining_spaces() %}
+                                {% if spaces %}
+                                    ({{ spaces }} left)
+                                {% else %}
+                                    (FULL)
+                                {% endif %}
+                            {% endif %}
+                            </td>
+                            {% if 'Private' not in class.cls.title %}
+                                <td class="text-right"><a href="{{url_for('.class_details', schedule_id=class.id)}}" class="details_link">Details / Sign me up!</a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+{% endblock %}

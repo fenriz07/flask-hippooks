@@ -1,0 +1,220 @@
+{% extends "/admin/base.html" %}
+{% block title %}Sales{% endblock %}
+{% block head %}
+{{ super() }}
+<script type="text/javascript">
+/*window.onbeforeunload = removeOnBeforeUnload() {
+    return "Are you sure?";
+}*/
+$(function () {
+
+    function removeOnBeforeUnload(e) {
+      e.preventDefault();
+      window.onbeforeunload = null;
+    };
+
+    $("#product-table :input,#discount,#studio").change(function (e) {
+        e.preventDefault();
+        $.post("{{url_for('.teacher_sales_totals')}}", data=$(":input").serializeArray(),
+            success=function(data) {
+                $("#items").html(data.items);
+                $("#amount").html(data.amount);
+                $("#tax").html(data.tax);
+                $("#discount-value").html(data.discount);
+                $("#total").html(data.total);
+            });
+    })
+    .first().change();
+
+    $('#studio').change(function (e) {
+      $.get("{{url_for('.sales_check_studio')}}", data={
+                id: $('#studio').val(),
+            },
+            success=function (data) {
+                if (data.changed === true) {
+                  location.reload();
+                }
+        });
+    });
+
+    $("#product-table :input").focus(function (e) {
+        var src = e.target.dataset.img;
+        $(e.target).parents("td").find(".thumbnail").attr("src", src);
+    });
+
+    $(".delete-item").click(function (e) {
+        removeOnBeforeUnload(e);
+        $(this).parent().siblings('.quantity-col').children('.quantity-input').val(0);
+        $('#update_submit').click();
+    })
+
+    $("#update_submit").click(function (e) {
+        removeOnBeforeUnload(e);
+        $('#form').append('<input type="hidden" name="update" value="update" /> ');
+        $('#form').submit();
+    })
+
+    $("#ring_up_submit").click(function (e) {
+        removeOnBeforeUnload(e);
+        $('#form').append('<input type="hidden" name="ring_up" value="ring_up" /> ');
+        $('#form').submit();
+    })
+
+    $(".product-link").click(function (e) {
+        removeOnBeforeUnload(e);
+        window.location = $(this).attr('href')
+    })
+
+});
+</script>
+<style>
+.quantity-col {
+  width: 10%;
+}
+.quantity-input {
+  width: 50% !important;
+}
+</style>
+{% endblock %}
+{% macro show_field(field) %}
+    {% if field.errors|length > 0 %}
+    <div class="row">
+        <div class="col-md-12">
+            <span class="text-danger">{{field.errors[0]}}</span>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-2">
+            {{field.label(class_="control-label")}}
+        </div>
+        <div class="col-md-3">
+            {{field(class_="form-control")}}
+        </div>
+    </div>
+{% endmacro %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+        <form class="add-edit" method="POST" id="form">
+            <div class="panel-body">
+                <h3 class="hipcooks-script">Create a New Sales Order</h3>
+                <div class="row add-edit">
+                    {{form.csrf_token}}
+                    {{show_field(form.studio)}}
+                    {{show_field(form.sold_by)}}
+                    {{show_field(form.discount)}}
+                    <div class="row">
+                      <div class="col-md-2">
+                          <label class="control-label">Items:</label>
+                      </div>
+                      <div class="col-md-10">
+                        {% if cart.products|length == 0 %}
+                          <p>No items in cart.</p>
+                        {% else %}
+                          <table class="table borderless" id="product_list_table">
+                              <thead>
+                                  <tr>
+                                      <th hidden></th>
+                                      <th class="quantity-col">Quantity</th>
+                                      <th>Name</th>
+                                      <th>Price</th>
+                                      <th>Item Sub Total</th>
+                                      <th>Delete Item</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {% for product, quantity in cart.products %}
+                                      <tr class="cart-item">
+                                          <td hidden>{{product.id}}</td>
+                                          <td class="quantity-col"><input type="text" class="form-control quantity-input" value="{{quantity}}" name="product_quantity_{{product.id}}"></td>
+                                          <td>{{product.name}}{% if product.type %} - {{product.type}}{% endif %}</td>
+                                          <td>${{product.price}}</td>
+                                          <td class="item-subtotal">${{"{:0.2f}".format(product.base_price(quantity))}}</td>
+                                          <td><a href="#" class="delete-link delete-item">Delete</a></td>
+                                      </tr>
+                                  {% endfor %}
+                              </tbody>
+                          </table>
+                        {% endif %}
+                      </div>
+                  </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label">Sub total:</label>
+                        </div>
+                        <div class="col-md-3">
+                            $<span id="amount">{{amount}}Amount</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label">Tax:</label>
+                        </div>
+                        <div class="col-md-3">
+                            +$<span id="tax">{{tax}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label">Discount amount:</label>
+                        </div>
+                        <div class="col-md-3">
+                            -$<span id="discount-value">{{discount}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label">Sale Total:</label>
+                        </div>
+                        <div class="col-md-3">
+                            $<span id="total">{{total}}</span>
+                        </div>
+                    </div>
+                    {{show_field(form.paid_with)}}
+                    <div class="col-md-3">
+                        <input class="btn btn-primary btn-sm" type="submit" name="update" value="Update Cart" id="update_submit">
+                        <input class="btn btn-primary btn-sm" type="submit" name="ring_up" value="Ring it up!" id="ring_up_submit">
+                    </div>
+                </div>
+            </div>
+            {% if request.form and not cart.products %}
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="text-danger">Needs products to create an order</span>
+                </div>
+            </div>
+            {% endif %}
+            <div class="panel panel-default">
+                <div class="form-inline">
+                    <table id="product-table" class="table">
+                      <tbody>
+                        {% for row in product_grid %}
+                            <tr class="table">
+                                {% for product in row %}
+                                    <td>
+                                      {% if product is not none %}
+                                        <div class="col-md-12">
+                                          <div class="row product-image-row">
+                                              <a href="{{url_for('.teacher_sales_product', product_id=product.id)}}"><img class="thumbnail product-image" src="{{product.thumbnail_url}}"></a>
+                                          </div>
+                                          <hr>
+                                          <div class="row center-text">
+                                            <a href="{{url_for('.teacher_sales_product', product_id=product.id)}}" class="product-link">
+                                                {{product.name}}
+                                            </a>
+                                          </div>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

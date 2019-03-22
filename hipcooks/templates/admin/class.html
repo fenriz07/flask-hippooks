@@ -1,0 +1,216 @@
+{% extends "/admin/base.html" %}
+{% block title %}{% if class_id %}Edit{% else %}Add{% endif %} Class{% endblock %}
+{% block head %}
+{{ super() }}
+<script src="/static/js/spectrum.js"></script>
+<link rel="stylesheet" href="/static/css/spectrum.css">
+<script>
+$(function () {
+    $("#color_code").spectrum({
+        preferredFormat: "hex3",
+        showInput: true,
+        showPalette: true,
+        hideAfterPaletteSelect:true,
+        palette: [["black", "gray", "silver", "white", "DarkTurquoise", "lightblue", "blue", "darkblue", "red", "purple", "lime", "green", "magenta", "orange", "brown", "yellow"]]
+    });
+    $("#color_code").show();
+})
+</script>
+{% endblock %}
+{% block content %}
+{% if class_id %}
+<script>
+    $(function() {
+        var csrf_token = "{{ csrf_token() }}"
+
+        // List with handle
+        Sortable.create(photos, {
+          handle: '.glyphicon-sort',
+          animation: 150,
+          onUpdate: function(event) {
+            $.post("{{url_for('.class_move_photo_root', class_id=class_id)}}"+event.oldIndex+"/"+event.newIndex, {csrf_token: csrf_token})
+          }
+        });
+
+        function post(url, data, success) {
+            return $.ajax({
+                url: url,
+                data: data,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: success
+            });
+        }
+
+        function assign_events(selector) {
+            selector.find($(".thumbnail")).click(function(event) {
+                $(event.target).siblings().toggle();
+            });
+            selector.find($(".update")).click(function(event) {
+                var fd = new FormData();
+                fd.append("caption", $(event.target).siblings(".caption").val());
+                fd.append("csrf_token", csrf_token);
+                post("{{url_for('.class_photo_update_root', class_id=class_id)}}"+event.target.attributes["photo-id"].value, fd);
+            });
+            selector.find($(".delete")).click(function(event) {
+                var fd = new FormData();
+                fd.append("csrf_token", csrf_token);
+                post("/admin/class/{{ class_id }}/photo/"+event.target.attributes["photo-id"].value+"/delete", fd, function(data) {
+                    console.log(data);
+                    $(event.target).parent().remove()
+                });
+            });
+        }
+
+        $("#new_image_form").submit(function(event) {
+            event.preventDefault();
+            var fd = new FormData();
+            jQuery.each($("#new_image_form").serializeArray(), function(i, field) {
+                fd.append(field.name, field.value);
+            });
+            fd.append("photo", $("#new_image_file")[0].files[0]);
+            upload = post("{{ url_for('admin.class_photo', class_id=class_id) }}", fd, function(data) {
+                var data = JSON.parse(data);
+                var new_body = $("<div class=\"photo-group well\">"+
+                        "<span class=\"glyphicon glyphicon-sort pull-right\" title=\"Click and drag to re-order\" aria-hidden=\"true\"></span>"+
+                        "<img  class=\"img-thumbnail pull-left\"/>"+
+                        "<input type=\"text\" class=\"caption form-control\">"+
+                        "<button class=\"update btn btn-primary btn-sm\" hidden>Update</button> "+
+                        "<button class=\"delete btn btn-danger btn-sm\" hidden>Delete</button>"+
+                    "</div>");
+                console.log(new_body);
+                new_body.children(".img-thumbnail").attr("src", data.thumbnail);
+                new_body.children(".caption").attr("value", data.caption);
+                new_body.children(".update,.delete").attr("photo-id", data.id);
+                $("#photos").append(new_body);
+                assign_events($(new_body));
+                $('#new_image_form')[0].reset();
+                $('#upload-error').hide();
+            });
+            upload.fail(function(data) {
+                $('#upload-error').show();
+            });
+        });
+
+        assign_events($("#photos"));
+    });
+</script>
+{% endif %}
+<style>
+    .photo-group {
+        background: #DDDDDD;
+        height: 175px;
+        border: 1px solid #CCCCCC;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+        -o-user-select:none;
+    }
+
+    .photo-group .glyphicon-sort {
+        cursor: pointer;
+        padding: 5px 15px 15px 15px;
+    }
+
+    .photo-group input {
+        width: 200px;
+        margin-bottom: 10px;
+    }
+
+    .photo-group .img-thumbnail {
+        margin-right: 10px;
+    }
+
+    #upload-error {
+        color: #F00;
+        display: none;
+    }
+
+    #class_properties .form-control {
+        width: 100%;
+    }
+
+    .form-control#color_code {
+        width: 132px;
+    }
+</style>
+
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row add-edit">
+              <h3 class="hipcooks-script">{% if class_id %}Edit{% else %}Add{% endif %} Class</h3>
+                <div class="col-md-6" id="class_properties">
+                    <form method="POST" class="class-edit add-edit">
+                        {% for field in form %}
+                            {% if field.name == "csrf_token" %}
+                                {{field}}
+                            {% else %}
+                                {% if field.errors|length > 0 %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    {{field.errors[0]}}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {{field.label(class_="control-label")}}
+                                    </div>
+                                    <div class="col-md-8">
+                                        {{field(class_="form-control")}}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if user.can_update('class') %}
+                        <input class="btn btn-primary btn-sm" name="save" type="submit" value="Save">
+                        <input class="btn btn-primary btn-sm" name="continue"  type="submit" value="Save and Continue">
+                        {% endif %}
+                    </form>
+
+                </div>
+                <div class="col-md-6">
+                    {% if class_id %}
+                        <label for="photos" class="control-label">Images</label>
+                        <div id="photos">
+                        {% for photo in photos %}
+                            <div class="photo-group well">
+                                {% if user.can_update('class') %}
+                                <span class="glyphicon glyphicon-sort pull-right" title="Click and drag to re-order" aria-hidden="true"></span>
+                                {% endif %}
+                                <img src="{{ photo.photo|thumbnail_path }}" class="img-thumbnail pull-left">
+                                <input type="text" class="caption form-control" value="{{photo.caption}}"/>
+                                {% if user.can_update('class') %}
+                                <button class="update btn btn-primary btn-sm" photo-id="{{photo.id}}" hidden>Update</button>
+                                <button class="delete btn btn-danger btn-sm" photo-id="{{photo.id}}" hidden>Delete</button>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <form id="new_image_form" method="POST" class="form-inline add-edit" enctype="multipart/form-data">
+                            <br>
+                            {{form.csrf_token}}
+                            <label for="new_image_file" class="control-label">Upload new image (.jpg or .jpeg only): </label>
+                            <br>
+                            <input id="new_image_file" name="photo" type="file" class="form-control">
+                            <input id="new_image_caption" name="caption" type="text" class="form-control" placeholder="Image Caption">
+                            {% if user.can_update('class') %}
+                            <input type="submit" id="new_image" class="btn btn-primary btn-sm" value="Upload">
+                            {% endif %}
+                            <br>
+                            <span id="upload-error">Image upload failed</span>
+                        </form>
+                        <br>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

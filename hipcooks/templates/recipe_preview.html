@@ -1,0 +1,77 @@
+<html>
+<head>
+    <title>Recipes for {{cls.title}}</title>
+    <link rel="icon" type="image/ico" href="/static/img/favicon.ico">
+    <style>
+      {{ include_file("css/adminbootstrap.min.css") }}
+    </style>
+    <style>
+      {{ include_file("css/adminbootstrap.min.css") }}
+    </style>
+    <style>
+      {{ include_file("css/hipcooks.css") }}
+    </style>
+    <style>
+      {{ include_file("css/MyFontsWebfontsKit.css") }}
+    </style>
+    <script>
+      {{ include_file("js/jquery-1.11.3.js") }}
+    </script>
+    <script>
+      {{ include_file("js/bootstrap.min.js") }}
+    </script>
+    <style>
+            a.form_button {
+                visibility: hidden;
+            }
+            .container {
+                background-color: #FFFFFF;
+            }
+            #recipe_menu {
+                margin-left: 60px !important;
+            }
+            #recipe_container {
+                width: 820px;
+                padding-left: 10px;
+                padding-right: 10px;
+
+            }
+            #recipes_class_title{
+                text-align: right;
+                padding-right: 20px;
+                padding-bottom: 0 !important;
+                margin-bottom: 15px;
+            }
+
+            #recipes_class_title span{
+                font-weight: bold !important;
+            }
+
+            #printheadergraphic {
+                margin-bottom: -50px;
+                margin-top: 20px;
+            }
+
+    </style>
+    {% if print_on_load %}
+    <script type="text/javascript">
+        $(function() {
+            window.print();
+        });
+    </script>
+    {% endif %}
+</head>
+<body>
+    <br>
+    <div class="container" id="recipe_container">
+        <img src="data:image/png;base64,{{header_image}}" id="printheadergraphic">
+        {% include "recipe_template.html" %}
+        <div class="row">
+            <div class="col-sm-12">
+                <span class="orange_text Teen-normal">&copy; Hipcooks</span><span class="orange_text pull-right Teen-normal">www.hipcooks.com</span>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

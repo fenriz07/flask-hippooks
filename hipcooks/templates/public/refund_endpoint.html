@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Reschedule Class{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-3">
+        {% include 'classes_sidebar.html' %}
+    </div>
+    <div class="col-sm-9">
+        <div class="row">
+            <div class="col-sm-11">
+                <h3 class="JandaQuickNote-normal">
+                    Thank you! Your reservation has been removed from the class roster.<br>
+                    Sorry it didn't work out this time. Hope to see you soon!
+                </h3>
+                <p>
+                    We'll issue your refund as soon as possible - please allow several business days for processinng.
+                </p>
+                <p>
+                    You will receive an email when the refund is processed on our side. Your credit card company may take a few days to post the refund.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: We're Hiring!{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 25px;
+        padding-right: 50px;
+        display: inline-block;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        {{include_content("/terms/hiring/body")}}
+    </div>
+</div>
+{% endblock %}

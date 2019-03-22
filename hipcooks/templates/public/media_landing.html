@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: In The Media{% endblock %}
+{% block content %}
+<style>
+    a.medialink {
+        display: inline-block;
+        height: 218px;
+        width: 185px;
+        text-align: center;
+        float: left;
+        margin-right: 20px;
+        margin-bottom: 10px;
+        font-size: 12px;
+        color: #292929 !important;
+    }
+
+    a.medialink img {
+        border: solid 2px #00ADCD;
+        background-color: black;
+        margin-bottom: 10px;
+        opacity: 1;
+        -moz-transition: all .25s;
+        -webkit-transition: all .25s;
+        transition: all .25s;
+        width: 185px;
+        height: 150px;
+    }
+
+    a.medialink:hover img {
+        opacity: .5;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'media_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <span class="text18 JandaQuickNote-normal orange_text" style="display: block; margin: 10px 0;">In the Media</span>
+        <a href="http://www.laweekly.com/restaurants/10-of-our-favorite-cooking-classes-in-la-5827220" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/1_10_of_Our_Favorite_Cooking_Classes_in_LA.jpg">
+            <br>
+            10 of Our Favorite Cooking Classes in LA
+        </a>
+
+        <a href="http://ecoronado.com/news/2015/07/16/for-a-bridgeworthy-evening-out-try-a-hands-on-cooking-class-at-hipcooks" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/2_For_a_Bridgeworthy_Evening_Out_Try_A_Hands-On_Cooking_Class_at_Hipcooks.jpg">
+            <br>
+            For a Bridgeworthy Evening Out, Try A Hands-On Cooking Class at Hipcooks
+        </a>
+
+        <a href="http://ktla.com/2015/03/02/263839/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/3_KTLA_Interview.jpg">
+            <br>
+            KTLA Interview
+        </a>
+
+        <a href="http://www.kgw.com/media/cinematic/video/21367117/cassidy-quinn-cooks-with-hipcooks/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/4_Cassidy_Quinn_Cooks_with_Hipcooks.jpg">
+            <br>
+            Cassidy Quinn Cooks with Hipcooks
+        </a>
+
+        <a href="http://www.orangecoast.com/diningtaste-of-oc/hipcooks-at-home-in-the-dtsa-food-scene/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/5_Hipcooks_at_Home_in_the_DTSA_Food_Scene.jpg">
+            <br>
+            Hipcooks at Home in the DTSA Food Scene
+        </a>
+
+        <a href="http://www.sandiegoreader.com/news/2015/jul/01/best-learn-how-cook/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/7_Learn_How_To_Cook_Date_Night_Gets_Cooking.jpg">
+            <br>
+            Learn How To Cook <br>Date Night Gets Cooking
+        </a>
+
+        <a href="http://losangeles.cbslocal.com/top-lists/top-cooking-classes-in-los-angeles/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/28_CBS_Top_Cooking_Classes_in_Los_Angeles.jpg">
+            <br>
+            Top Cooking Classes in Los Angeles
+        </a>
+
+        <a href="http://divulgemagazine.com/dining-out/hipcooks-learning-to-cook-with-style/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/9_Learning_to_Cook_With_Style.jpg">
+            <br>
+            Hipcooks: Learning to Cook With Style
+        </a>
+
+        <a href="http://www.loveandsaltblog.com/?cat=13" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/10_My_Big_Fat_Greek_Cooking_Class.jpg">
+            <br>
+            My Big Fat Greek Cooking Class
+        </a>
+
+        <a href="http://www.activelynorthwest.com/food/go-local-cooking-classes-in-portland/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/13_2015ActivelyNorthwest.jpg">
+            <br>
+            Go Local: Inspired Cooking Classes in Portland
+        </a>
+
+        <a href="http://vacationidea.com/california/top-things-to-do-in-santa-ana.html" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/11_Top_10_Things_to_do_in_Santa_Ana.jpg">
+            <br>
+            Top 10 Things to do in Santa Ana
+        </a>
+
+        <a href="http://www.afar.com/places/hipcooks-east-los-angeles" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/14_AFAR_Take_A_Cooking_Class_in_Los_Angeles_Why_Not.jpg">
+            <br>
+            Take A Cooking Class in Los Angeles? Why Not?
+        </a>
+
+        <a href="http://www.bencaro.com/hipcooks-cooking-class-review-rum-cocktail-recipe/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/15_Bencaro_Hipcooks_Cooking_Class_Review_and_Rum_Cocktail_Recipe.jpg">
+            <br>
+            Hipcooks Cooking Class Review and Rum Cocktail Recipe
+        </a>
+
+        <a href="http://cisl.edu/wordpress/suggested-student-activities/cooking-classes-in-san-diego.htm" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/16_CISL_COOKING_CLASSES_IN_SAN_DIEGO.jpg">
+            <br>
+            Cooking Classes in San Diego
+        </a>
+
+        <a href="http://www.laweekly.com/squidink/2014/02/04/hipcooks-where-to-make-friends-and-cook-for-them-recipe" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/17 LA_Weekly_Hipcooks__Where_to_Make_Friends,_and_Cook_For_Them.jpg">
+            <br>
+            Hipcooks: Where to Make Friends, and Cook For Them
+        </a>
+
+        <a href="http://www.marpop.com/top-lists/cooking-classes-in-la/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/18_Marpop_Hot_Stuff_Cooking_Classes_in_LA.jpg">
+            <br>
+            Hot Stuff: Cooking Classes in LA
+        </a>
+
+        <a href="http://erindouglass.com/?p=239" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/19_Erin_Douglass_Hipcooks_The_introduction.jpg">
+            <br>
+            Hipcooks: The introduction
+        </a>
+
+        <a href="http://www.thrillist.com/entertainment/los-angeles/best-la-date-ideas" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/20_Thrillist_15_ACTUALLY_GREAT_LA_DATE_IDEAS.jpg">
+            <br>
+            15 Actually Great LA Date Ideas
+        </a>
+
+        <a href="http://www.rtwgirl.com/cocktails-and-cooking-class-hipcooks/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/21_Round_the_world_A_Cocktails_and_Cooking_Class_with_Hipcooks.jpg">
+            <br>
+            A Cocktails and Cooking Class with Hipcooks
+        </a>
+
+        <a href="http://www.afar.com/places/hipcooks-los-angeles" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/22_Afar_A_Cooking_Class_(with_Booze).jpg">
+            <br>
+            A Cooking Class (with Booze!)
+        </a>
+
+        <a href="http://foodiecurious.com/uncategorized/hipcooks-tapa-class-brings-some-class-to-your-table/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/23_Foodiecurious_Hipcooks_Tapa_Class_Brings_Some_Class_to_Your_Table.jpg">
+            <br>
+            Hipcooks Tapa Class Brings Some Class to Your Table
+        </a>
+
+        <a href="http://www.ocregister.com/articles/hipcooks-639522-reti-santa.html" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/24_OC_Register_Center_offers_a_taste_of_international_flavors.jpg">
+            <br>
+            Center Offers Taste of International Flavors
+        </a>
+
+        <a href="http://www.ocwino.com/adventure/category/hipcooks" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/25_OC_Wino_A_New_Cooking_Adventure_Has_Opened_in_Hip_Santa_Ana.jpg">
+            <br>
+            A New Cooking Adventure Has Opened in Hip Santa Ana
+        </a>
+
+        <a href="http://www.urbanvue.com/25-fun-things-portland/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/26_urbanvue_25_Fun_Things_To_Do_In_Portland_.jpg">
+            <br>
+            25 Fun Things To Do in Portland Or
+        </a>
+
+        <a href="http://www.sdhealthyliving.com/2014/Healthy-Valentine-Gift-Guide" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/27_SD_Healthy_Living_Healthy_Valentine's_Gift_Guide_San_Diego_Style.jpg">
+            <br>
+            Healthy Valentine's Gift Guide: San Diego Style
+        </a>
+
+        <a href="http://www.discoversd.com/news/2014/dec/13/holiday-gift-suggestion-food-drink/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/29_Discover_SD_Gifts_For_That_Special_Food_Lover.jpg">
+            <br>
+            Gifts For That Special Food Lover
+        </a>
+
+        <a href="http://la.racked.com/archives/2014/06/11/11_unique_ideas_for_a_stylish_bachelorette_party_in_la.php#more" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/30_Racked_11_Unique_Ideas_for_a_Stylish_Bachelorette_Party_in_LA.jpg">
+            <br>
+            11 Unique Ideas for a Stylish Bachelorette Party in LA
+        </a>
+
+        <a href="http://www.wsj.com/articles/SB10001424052702303342104579097473425179090" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/31The_Wallstreet_Journal_Kids_in_the_Kitchen.jpg">
+            <br>
+            Kids in the Kitchen
+        </a>
+
+        <a href="http://www.sandiegomagazine.com/Blogs/Cityfiles/Fall-2013/36-Ways-to-Get-Healthy/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/32_SD_Magazine_36_Ways_to_Get_Healthy.jpg">
+            <br>
+            36 Ways to Get Healthy
+        </a>
+
+        <a href="https://www.youtube.com/watch?v=piN55etCqj4" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/33_Video_The_Talk_of_San_Diego_Show_with_Andrea_Bensussen_at_HipCooks_in_San_Diego_CA.jpg">
+            <br>
+            The Talk of San Diego Show with Andrea Bensussen at HipCooks in San Diego, CA
+        </a>
+
+        <a href="http://www.laweekly.com/squidink/2013/05/08/5-great-cooking-classes-in-los-angeles" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/34_LA_Weekly_5_Great_Cooking_Classes_in_Los_Angeles.jpg">
+            <br>
+            5 Great Cooking Classes in Los Angeles
+        </a>
+
+        <a href="http://www.losangeles.com/articles/cooking-classes-in-la-to-start-the-new-year.html" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/35_LosAngeles.com_Cooking_Classes_in_LA_to_Start_New_Year.jpg">
+            <br>
+            Cooking Classes in LA to Start New Year
+        </a>
+
+        <a href="http://seattle.cbslocal.com/top-lists/best-places-to-buy-gifts-for-grads-in-seattle/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/36_Best_Places_to_Buy_Gifts_For_Grads_in_Seattle.jpg">
+            <br>
+            Best Places to Buy Gifts For Grads in Seattle
+        </a>
+
+        <a href="http://www.laabroad.com/2013/04/thai-cooking-hipcooks-style_14.html" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/38_Thai_Cooking_-_Hipcooks_Style.jpg">
+            <br>
+            Thai Cooking - Hipcooks Style
+        </a>
+
+        <a href="http://mysticsandmint.blogspot.com/2012/02/hipcooks-la.html" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/39Mystics_+_Mint_hipcooks_LA.jpg">
+            <br>
+            Hipcooks LA
+        </a>
+
+        <a href="http://violetkim.com/tag/hipcooks-west-la/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/40_Date_Night_with_Hipcooks_West.jpg">
+            <br>
+            Date Night with @Hipcooks #West
+        </a>
+
+        <a href="http://www.utsandiego.com/news/2013/feb/11/valentines-day-date-ideas/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/41UT_San_Diego_Valentine's_Day_date_ideas.jpg">
+            <br>
+            Valentine's Day Date Ideas
+        </a>
+
+        <a href="http://sduptownnews.com/hipsters-in-the-kitchen/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/42SD_Uptown_News_Hipsters_in_the_kitchen.jpg">
+            <br>
+            Hipsters in the Kitchen
+        </a>
+
+        <a href="http://www.ejeats.com/thai-cooking-class-at-hipcooks/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/43_EJ_Eats_Thai_Cooking_class.jpg">
+            <br>
+            Thai Cooking Class at Hipcooks
+        </a>
+
+        <a href="http://greenlakeinseattle.com/mothers-day-is-right-around-the-corner-best-gift-ideas/#" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/44_Green_Lake_Seattle_Mother's_day.jpg">
+            <br>
+            Mother’s Day is Right Around the Corner: Best Gift Ideas!
+        </a>
+
+        <a href="http://www.examiner.com/review/date-night-teach-your-man-how-to-handle-a-spatula-at-hipcooks" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/45_examiner_date_night.jpg">
+            <br>
+            Date Night: Teach Your Man How to Handle A Spatula at Hipcooks
+        </a>
+
+        <a href="http://www.campuscircle.com/review.cfm?r=15701" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/46_Campus_Circle_Concocting_a_new_kind_og_meal.jpg">
+            <br>
+            Hipcooks: Concocting a New Kind of Meal
+        </a>
+
+        <a href="http://www.portlandmonthlymag.com/eat-and-drink/eat-beat/articles/win-a-copy-of-monika-retis-hipcooks-october-2012" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/47_Win_A_Copy_of_Monika_Reti's_Hipcooks.jpg">
+            <br>
+            Win A Copy of Monika Reti's Hipcooks
+        </a>
+
+        <a href="http://redtri.com/portland/celebrate-moms-local-gifts-for-mothers-day/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/48_Red_Tricycle_10_locally_made_gifts_for_mom.jpg">
+            <br>
+            10 Locally-Made Gifts for Mother’s Day
+        </a>
+
+        <a href="http://eyesandedge.com/hipcooks-damn-delightful/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/49_Eyes_+_Edge_.jpg">
+            <br>
+            HIPCOOKS- DAMN DELIGHTFUL!
+        </a>
+
+        <a href="http://ruthiegyll.blogspot.com/2012/03/hipcooks-west_11.html" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/50_NO._17_Hipcooks_West.jpg">
+            <br>
+            Hipcooks West
+        </a>
+
+        <a href="http://www.kpbs.org/news/2012/dec/17/bounty-holiday-food-gifts-san-diego-foodies/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/51_KPBS_A_Bounty_Of_Holiday_Food_Gifts_For_San_Diego_Foodies.jpg">
+            <br>
+            A Bounty Of Holiday Food Gifts For San Diego Foodies
+        </a>
+
+        <a href="http://saucyjossie.com/2012/10/15/thai-me-up/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/52_Saucy_Jossie_Thai_Me_Up_Hipcooks_Los_Angeles_Cooking_Class.jpg">
+            <br>
+            Thai Me Up <br> Hipcooks Los Angeles Cooking Class
+        </a>
+
+        <a href="http://sandiego.urbanistguide.com/blog/urban-dish-learn-to-diy-in-north-park-at-hipcooks/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/53_The_Urbanist_Guide.jpg">
+            <br>
+            URBAN DISH: LEARN TO DIY IN NORTH PARK AT HIPCOOKS
+        </a>
+
+        <a href="http://la.cleanplates.com/events/los-angeles-cooking-classes/#more-651" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/54_Clean_Plates_Back_to_school.jpg">
+            <br>
+            Back to School: LA Cooking Classes
+        </a>
+
+        <a href="https://www.youtube.com/watch?v=VONmt_JxRvs" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/55_Video_Los_Angeles_Lifestyle.jpg">
+            <br>
+            Los Angeles Lifestyle: Hipcooks Cooking Classes | Things to Do in LA | Partners Trust
+        </a>
+
+        <a href="http://www.discoversd.com/news/2012/dec/06/holiday-cooking-classes/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/56_Discover_SD_Holiday_Cooking_Classes.jpg">
+            <br>
+            Holiday Cooking Classes
+        </a>
+
+        <a href="http://ivn.us/2012/12/15/holiday-cooking-classes-in-san-diego/" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/57_Holiday_Cooking_Classes_Ease_Stress_For_many.jpg">
+            <br>
+            Holiday Cooking Classes Ease Stress For many
+        </a>
+
+        <a href="http://www.thepastryposts.com/2012/05/hipcooks-san-diego.html" class="medialink" target="_new">
+            <img src="/static/img/media/thumbnails/58_The_Pastry_Posts.jpg">
+            <br>
+            The Pastry Posts
+        </a>
+
+    </div>
+</div>
+<br>
+
+{% endblock %}

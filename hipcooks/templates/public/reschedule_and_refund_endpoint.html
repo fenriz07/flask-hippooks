@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Reschedule and Refund Class{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-3">
+        {% include 'classes_sidebar.html' %}
+    </div>
+    <div class="col-sm-9">
+        <div class="row">
+            <div class="col-sm-11">
+                <h3 class="JandaQuickNote-normal">
+                    Thank you! Your reservation has been removed from the class roster.<br>
+                    Sorry it didn't work out this time. Hope to see you soon!
+                </h3>
+                <p>
+                    Here is your Make-up number: <span class="orange_text">{{ code }}</span>
+                </p>
+                <p>
+                    This certificate code is worth the value of the amount you paid for the class with Hipcooks gift certificates. You may use it immediately if you wish, or save it for later - the number will not expire. If you lose it, just log into <a href="{{ url_for('.dashboard') }}">My Hipcooks</a>. All your codes are stored there. We are also emailing you a confirmation.
+                </p>
+                <p>
+                    For the amount you paid for the class using your credit card, we'll issue your refund as soon as possible - please allow several business days for processinng.
+                </p>
+                <p>
+                    You will receive an email when the refund is processed on our side. Your credit card company may take a few days to post the refund.
+                </p>
+                <br>
+                <div class="text-center">
+                    <img src="/static/img/reschedule_graphic.jpg">
+                </div>
+                <br>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: {% if campus %}{{ campus.name }}{% endif %}{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="/static/js/unslider/css/unslider.css">
+<style media="screen">
+    #slider, #slider img {
+        height: 246px;
+        width: 640px;
+    }
+
+</style>
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'classes_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-11">
+                <h3 class="JandaQuickNote-normal">Welcome to Hipcooks {% if campus %}{{ campus.name }}!{% else %}- No campus selected - Shouldn't happen live{% endif %}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-11">
+                <div class="slider" id="slider">
+                    <ul>
+                        <li><img src="/static/img/class_splash/{{ campus.tab_name|replace(" ","") }}1.jpg"></li>
+                        <li><img src="/static/img/class_splash/{{ campus.tab_name|replace(" ","") }}2.jpg"></li>
+                        <li><img src="/static/img/class_splash/{{ campus.tab_name|replace(" ","") }}3.jpg"></li>
+                        <li><img src="/static/img/class_splash/{{ campus.tab_name|replace(" ","") }}4.jpg"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-11">
+                <h3 class="JandaQuickNote-normal"><img src="/static/img/jacks3.png" class="jacks"> Class in session</h3>
+                    {{eval(campus.class_in_session_body)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-11">
+                <h3 class="JandaQuickNote-normal"><img src="/static/img/jacks3.png" class="jacks"> The Skinny</h3>
+                    {{eval(campus.the_skinny_body)}}
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<script src="/static/js/unslider/js/unslider-min.js"></script>
+<script>
+	jQuery(document).ready(function($) {
+		$('.slider').unslider({
+            autoplay: true,
+            nav: false,
+            arrows: false,
+            animation: 'fade'
+        });
+	});
+</script>
+{% endblock %}

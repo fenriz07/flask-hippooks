@@ -1,0 +1,114 @@
+{% macro render_pagination(pagination, endpoint, show_all, count, label) %}
+  <div class="container-fluid pagination">
+  {% for page in pagination.iter_pages() %}
+    {% if page %}
+      {% if page != pagination.page %}
+        <a href="{{ url_for(endpoint, page=page, **kwargs) }}?{{request.args|urlencode}}" class="JandaQuickNote-normal">{{ page }}</a>
+      {% else %}
+        <strong class="JandaQuickNote-normal">{{ page }}</strong>
+      {% endif %}
+    {% else %}
+      <span class="ellipsis">…</span>
+    {% endif %}
+  {% endfor %}
+  {% if show_all %}
+    <a href="#" class="JandaQuickNote-normal left-pad" id="pagination-show-all">Show All</a>
+  {% endif %}
+  {% if count %}
+    {% if count == 1%}
+      <span class="left-pad">{{count}} {{label}}</span>
+    {% else %}
+      <span class="left-pad">{{count}} {{label}}s</span>
+    {% endif %}
+  {% endif %}
+  </div>
+{% endmacro %}
+
+{% macro column_sort_buttons(view_name, column_name) %}
+  <a href="{{ url_for(view_name, **kwargs) }}?column={{column_name}}&amp;order=asc" class="sort-button asc noprint">+</a>
+  <a href="{{ url_for(view_name, **kwargs) }}?column={{column_name}}&amp;order=desc" class="sort-button desc noprint">-</a>
+{% endmacro %}
+
+{% macro column_sort_toggle(title, view_name, column_name) %}
+    <script type="text/javascript" src="/static/js/admin-styles.js"></script>
+    <a href="{{ url_for(view_name, **kwargs) }}?column={{column_name}}&amp;order=asc" class="sort-button-toggle asc noprint">{{title}}<span class="glyphicon glyphicon-sort-by-attributes-alt"></span></a>
+    <a href="{{ url_for(view_name, **kwargs) }}?column={{column_name}}&amp;order=desc" class="sort-button-toggle desc noprint" style="display:none">{{title}}<span class="glyphicon glyphicon-sort-by-attributes"></span></a>
+{% endmacro %}
+
+{% macro enrich_editor(selector=".rich-editor") %}
+    <script type="text/javascript" src="/static/ckeditor/ckeditor.js"></script>
+    <script src="/static/ckeditor/adapters/jquery.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        $("{{selector}}").ckeditor({
+            "filebrowserUploadUrl": "{{url_for('.upload_images')}}",
+            "filebrowserBrowseUrl": "{{url_for('.browse_images')}}"
+        });
+    });
+    </script>
+{% endmacro %}
+
+{% macro report_show_field(field) %}
+    {% if field.errors|length> 0 %}
+    <div class="row">
+        <div class="col-md-12">
+            <span class="text-danger">{{field.errors[0]}}</span>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-2">
+            {{field.label(class_="control-label")}}
+        </div>
+        <div class="col-md-10">
+            {{field(class_="form-control", **kwargs)}}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro div_field(field, class_="form-control", extra_field_args={}) %}
+    {% if field.errors|length > 0 %}
+    <div class="col-sm-12">
+        <span class="text-danger">
+            {{field.errors[0]}}
+        </span>
+    </div>
+    {% endif %}
+    <div class="form-group">
+        {{field.label(class_="col-sm-3 control-label")}}
+        <div class="col-sm-8">
+            {{field(**dict(class_=class_, **extra_field_args))}}
+            {% if caller is defined %}
+                {{caller()}}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro div_unlabeled_field(field, class_="form-control", extra_field_args={}) %}
+    {% if field.errors|length > 0 %}
+    <div class="col-sm-12">
+        <span class="text-danger">
+            {{field.errors[0]}}
+        </span>
+    </div>
+    {% endif %}
+    {{field(**dict(class_=class_, **extra_field_args))}}
+    {% if caller is defined %}
+        {{caller()}}
+    {% endif %}
+{% endmacro %}
+
+{% macro div_field_inline() %}
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-9">
+                {{caller()}}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro active_category(test_category) %}
+    {% if category == test_category %}class="active"{% endif %}
+{% endmacro %}

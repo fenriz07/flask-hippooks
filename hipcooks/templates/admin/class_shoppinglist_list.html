@@ -1,0 +1,48 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Shopping Lists{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2 class="hipcooks-script">Shopping Lists
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <a href="{{url_for('.class_list')}}">Create new shopping lists from the class list</i></a>
+        </div>
+    </div>
+    <table class="table table-striped table-hover" border=0>
+        <thead>
+            <tr>
+                <th>Class Abbr</th>
+                <th>View Shopping List</th>
+                <th>Last Updated</th>
+                {% if user.can_update('class_shoplists') %}
+                    <th>Edit Shopping List</th>
+                {% endif %}
+                {% if user.can_update('class') %}
+                    <th>Edit Description</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for shop_list in pagination.items %}
+                <tr>
+                    <td title="{{shop_list.cls.title}}" class="expand-cell">{{shop_list.cls.abbr}}</td>
+                    <td class="expand-cell"><a href="{{url_for('.shopping_list_view', id=shop_list.cls.id)}}">View List</a></td>
+                    <td class="expand-cell">{% if shop_list.last_updated %}{{shop_list.last_updated.strftime("%m/%d/%Y")}}{% endif %}</td>
+                    {% if user.can_update('class_shoplists') %}
+                        <td class="expand-cell"><a href="{{url_for('.shopping_list_edit', id=shop_list.id)}}">Edit List</a></td>
+                    {% endif %}
+                    {% if user.can_update("class") %}
+                        <td class="expand-cell"><a href="{{url_for('.class_edit', id=shop_list.id)}}">Description</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

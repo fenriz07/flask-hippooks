@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>Class List</title>
+</head>
+<body>
+<div style="width:850px">
+<center><h2 class="hipcooks-script">{{schedule.cls.title}} &mdash; {{schedule.date.strftime("%b %d %Y")}}, {{schedule.time_range}}</h2></center>
+<div style="text-align:justify">
+<p><span style="font-size: medium;">WAIVER By its nature, cooking is an inherently dangerous activity as it includes working with knives and heat, among other things. Knowing this to be the case, I hereby irrevocably, absolutely forever and fully, release and discharge Hipcooks and its instructor Monika Reti (hereinafter &ldquo;Hipcooks&rdquo;) from any and all claims, demands, actions, suits, damages (including but not limited to damages resulting from personal injuries, emotional distress, lost income, punitive and exemplary damages), liabilities, duties, promises, costs, expenses (including, but not limited to, attorneys&rsquo; fees), indemnification rights, losses, causes of action, and judgments of any kind, nature, or amount, whether due or owing in the past, present or future and whether based upon contract, tort, statute or any other legal or equitable theory of recovery, and whether known or unknown, suspected or unsuspected, fixed or contingent, matured or unmatured, which I or my successors, insurers, heirs, and each of them (collectively &ldquo;I&rdquo;), at any time heretofore had owned or held or which now have, own, or hold, or which they may ever have in connection with my participation in the cooking class provided by Hipcooks. I also acknowledge that I am aware of the provisions of Section 1542 of the California Civil Code, which provides:</span></p>
+<p><strong><span style="font-size: medium;"><span style="font-family: Times New Roman,Times,serif;">A GENERAL RELEASE DOES NOT EXTEND TO CLAIMS WHICH THE CREDITOR DOES NOT KNOW OR SUSPECT TO EXIST IN HIS OR HER FAVOR AT THE TIME OF EXECUTING THE RELEASE, WHICH KNOWN BY HIM OR HER MUST HAVE MATERIALLY AFFECTED HIS OR HER SETTLEMENT WITH THE DEBTOR.</span></span></strong></p>
+</div>
+<table align="center">
+<tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Signature&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th><th>Date</th></tr>
+{% for order in orders %}
+	{% if not order.cancelled %}
+	<tr valign="bottom">
+		<td><br/>{{order.first_name}} {{order.last_name}}</td>
+		<td>&nbsp;_________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><br>________________</td>
+	</tr>
+	{% endif %}
+	{% for guest in order.active_guests %}
+		<tr valign="bottom">
+			<td><br/>{{guest.name}}</td>
+			<td>&nbsp;_________________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><br>________________</td>
+		</tr>
+	{% endfor %}
+{% endfor %}
+</table>
+<p align="center"><b>Teachers</b>: {{schedule.teachers|join(', ')}}</p>
+<p align="center"><b>Assistants</b>: {{schedule.assistants|join(', ')}}</p>
+</div>
+</body></html>

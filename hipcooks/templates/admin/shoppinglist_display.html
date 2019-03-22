@@ -1,0 +1,75 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Shopping List{% endblock %}
+{% block header %}
+{{ super() }}
+<script>
+$(function() {
+
+    $('#preview').click(function() {
+      window.print();
+    })
+
+    $('.market-select').change(function() {
+      $('.market-select').each(function () {
+        var obj = $(this);
+        var selector = "#" + obj.val();
+        if (obj.is(':checked')) {
+          $(selector).show();
+        } else {
+          $(selector).hide();
+        }
+      });
+    });
+
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-md-12">
+              <h3 class="hipcooks-script">Shopping List</h3>
+
+              <form class="form-inline">
+                <div class="form-group">
+                  <a href="" class="JandaQuickNote-normal noprint" id="preview">Print</a>
+                </div>
+                <div class="form-group left-pad noprint">
+                  {% for market, market_id in market_ids.items() %}
+                    <label class="checkbox-inline">
+                      <input checked type="checkbox" class="market-select" id="market_{{market_id}}" value="{{market_id}}"> {{market}}
+                    </label>
+                  {% endfor %}
+                </div>
+              </form>
+
+                <div class="shopping-list list-market">
+                    {% if visible_items|length == 0 %}
+                    <h4>There are no items on this shopping list (maybe try selecting different markets?)</h4>
+                    {% endif %}
+                    {% for market, items in visible_items.items() %}
+                    <div class="{% if not loop.last %}breakbelow{% endif %}" id="{{market_ids[market]}}">
+                        <h4>{{shopping_list.name}}, {% if market %}{{market}}{% else %}Other Items{% endif %}</h4>
+                        <table class="table">
+                            <tr><th>Category</th><th>Item</th><th>Qty</th><th>Unit</th><th>Notes</th></tr>
+                            {% for item in items %}
+                            <tr>
+                                <td>{{item.category_str}}</td>
+                                <td>{{item.name}}</td>
+                                <td>{{item.number|mixed}}</td>
+                                <td>{{item.unit}}</td>
+                                <td>{{item.notes}}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <a class="btn btn-primary btn-sm noprint" role="button" href="{{url_for('.shopping_list_list')}}" id="back-all" style="margin-top: 10px;">Back to Go Shopping</a>
+    </div>
+</div>
+{% endblock %}

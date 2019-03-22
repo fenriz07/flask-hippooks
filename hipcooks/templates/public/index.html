@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Home{% endblock %}
+{% block content %}
+<style>
+    #sub_nav, #header_campus, #header_cart {
+        display: none !important;
+    }
+    #main_content {
+        background-color: #CDEFF9;
+    }
+    .campus_container {
+        margin-left: -78px;
+    }
+    .campus_block {
+        display: inline-block;
+        margin-bottom: 15px;
+        margin-left: 78px;
+        margin-right: 0px;
+        font-size: 20px;
+        width: 305px;
+    }
+    .campus_block img.campus_thumb {
+        border: solid 2px #00ADCD;
+        width: 305px;
+        height: 305px;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <span class="blue_text">
+            Click on the location nearest you for class schedules and info!
+        </span>
+        <br>
+        <br>
+    </div>
+</div>
+<div class="row">
+    <div class="campus_container">
+        {% for campus in campuses %}
+        <div class="campus_block">
+            <a href="{{ url_for('.campus', id=campus.id) }}">
+                <img src="{{campus.photo_route}}" class="campus_thumb">
+            </a>
+            <br>
+            <span class="JandaQuickNote-normal">Hipcooks {{campus.name}}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <br>
+        <p class="blue_text">
+            Hipcooks studios are all operated by a single owner, with a roving team of awesome teachers.
+        </p>
+    </div>
+</div>
+{% endblock %}
+{% block footer %}
+{% endblock %}

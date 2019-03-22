@@ -1,0 +1,54 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Teacher Edit{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+          <div class="row add-edit">
+            <h3 class="hipcooks-script">Add/Edit Teacher</h3>
+            <form method="POST" enctype="multipart/form-data" class="add-edit">
+                    {% for field in form %}
+                        {% if field.name == "csrf_token" %}
+                            {{field}}
+                        {% else %}
+                        {% if field.errors|length > 0 %}
+                            <div class="bg-danger">
+                                {{field.errors[0]}}
+                            </div>
+                        {% endif %}
+                            <div class="row">
+                                <div class="col-md-2">
+                                    {{field.label(class_="control-label")}}
+                                </div>
+                                <div class="col-md-9">
+                                    {{field(class_="form-control expanded-input")}}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                <div class="row">
+                    <div class="col-md-2">
+                        <label class="control-label">Locations</label>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-control" name="campus" multiple="multiple">
+                            {% for campus, visited in campuses %}
+                            <option value="{{campus.id}}" {% if visited %}selected="selected"{% endif %}>{{ campus.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    {% if user.can_update('staff') %}
+                    {% if id is not none %}<a href="{{url_for('.staff_permissions', id=id)}}" target="_blank" class="btn btn-primary btn-sm">Permissions</a>{% endif %}
+                    <input type="submit" value="Save" class="btn btn-primary btn-sm">
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+{{ enrich_editor() }}
+{% endblock %}

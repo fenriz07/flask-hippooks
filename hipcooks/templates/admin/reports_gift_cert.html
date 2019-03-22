@@ -1,0 +1,64 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor, report_show_field as show_field %}
+{% block title %}Gift Certificate Report{% endblock %}
+{% block head %}
+{{ super() }}
+<script type="text/javascript">
+$(function() {
+    $("#filter :radio").change(function(e) {
+        $("#paid_with").prop("disabled", $(e.target).val() != "other");
+    });
+    if ($("#filter-3").is(":checked")) {
+        $("#paid_with").prop("disabled", false)
+    }
+});
+</script>
+<style>
+#filter {
+    border: none;
+    box-shadow: none;
+};
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-body">
+          <h3 class="hipcooks-script">Create Gift Certificate Report</h3>
+            <div class="row add-edit">
+                <form class="add-edit" method="POST">
+                    {{form.csrf_token}}
+                    {{show_field(form.studio)}}
+
+                    {% if form.filter.errors|length> 0 %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="text-danger">{{form.filter.errors[0]}}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            {{form.filter.label(class_="control-label")}}
+                        </div>
+                        <div class="col-md-10">
+                            <ul class="form-control" id="filter">
+                              <li><input id="filter-0" name="filter" type="radio" value="all"> <label for="filter-0">All</label></li>
+                              <li><input id="filter-1" name="filter" type="radio" value="purchased"> <label for="filter-1">Purchased Only</label></li>
+                              <li><input id="filter-2" name="filter" type="radio" value="makeup"> <label for="filter-2">Makeup Only</label></li>
+                              <li>
+                                <input id="filter-3" name="filter" type="radio" value="other"> <label for="filter-3">Paid with</label>
+                                {{form.paid_with(class_="form-control", disabled=True, style="display: inline-block; margin-left: 20px;")}}
+                              </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% include "admin/report_date_select.html" %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{ enrich_editor() }}
+{% endblock %}

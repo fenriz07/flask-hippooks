@@ -1,0 +1,121 @@
+{% extends "/base.html" %}
+{% block title %}Hipcooks: Sign In{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    #returning_cooks_box, #new_cooks_box {
+        width: 489px;
+    }
+
+    .form-group, #returning_cooks_box input, #new_cooks_box input {
+        margin-bottom: 0;
+    }
+
+    input.form_box.blue_border {
+        width: 323px;
+        height: 29px;
+    }
+
+    label.control-label {
+        width: 125px;
+        margin-right: 17px;
+    }
+
+    .forgot-password > a {
+        margin-left: 28px;
+        text-decoration: underline !important;
+    }
+    .form_box {
+        padding-bottom: 9px;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-12 my_hipcooks">
+                <h3 class="JandaQuickNote-normal">My Hipcooks</h3>
+                <p>
+                    Look up your class reservations, gift certificate codes, get the recipes for the classes you've taken, and more!
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-10">
+                <h4 class="JandaQuickNote-normal">Returning Cooks</h4>
+                <form method="POST" class="form-horizontal form-sign-in" id="returning_cooks_box">
+                    <div class="form_box">
+                        {% for field in sign_in_form %}
+                            {% if field.short_name == "csrf_token" %}
+                                {{field}}
+                            {% else %}
+                                {% if field.errors|length> 0 %}
+                                    <p class="text-danger">{{field.errors[0]}}</p>
+                                {% endif %}
+                                {% if field.short_name == "password" %}
+                                <div class="form-password">
+                                    {{field.label(class_="control-label")}}
+                                    {{field(class_="blue_border form_box")}}
+                                </div>
+                                {% else %}
+                                <div>
+                                    {{field.label(class_="control-label")}}
+                                    {{field(class_="blue_border form_box")}}
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="forgot-password">
+                            <a href="{{url_for('.forgot_password')}}" class="control-label text12">Forgot password?</a>
+                        </div>
+                    </div>
+                    <input name="sign-in-submit" type=submit value="Login" class="form_button pull-right">
+                </form>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span class="JandaQuickNote-normal text18" style="margin-right: 12px;">New Cooks</span>
+                        We do not share your information with anyone. <a href="{{url_for('.policies')}}#privacy" class="orange_text">Privacy Policy</a>
+                    </div>
+                </div>
+                <form method="POST" class="form-horizontal form-sign-in" id="new_cooks_box">
+                    <div class="form_box">
+                        {% for field in register_form %}
+                            {% if field.short_name == "csrf_token" %}
+                                {{field(class_="form_box blue_border")}}
+                            {% else %}
+                                {% if field.errors|length> 0 %}
+                                    <p class="text-danger">{{field.errors[0]}}</p>
+                                {% endif %}
+                                <div>
+                                    {{field.label(class_="control-label")}}
+                                    {{field(class_="form_box blue_border")}}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <input name="register-submit" type=submit value="Create Account" class="form_button pull-right">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+{% endblock %}

@@ -1,0 +1,268 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Gift Certificate Edit{% endblock %}
+{% block head %}
+{{ super() }}
+{{ enrich_editor() }}
+<link rel="stylesheet" href="/static/css/bootstrap-datepicker.min.css">
+<script src="/static/js/bootbox.min.js"></script>
+<script>
+var d = new Date();
+$( document ).ready(function() {
+    $('#date_sent').val(d.getMonth()+1 + '/' + d.getDate() + '/' + d.getFullYear());
+});
+$(function() {
+    setTimeout(function() {window.scrollTo(0, 0);},1)
+    var senderEmail = "{{sender_email}}";
+    var recipientEmail = "{{recipient_email}}";
+    var dateSent = $('#date_sent').val();
+    var lastClicked = null;
+
+    $(".email-editor-toggle").click(function(e) {
+        e.preventDefault();
+        var obj = $(this);
+        var val = obj.attr('value');
+        $('#email_type').val(val);
+
+        $('#date-sent-div').hide();
+        $('#pdf-div').hide();
+        $('#receipt-div').hide();
+
+        if (val === 'pdf_and_receipt') {
+          $('#pdf-div').show();
+          $('#receipt-div').show();
+          $('#recipient').val(senderEmail);
+        } else if (val === 'pdf') {
+          $('#pdf-div').show();
+          $('#recipient').val(recipientEmail);
+        } else if (val == 'physical') {
+          $('#date-sent-div').show();
+          $('#recipient').val(senderEmail);
+          $('#date_sent').val(dateSent);
+          $('#subject').val('Physical Gift Certificate Card Sent');
+          $('#body').val('Congratulations! ' + $('#sender_name').val() + ' has just purchased a Hipcooks Cooking Class Gift Certificate for you!<p>' + $('#sender_name').val() + ' says:<p>"' + $('#message').val() + '"<p>Enjoy! Hipcooks');
+        }
+
+        if ((lastClicked && lastClicked.attr('value') == val) || lastClicked == null) {
+          $("#email-editor").toggle();
+        } else if (!$("#email-editor").is(":visible") && lastClicked.attr('value') !== val) {
+          $("#email-editor").show();
+        }
+        lastClicked = obj;
+    });
+
+    $("#email-form").submit(function(e) {
+        e.preventDefault();
+        form = $(this);
+        var formData = new FormData(form[0]);
+
+        $.ajax({
+          url: "/admin/gift-certificates/{{cert.id}}/email",
+          type: 'POST',
+          xhr: function() {
+              var myXhr = $.ajaxSettings.xhr();
+              return myXhr;
+          },
+          success: function() {
+                  $("#email-editor").toggle(false);
+                  $("#email-success").toggle(true);
+                  $("#email-failure").toggle(false);
+              },
+          error: function(jqXHR, textStatus, errorThrown) {
+                  $("#email-failure").toggle(true);
+              },
+          data: formData,
+          cache: false,
+          contentType: false,
+          processData: false
+      });
+    })
+
+    $('#delete').click(function(e) {
+      bootbox.confirm("Are you sure?", function(result) {
+        console.log(result);
+        if (result === true) {
+          $('#form').append('<input type="hidden" name="delete" value="Delete" /> ');
+          $('#form')[0].submit();
+        }
+      });
+    });
+
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="row">
+            <h3 class="hipcooks-script">{% if cert.id %}Edit{% else %}Add{% endif %} Gift Certificate</h3>
+              {% if cert.id %}
+              <div class="col-lg-9 col-md-8 shopping-list-link">
+                  <div>
+                      <a value="pdf_and_receipt" class="script-link-btn email-editor-toggle" href="#">Email PDF and receipt to sender</a> |
+                      <a value="pdf" class="script-link-btn email-editor-toggle" href="#">Email PDF to recipient</a> |
+                      <a value="physical" class="script-link-btn email-editor-toggle" href="#">Physical card has been sent</a>
+                  </div>
+                  <div id="email-success" hidden>
+                      <b>Successfully sent emails.</b>
+                  </div>
+                  <div id="email-editor" class="col-md-offset-1 col-md-11" hidden>
+                      <form id="email-form" action="{{url_for('.send_gift_certificate_conf_email', id=cert.id)}}" method="POST">
+                          {{email_form.csrf_token}}
+                          {{email_form.email_type(class_="form-control")}}
+
+                          <div class="row email-form">
+                              <div class="col-md-2">
+                                  {{email_form.from_email.label(class_="control-label")}}
+                              </div>
+                              <div class="col-md-10">
+                                  {{email_form.from_email(class_="form-control")}}
+                              </div>
+                          </div>
+
+                          {% if email_form.recipient.errors|length> 0 %}
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <span class="text-danger">{{email_form.recipient.errors[0]}}</span>
+                              </div>
+                          </div>
+                          {% endif %}
+
+                          <div class="row email-form">
+                              <div class="col-md-2">
+                                  {{email_form.recipient.label(class_="control-label")}}
+                              </div>
+                              <div class="col-md-10">
+                                  {{email_form.recipient(class_="form-control")}}
+                              </div>
+                          </div>
+
+                          {% if email_form.subject.errors|length> 0 %}
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <span class="text-danger">{{email_form.subject.errors[0]}}</span>
+                              </div>
+                          </div>
+                          {% endif %}
+
+                          <div id="date-sent-div" class="row" hidden>
+                              <div class="col-md-2">
+                                  {{email_form.date_sent.label(class_="control-label")}}
+                              </div>
+                              <div class="col-md-10">
+                                  {{email_form.date_sent(class_="form-control date")}}
+                              </div>
+                          </div>
+
+                          <div class="row email-form">
+                              <div class="col-md-2">
+                                  {{email_form.subject.label(class_="control-label")}}
+                              </div>
+                              <div class="col-md-10">
+                                  {{email_form.subject(class_="form-control")}}
+                              </div>
+                          </div>
+
+                          {% if email_form.body.errors|length> 0 %}
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <span class="text-danger">{{email_form.body.errors[0]}}</span>
+                              </div>
+                          </div>
+                          {% endif %}
+
+                          <div class="row email-form">
+                              <div class="col-md-2">
+                                  {{email_form.body.label(class_="control-label")}}
+                              </div>
+                              <div class="col-md-10">
+                                  {{email_form.body(class_="form-control")}}
+                              </div>
+                          </div>
+
+                          <div id="pdf-div" class="row" hidden>
+                              <div class="col-md-2">
+                                  {{email_form.pdf.label(class_="control-label")}}
+                              </div>
+                              <div class="col-md-10">
+                                  {{email_form.pdf(class_="form-control")}}
+                              </div>
+                          </div>
+
+                          <div id="receipt-div" class="row" hidden>
+                              <div class="col-md-2">
+                                  {{email_form.receipt.label(class_="control-label")}}
+                              </div>
+                              <div class="col-md-10">
+                                  {{email_form.receipt(class_="form-control")}}
+                              </div>
+                          </div>
+
+                          <input class="btn btn-primary" type="submit" value="Send">
+                          <div id="email-failure" hidden>
+                              There was an error sending the emails.
+                          </div>
+                      </form>
+                  </div>
+              </div>
+              {% endif %}
+          </div>
+            <div class="row add-edit">
+                <form method="POST" enctype=multipart/form-data class="add-edit" id="form">
+                    {{form.csrf_token}}
+                    {% for field in form if field.name != "csrf_token" %}
+                        {% if field.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="text-danger">{{field.errors[0]}}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-2">
+                                {{field.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-3">
+                                {{field(class_="form-control")}}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label">Original Amount</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input value="{{cert.amount_to_give}}" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label">Created Date</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input value="{% if cert.created %}{{cert.created.strftime("%-m/%d/%y %-I:%M %p")}}{% endif %}" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                    {% if user.can_update('giftcertificate') %}
+                        <input class="btn btn-primary btn-sm" type="submit" name="save" value="Save">
+                        <input class="btn btn-primary btn-sm" type="submit" name="save_and_continue" value="Save and Continue">
+                        <input class="btn btn-primary btn-sm" type="submit" name="save_add_another" value="Save and Add Another">
+                        <a class="delete-link" id="delete" name="delete" value="Delete"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete</a>
+                    {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/bootstrap-datepicker.min.js"></script>
+<script>
+$(".date").datepicker({
+    format: "mm/dd/yyyy",
+    autoclose: true,
+    startDate: new Date()
+});
+</script>
+{% endblock %}

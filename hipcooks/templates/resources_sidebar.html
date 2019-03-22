@@ -1,0 +1,26 @@
+{% from "/macros.html" import active_category with context %}
+<div id='cssmenu' class="uppercase nowrap">
+    <ul>
+        <li {{ active_category("resources-kitchen") }}>
+            <a href='/resources/kitchen'><span>What's In Our Kitchen</span></a>
+            <ul>
+                <li>
+                    <a href='/resources/kitchen#Large%20Appliances'><span>Large Appliances</span></a>
+                </li>
+                <li>
+                    <a href='/resources/kitchen#Small%20Appliances'><span>Small Appliances</span></a>
+                </li>
+                <li>
+                    <a href='/resources/kitchen#Kitchen%20Items'><span>Kitchen Items</span></a>
+                </li>
+            </ul>
+
+        </li>
+        <li {{ active_category("resources-ingredients") }}>
+            <a href='/resources/ingredients' style="font-size: 13px;"><span>Specialty Ingredients</span></a>
+        </li>
+        <li {{ active_category("resources-markets") }}>
+            <a href='/resources/markets'><span>Great Markets</span></a>
+        </li>
+    </ul>
+</div>

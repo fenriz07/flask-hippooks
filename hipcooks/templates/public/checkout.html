@@ -1,0 +1,194 @@
+{% extends "/base.html" %}
+{% block title %}Hipcooks: Check Out{% endblock %}
+{% block head %}
+<script>
+$(function() {
+    function sameasbilling() {
+        if ($("#same_as_billing").prop("checked")) {
+            $("div.billing_address_container input, select").each(function(i, obj) {
+                var target = $(obj).attr("id").replace("billing", "shipping");
+                var value = $(obj).val();
+                $("#" + target).val(value);
+            });
+        }
+    }
+
+    $("div.billing_address_container_input").keypress(sameasbilling);
+    $("#same_as_billing").click(sameasbilling);
+    $("#purchase-submit").click(function(e) {
+        e.preventDefault();
+        $(this).prop("disabled", true);
+        $("#purchase-form").submit();
+    });
+});
+</script>
+<style>
+    .padded_box {
+        padding: 10px;
+        padding-right: 50px;
+        padding-left: 20px;
+        margin-bottom: 15px;
+    }
+
+    .control-label.blue_text {
+        margin-top: 5px;
+        text-align: right;
+    }
+
+    .padded_box input[type=checkbox] {
+        margin-top: 16px;
+    }
+
+    #totals hr {
+        height: 1px;
+        background: #00ADCD;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 575px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    .form-group {
+        margin-bottom: 2px;
+    }
+    .formLabel, .formInput {
+        display:inline-block;
+
+    }
+    .form_box{
+        margin: 0;
+    }
+
+    .billing_address_container {
+        margin-top: 15px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<form method="POST" id="purchase-form" class="form-horizontal">
+    <div class="row">
+        <div class="col-sm-3" id="sidebar_div">
+            {% include 'sidebar.html' %}
+        </div>
+        <div class="col-sm-5" id="content_div">
+            <h3 class="JandaQuickNote-normal">Check Out</h3>
+            {% for field in form %}
+                {% if field.name == "csrf_token" %}
+                    {{field}}
+                {% elif field.name == "billing_address" or field.name == "shipping_address" or field.name == "payment" %}
+                <div class="{{field.name}}_container blue_border padded_box">
+                    <h4>{{field.label()}}</h4>
+                    {% if field.name == "shipping_address" %}
+                    <div class="form-group">
+                        <label for="same_as_billing" class="control-label blue_text normal_text uppercase col-sm-5">Same as billing</label>
+                        <div class="col-sm-7">
+                            <input id="same_as_billing" type="checkbox"/>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% for subfield in field %}
+                        {% if subfield.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span class="text-danger">{{subfield.errors[0]}}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if subfield.name.endswith("csrf_token") %}
+                            {{subfield}}
+                        {% else %}
+                            <div class="form-group">
+                                {{subfield.label(class_="formLabel control-label blue_text normal_text uppercase col-sm-5")}}
+                                <div class="col-sm-7">
+                                    {{subfield(class_="form_box form-control blue_border")}}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {% if field.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span class="text-danger">{{field.errors[0]}}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="form-group" align="right">
+                        {{field.label(class_="formLabel control-label blue_text normal_text uppercase col-sm-4")}}
+                        <div class="col-sm-8">
+                            {{field(class_="form_box blue_border")}}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="col-sm-3" id="totals">
+            <br><br><br>
+            {% if cart.products %}
+                <h4>Kitchen Items</h4>
+                <hr>
+                <div>There are
+                    {{cart.products|length}}
+                    items in your store cart.</div>
+                <div class="row">
+                    <div class="col-sm-7">Subtotal:</div>
+                    <div class="col-sm-4 text-right">${{'%.2f'|format(cart.product_subtotal + cart.product_tax)}}</div>
+                </div>
+                {% if not cart.pickup %}
+                    <div class="row">
+                        <div class="col-sm-7">Standard Shipping:</div>
+                        <div class="col-sm-4 text-right">${{'%.2f'|format(cart.product_shipping)}}</div>
+                    </div>
+                {% endif %}
+                <hr>
+                <div class="row large_text">
+                    <div class="col-sm-7">Total:</div>
+                    <div class="col-sm-4 text-right">${{'%.2f'|format(cart.product_total)}}</div>
+                </div>
+                <br><br>
+            {% endif %}
+            {% if cart.classes or cart.gift_certificates %}
+                <h4>Class</h4>
+                <hr>
+                There are
+                {{cart.classes|length + cart.gift_certificates|length}}
+                items in your classes cart.
+                <div class="row">
+                    <div class="col-sm-7">Subtotal:</div>
+                    <div class="col-sm-4 text-right">${{'%.2f'|format(cart.classes_subtotal)}}</div>
+                </div>
+                <hr>
+                <div class="row large_text">
+                    <div class="col-sm-7">Total:</div>
+                    <div class="col-sm-4 text-right">${{'%.2f'|format(cart.total_class_cost)}}</div>
+                </div>
+                <br><br>
+            {% endif %}
+            {% if cart.total_class_cost > 0 and cart.product_total > 0 %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        You will see two separate charges on your credit card.
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <input id="purchase-submit" class="btn form_button inverted" type="submit" value="Purchase Order"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

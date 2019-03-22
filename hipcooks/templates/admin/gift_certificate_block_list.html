@@ -1,0 +1,39 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Gift Certificate Blocks{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="hipcooks-script">Gift Certificate Blocks</h2>
+        {% if user.can_update('giftcertificate') %}
+          <div>
+            <a class="script-link-btn" role="button" href="{{url_for('.gift_certificate_block_edit')}}">Add New GC Block</a> |
+            <a class="script-link-btn" role="button" href="{{url_for('.gift_certificate_list')}}">Gift Certificates</a>
+          </div>
+        {% endif %}
+    <table class="table table-striped table-hover" border=0>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Studio</th>
+                <th>Amount</th>
+                <th>Number</th>
+                <th>Date Created</th>
+                <th>Date Modified</th>
+                <th></th>
+            </tr>
+        </thead>
+        {% for cert in pagination.items %}
+        <tr>
+            <td>{{cert.name}}</td>
+            <td>{{cert.campus.name}}</td>
+            <td>{{cert.amount_to_give}}</td>
+            <td>{{cert.total_certs}}</td>
+            <td>{{cert.created}}</td>
+            <td>{{cert.last_updated}}</td>
+            <td><a href="{{url_for('.gift_certificate_block_edit', id=cert.id)}}">Edit</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+  {{ macros.render_pagination(pagination, "admin.gift_certificate_block_list") }}
+</div>
+{% endblock %}

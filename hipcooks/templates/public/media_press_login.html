@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% from "macros.html" import div_field %}
+{% block title %}Hipcooks: Press Login{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    #contact_form label {
+        text-transform: uppercase;
+    }
+
+    #contact_form .col-sm-8 {
+        width: 395px;
+    }
+
+    #contact_form .col-sm-3 {
+        width: 60px;
+        padding-right: 0px;
+    }
+
+    #midsection {
+        width: 490px;
+        padding: 0;
+        margin-left: 34px;
+    }
+
+    .rightsection {
+        min-width: 300px;
+        padding-left: 10px;
+        line-height: 18px;
+    }
+
+    .location {
+        padding-left: 35px;
+    }
+
+    #contact_form input[type="text"], #contact_form textarea {
+        width: 408px;
+    }
+    .form-group {
+        margin: 0;
+    }
+
+    input.form_box, textarea.form_box {
+        margin: 1px 0;
+    }
+</style>
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'media_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-2 well" style="margin:15px;margin-left:100px">
+                <form class="form-horizontal blue_text uppercase" id="sign-in-form" method="POST">
+                    <div class="form-group">
+                        <label for="username" class="col-sm-3 control-label">Username</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="username" placeholder="username" value="Press">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-sm-3 control-label">Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control" id="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <input type="submit" class="form_button pull-right" id="sign-in-submit" value="Login">
+                </form>
+            </div>
+            <div class="col-sm-8 col-sm-offset-2 well" style="margin:50px">
+                <p class="JandaQuickNote-normal text16">If you'd like to request Press access, just fill out the form and send it along.</p>
+                <form method="POST" class="form-horizontal" id="contact-form">
+                    <div class="form_box">
+                        {{ form.csrf_token }}
+                        {{ div_field(form.name, class_="form_box form-control blue_border") }}
+                        {{ div_field(form.email, class_="form_box form-control blue_border") }}
+                        {{ div_field(form.note, class_="form_box form-control blue_border", extra_field_args={"rows": 10}) }}
+                    </div>
+                    <input type=submit value="Send" class="form_button pull-right" id="send-email">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+{% endblock %}

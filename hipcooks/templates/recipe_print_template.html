@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col-sm-8" id="recipes_header">
+        <h3 class="JandaQuickNote-normal orange_text pull-right" id="recipes_class_title">{{recipe_set.cls.title}}</h3>
+        <img src="/static/img/recipeheadergraphic.png" id="recipes_header_graphic">
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-8">
+        <br><br>
+        <p class="recipe_intro">
+            {{recipe_set.intro|safe}}
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-7 col-sm-offset-1">
+        <h3 class="JandaQuickNote-normal">Menu</h3>
+        <ul class="jack_bullets">
+            {% for recipe in recipe_set.ordered_recipes %}
+                <li>{{recipe.title}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% for recipe in recipe_set.ordered_recipes %}
+    <div class="row">
+        <div class="col-sm-8 recipe_card">
+            <h3 class="JandaQuickNote-normal">{{recipe.title}}</h3>
+            <p>
+                {{recipe.intro|safe}}
+            </p>
+            <p><i>
+                {{recipe.serves}}
+            </i></p>
+            <p class="blue_text">
+                {{recipe.ingredients|safe}}
+            </p>
+            <p>
+                {{recipe.instructions|safe}}
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <span class="orange_text">&copy; Hipcooks</span><span class="orange_text pull-right">www.hipcooks.com</span>
+        </div>
+    </div>
+{% endfor %}

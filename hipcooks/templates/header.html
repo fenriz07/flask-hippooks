@@ -1,0 +1,64 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 visible-md visible-lg" id="main_nav">
+            <ul class="uppercase">
+                {% for tab_campus in campuses %}
+                    <li class="tab {%if campus and tab_campus.id == campus.id%}active{%endif%}">
+                        <a href="{{url_for('.campus', id=tab_campus.id)}}">
+                            {{tab_campus.tab_name}}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="row" id="main_header">
+        <div class="col-sm-8" id="header_logo">
+            <a href="/"><img src="/static/img/headergraphic.png"></a>
+        </div>
+        <div class="col-sm-3 visible-lg text-center">
+            <span class="JandaQuickNote-normal" id="header_campus">{% if campus %}{{campus.name}}{% else %}No current campus{% endif %}</span>
+        </div>
+        <div class="col-sm-1" class="text-center">
+            <div id="header_cart" class="visible-lg">
+                <a href="/cart">
+                    <span id="cart_icon"></span>
+                    <span id="cart_qty">{{cart.size}}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 visible-md visible-lg" id="sub_nav">
+            <ul>
+                <li class="tab doublewide Teen-bold {% if subnav == 'dashboard' %}active{% endif %}">
+                    <a href="{{ url_for('.dashboard') }}">My Hipcooks</a>
+                </li>
+                <li class="tab {% if subnav == 'class' %}active{% endif %}">
+                    <a href="{{ url_for('.class_landing') }}">Classes</a>
+                </li>
+                <li class="tab {% if subnav == 'about' %}active{% endif %}">
+                    <a href="{{ url_for('.about_hipcooks') }}">About Us</a>
+                </li>
+                <li class="tab {% if subnav == 'resources' %}active{% endif %}">
+                    <a href="{{ url_for('.resources_kitchen') }}">Resources</a>
+                </li>
+                <li class="tab">
+                    <a target="_blank" href="http://blog.hipcooks.com">Recipe Blog</a>
+                </li>
+                <li class="tab {% if subnav == 'store' %}active{% endif %}">
+                    <a href="{{ url_for('.store') }}">Store</a>
+                </li>
+                <li class="tab {% if subnav == 'media' %}active{% endif %}">
+                    <a href="{{ url_for('.media_landing') }}">Media</a>
+                </li>
+                <li class="tab {% if subnav == 'directions' %}active{% endif %}">
+                    <a href="{{ url_for('.directions') }}">Directions</a>
+                </li>
+                <li class="tab last {% if subnav == 'contact' %}active{% endif %}">
+                    <a href="{{ url_for('.contact') }}">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

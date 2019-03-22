@@ -1,0 +1,10 @@
+#!/home/fen/Freelancer/Clientes/hipcooks/proyect/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'us==0.9.1','console_scripts','states'
+__requires__ = 'us==0.9.1'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('us==0.9.1', 'console_scripts', 'states')()
+    )

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Mission Statement{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'media_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-11 mission_title">
+                <h4 class="JandaQuickNote-normal">Mission Statement</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-11 JandaQuickNote-normal mission_statement">
+                <p>
+                    We say “Mission Accomplished!” when a student leaves a Hipcooks class planning the next time he'll be cooking.  You see, our aim is to empower and excite our students to go into their own kitchens and create! Of course, we teach mad skills (how to use a knife, how to flip ingredients in a sauté pan) - but we really focus on instilling confidence - with a dash of playfulness - in each of our classes.
+                </p>
+                <p>
+                    What you won't find at Hipcooks: stuffy teachers that you have to call "Chef" that dictate his way to do things. You know the kind - they make everything seem very complicated and fussy. That's not what we believe in. At Hipcooks, we "demystify" food and make it approachable. Like Gusteau says: "Anyone can cook!"
+                </p>
+                <p>
+                    Another thing you won't find at Hipcooks: measurements and recipes. Nope! You'll get those later (via email) after you attend a class. Cooking from a recipe is impersonal (and you already know how to follow a recipe). Instead we immerse you in the theme of that particular class and create the delicious dishes step by step, with explanations and anecdotes along the way.
+                </p>
+                <p>
+                    What you will find at Hipcooks is a fun environment with hands-on (experiential) learning. We won’t divide you into groups – we cook it all together. We focus on healthy, fresh, organic and local foods. Real Food, Real Menus. You’ll leave with a newfound confidence and a spring in your step. And hopefully, you’ll be cooking more at home!
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-11 text-right">
+                <img src="/static/img/missionphoto.jpg">
+                <br>
+                <span class="blue_text">photography by Lissa Hahn</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+<br>
+
+{% endblock %}

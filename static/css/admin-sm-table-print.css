@@ -1,0 +1,21 @@
+@media print {
+    .hipcooks-data-header {
+        padding: 0;
+    }
+    .hipcooks-data-wrapper {
+        display: inline-block;
+    }
+    .hipcooks-data {
+        padding: 0;
+    }
+    .data-inner.auto-width .table {
+        min-width: 700px;
+    }
+    .col-sm-12,
+    .col-md-12 {
+        width: auto;
+    }
+    .hipcooks-side {
+        display: none;
+    }
+}

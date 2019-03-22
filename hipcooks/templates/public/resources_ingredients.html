@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Resources - Ingredients From Class{% endblock %}
+{% block content %}
+
+<style>
+    .product-img {
+        width: 187px;
+        border: 2px solid #03ABD0;
+        line-height: 187px;
+        text-align: center;
+        position: relative;
+    }
+
+    .product-img img{
+        max-width: 100%;
+    }
+
+    .product {
+        display: inline-block;
+        margin-bottom: 30px;
+        width: 25%;
+        float: left;
+    }
+
+    .product span.text12 {
+        display: block;
+        width: 186px;
+    }
+
+    .product_row {
+        margin-left: 0;
+        margin-right: 0;
+        width: 815px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 800px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    #heading {
+        letter-spacing: 1;
+        padding-top: 8px;
+        padding-bottom: 5px;
+        display: block;
+    }
+
+    #q {
+        border: 2px solid #aaaaaa;
+        border-radius: 2px;
+        display: inline-block;
+        height: 22px;
+        width: 148px;
+        margin-right: -3px;
+        margin-left: 5px;
+        color: #03ABD0;
+        padding-left: 5px;
+    }
+
+    #search_button {
+        display: none;
+    }
+
+    #page_title {
+        display: inline-block;
+        margin-left: 15px;
+        margin-top: 10px;
+        margin-bottom: -15px;
+    }
+
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'resources_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div>
+                <form>
+                    <div class="input-group pull-right text16" id="search_form">
+                        SEARCH:
+                        <input name="q" type="text" id="q">
+                        <button id="search_button" type="submit">&nbsp;<i class="glyphicon glyphicon-search"></i>&nbsp;</button>
+                    </div><!-- /input-group -->
+                </form>
+            </div>
+        </div>
+        <br>
+        {% for row in items|batch(4) %}
+        <div class="row product_row">
+            {% for item in row %}
+            <div class="product">
+                <div class="product-img">
+                    <img src="{{item.pic_url}}">
+                </div>
+                <br>
+                <span class="text12"><strong>{{item.name}}</strong><span class="blue_text"> - {{item.description}}</span></span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<br>
+
+{% endblock %}

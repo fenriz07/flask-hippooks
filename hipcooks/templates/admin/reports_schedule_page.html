@@ -1,0 +1,21 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor, report_show_field as show_field %}
+{% block title %}Schedule Page Report{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-body">
+          <h3 class="hipcooks-script">Schedule Page Report</h3>
+            <div class="row add-edit">
+                <form class="add-edit form-inline" method="POST">
+                    {{form.csrf_token}}
+                    {{show_field(form.teacher)}}
+                    {{show_field(form.studio)}}
+                    {% include "admin/report_date_select.html" %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{ enrich_editor() }}
+{% endblock %}

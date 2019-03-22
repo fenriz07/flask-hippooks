@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: What's In Our Kitchen{% endblock %}
+{% macro show_category(name, products) %}
+<div class="category_name orange_text">
+    <a name="{{name}}">{{name}}</a>
+</div>
+{% for row in products|batch(4) %}
+    <div class="row product_row">
+        {% for item in row %}
+        <div class="product">
+            {{caller(item)}}
+        </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+{% endmacro %}
+{% block content %}
+
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 798px;
+        padding-left: 7px;
+        display: inline-block;
+    }
+
+    .category_name {
+        position: relative;
+        right: 160px;
+        top: 17px;
+        width: 146px;
+        text-align: right;
+    }
+
+    .category_name a {
+        color: #F26200 !important;
+        font-weight: bold !important;
+    }
+
+    .product {
+        display: inline-block;
+        margin-bottom: 30px;
+        width: 25%;
+        float: left;
+    }
+
+    .product a img{
+        border: 2px solid #03ABD0;
+        width: 186px;
+    }
+
+    .product span.text12 {
+        display: block;
+        width: 186px;
+    }
+
+    .product a span {
+        color: black;
+    }
+
+    .product:hover a span {
+        color: #03ABD0;
+    }
+
+    .product_row {
+        margin-left: 0;
+        margin-right: 0;
+        width: 815px;
+    }
+
+    #miele_popup {
+        width: 576px;
+        height: 229px;
+        position: absolute;
+        top: 350px;
+        left: 125px;
+        -webkit-box-shadow: -25px 25px 25px 0px rgba(0,0,0,0.25);
+        -moz-box-shadow: -25px 25px 25px 0px rgba(0,0,0,0.25);
+        box-shadow: -25px 25px 25px 0px rgba(0,0,0,0.25);
+        display: none;
+        cursor: pointer;
+    }
+
+    #vitamix_popup {
+        width: 576px;
+        height: 229px;
+        position: absolute;
+        top: 850px;
+        left: 125px;
+        -webkit-box-shadow: -25px 25px 25px 0px rgba(0,0,0,0.25);
+        -moz-box-shadow: -25px 25px 25px 0px rgba(0,0,0,0.25);
+        box-shadow: -25px 25px 25px 0px rgba(0,0,0,0.25);
+        display: none;
+        cursor: pointer;
+        background: white;
+        border: solid black 2px;
+        padding: 28px;
+    }
+
+    #vitamix_popup p {
+        margin-left: 80px;
+        margin-top: 10px;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'resources_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-12">
+                <img src="/static/img/Hipcooks_Whats_in_Our_Kitchen_Header.jpg">
+                <br><br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 text-center orange_text text18 JandaQuickNote-normal">
+                Click on photos to buy at a great price!
+            </div>
+        </div>
+        <div id="miele_popup">
+            <img src="/static/img/MielePopupScreen.png">
+        </div>
+        {% call(item) show_category("Large Appliances", large_appliances) %}
+            <a
+            {% if item.manufacturer in special_manufacturers %}
+            href="#" class="{{item.manufacturer|lower}}">
+            {% else %}
+            href="{{item.pdf_url}}">
+            {% endif %}
+                <img src="{{item.pic_url}}">
+                <br>
+                <span class="text12">{{item.name}}</span>
+            </a>
+        {% endcall %}
+        <div id="vitamix_popup">
+            <img src="/static/img/vitamix_logo.png">
+            <br>
+            <p>We can get you an unbeatable price on a Vitamix shipped straight to your door.
+               Move over, Costco!
+               Please write to <a href="mailto:kyrsten@hipcooks.com?subject=Vitamix">kyrsten@hipcooks.com</a> for product details and pricing.</p>
+        </div>
+        {% call(item) show_category("Small Appliances", small_appliances) %}
+            <a
+            {% if item.manufacturer in special_manufacturers %}
+            href="#" class="{{item.manufacturer|lower}}">
+            {% else %}
+            href="{{item.link}}">
+            {% endif %}
+                <img src="{{item.pic_url}}">
+                <br>
+                <span class="text12">{{item.name}}</span>
+            </a>
+        {% endcall %}
+        {% call(item) show_category("Kitchen Items", kitchen_items) %}
+            <a href="{{url_for('.store_product', product_id=item.id)}}">
+                <img src="{{item.thumbnail_url}}">
+                <br>
+                <span class="text12">{{item.name}}</span>
+            </a>
+        {% endcall %}
+
+    </div>
+</div>
+<br>
+<script type="text/javascript">
+    $(".miele").on("click", function(event){
+        event.preventDefault();
+        $("#miele_popup").show();
+    });
+    $("#miele_popup").on("click", function(event){
+        $("#miele_popup").hide();
+    });
+
+    $(".vitamix").on("click", function(event){
+        event.preventDefault();
+        $("#vitamix_popup").show();
+    });
+    $("#vitamix_popup").on("click", function(event){
+        $("#vitamix_popup").hide();
+    });
+
+</script>
+{% endblock %}

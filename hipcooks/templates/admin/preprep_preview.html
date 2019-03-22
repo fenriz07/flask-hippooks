@@ -1,0 +1,83 @@
+{% extends "/admin/base.html" %}
+{% block title %}Setup{% endblock %}
+{% block header %}
+<script type="text/javascript">
+$(function() {
+    var toggle = function(e) {
+        $(this).parent().parent().siblings(".hideable").children().toggle();
+        $(this).parent().parent().toggleClass('no-print');
+        $(this).parent().parent().siblings(".hideable").toggleClass('no-print');
+    };
+
+    var pointToggle = function(e) {
+        $(this).parent().parent().next('.round-points').find('.teaching-point').toggle();
+        $(this).parent().parent().next('.round-points').find('.teaching-point').toggleClass('no-print');
+        $(this).parent().parent().siblings(".hideable").toggleClass('no-print');
+    };
+
+    $(".toggle-button").click(toggle);
+    $(".tp-button").click(pointToggle);
+    $(".print-button").click(function(){
+        window.print();
+    } )
+});
+</script>
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Karla:400,400italic,700,700italic);
+
+    .print-button {
+        margin: 10px;
+    }
+    .panel-body {
+        border: none;
+    }
+    @media print {
+        .no-print {
+            display: none;
+        }
+    }
+
+    body {
+        font-family: Karla, "Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size: 16px;
+    }
+
+    .print-panel p {
+        padding: 0;
+    }
+
+</style>
+{% endblock %}
+{% macro toggle_button() %}
+    <button class="btn btn-secondary toggle-button btn-sm no-print">+/-</button>
+{% endmacro %}
+{% block content %}
+<div class="container">
+    <div class="printable-panel">
+        <button type="button" class="btn btn-primary print-button no-print pull-right">Print this page</button>
+        <div class="panel-body">
+            <div class="row print-title">
+                <div class="col-md-12">
+                    {{preprep_list.name}}
+                </div>
+            </div>
+            {% for item in preprep_list.items %}
+              <div class="row print-title"    >
+                  <div class="col-md-12">
+                      {{ item.setup.cls.title }}
+                  </div>
+              </div>
+              <div class="round-details">
+                  <div class="row">
+                      <div class="col-md-12 hideable">
+                          {{item.text|safe}}
+                      </div>
+                  </div>
+              </div>
+            {% endfor %}
+            </div>
+            <button type="button" class="btn btn-primary print-button no-print pull-right">Print this page</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

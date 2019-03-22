@@ -1,0 +1,177 @@
+{% extends "/admin/base.html" %}
+{% block title %}Sales{% endblock %}
+{% block head %}
+{{ super() }}
+<script type="text/javascript">
+$(function () {
+    $(".related-product").click(function (e) {
+        e.preventDefault();
+        product_id = e.target.dataset.id;
+        product_type = e.target.dataset.type;
+        $.get("{{url_for('.sales_product_details')}}", data={
+                  id: product_id,
+              },
+              success=function (data) {
+                  $('#selected_product_id').val(data.selected_product_id);
+                  $("#icon").attr("src", data.image_url);
+                  $("#price").html(data.price);
+                  $("#product_name").text(data.type);
+                  $("#description").html(data.description);
+                  if (data.quantity > 0) {
+                      dropdown = $("<select id='quantity' name='quantity' class='form-control'></select>")
+                      for (var i = 1; i <= data.quantity; i++) {
+                          dropdown.append("<option value="+i+">"+i+"</option>");
+                      }
+                      $("#quantity").replaceWith(dropdown);
+                      $("#has-stock").show()
+                      $("#out-of-stock").hide()
+                  } else {
+                      $("#has-stock").hide()
+                      $("#out-of-stock").show()
+                  }
+          });
+    });
+});
+</script>
+<style>
+    #icon {
+        max-width: 500px;
+        border: 1px solid black;
+        display: inline-block;
+        margin-bottom: 50px;
+
+    }
+
+    #first_row {
+        margin-top: 40px;
+        margin-left: 20px;
+    }
+
+    #second_row {
+        padding-top: 100px;
+        margin-top: 40px;
+        margin-left: 20px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #product_info {
+        display: inline-block;
+        margin-left: 240px;
+        vertical-align: top;
+        width: 320px;
+    }
+
+    #has-stock {
+        position: absolute;
+        right: 55px;
+    }
+
+    #has-stock .form-inline {
+        margin-bottom: 0px;
+        /*display: block;*/
+    }
+
+
+    .product-block {
+        position: relative;
+        display: inline-block;
+        float: left;
+        margin-right: 13px;
+        margin-bottom: 13px;
+        width: 130px;
+        height: 106px;
+        overflow: hidden;
+        border: 1px solid black;
+    }
+
+    .product-block:hover {
+        border: 1px solid #03ABD0;
+    }
+
+    #product_price {
+        float: right;
+    }
+</style>
+{% endblock %}
+{% macro show_field(field) %}
+    {% if field.errors|length > 0 %}
+    <div class="row">
+        <div class="col-md-12">
+            <span class="text-danger">{{field.errors[0]}}</span>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-2">
+            {{field.label(class_="control-label")}}
+        </div>
+        <div class="col-md-3">
+            {{field(class_="form-control")}}
+        </div>
+    </div>
+{% endmacro %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+        <h3 class="hipcooks-script">Add Products to Sale</h3>
+        <form class="add-edit" method="POST">
+            <div class="panel-body">
+              <div class="col-sm-12" id="first_row">
+                  <img src="{{product.url}}" id="icon">
+                  <div id="product_info">
+                      <div id="product_price">
+                          <strong><span>$<span id="price">{{product.price}}</span></span></strong>
+                          <div id="out-of-stock"{% if remaining > 0 %}hidden{% endif %}>
+                              <strong><span style="color:darkorange" class="pull-right stock_out">Out of Stock</span></strong>
+                          </div>
+                      </div>
+                      <div class=id="product_name">
+                          <strong>{{product.name}}</strong>
+                      </div>
+                      <div id="description">
+                          {{product.description}}
+                      </div>
+                      <div id="has-stock" {% if remaining <= 0 %}hidden{% endif %} class="form-inline">
+                          <form class="form-inline pull-right" method="POST">
+                              <input hidden type="text" name="selected_product_id" id="selected_product_id" value="{{product.id}}">
+                              <div class="form-group">
+                                  {{form.csrf_token}}
+                                  Qty:
+                                  <select id="quantity" name="quantity" class="form-control">
+                                      {% for i in range(1, remaining+1) %}
+                                          <option value="{{i}}">
+                                              {{i}}
+                                          </option>
+                                      {% endfor %}
+                                  </select>
+                                  <button type="submit" class="form_button inverted">Add to Cart</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+
+              {% if related_products.count() > 1 %}
+              <div class="row" id="second_row">
+                  <div class="col-sm-12">
+                      {% for related_product in related_products %}
+                      <div class="inline_block text-center product-block">
+                          <a href="#" class="related-product" title="{{related_product.type}}">
+                              <img src="{{related_product.thumbnail_url}}" data-id="{{related_product.id}}">
+                          </a>
+                      </div>
+                      {% endfor %}
+                  </div>
+              </div>
+              {% endif %}
+
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

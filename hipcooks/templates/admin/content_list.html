@@ -1,0 +1,42 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Content list{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row hipcooks-title">
+        <div class="col-lg-9 col-md-8">
+            <h2 class="hipcooks-script">Content</h2>
+                {% if user.can_update('content') %}
+                    <div>
+                        <a class="script-link-btn noprint" href="{{url_for('.content_edit')}}">Add New Content</a>
+                    </div>
+                {% endif %}
+        </div>
+    </div>
+    <table class="table table-striped table-hover" border=0>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Page Title</th>
+                <th>Category</th>
+                <th>Email Subject</th>
+                <th></th>
+                <th>Text</th>
+                <th>Path</th>
+            </tr>
+        </thead>
+        {% for page in pagination.items %}
+        <tr>
+            <td>{{page.description}}</td>
+            <td>{{page.title}}</td>
+            <td>{{page.full_category}}</td>
+            <td>{{page.email_subject}}</td>
+            <td><a href="{{url_for('.content_edit', id=page.id)}}">Edit</a></td>
+            <td>{{page.body | truncate(50)}}</td>
+            <td>{{page.path}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  {{ macros.render_pagination(pagination, "admin.content_list") }}
+</div>
+{% endblock %}

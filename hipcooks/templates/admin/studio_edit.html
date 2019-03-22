@@ -1,0 +1,61 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Studio Edit{% endblock %}
+{% block head %}
+{{ super() }}
+<script src="/static/js/spectrum.js"></script>
+<link rel="stylesheet" href="/static/css/spectrum.css">
+<script>
+$(function () {
+    $("#color_code").spectrum({
+        preferredFormat: "hex3",
+        showInput: true,
+        showPalette: true,
+        hideAfterPaletteSelect:true,
+        palette: [["black", "gray", "silver", "white", "DarkTurquoise", "lightblue", "blue", "darkblue", "red", "purple", "lime", "green", "magenta", "orange", "brown", "yellow"]]
+    });
+    $("#color_code").show();
+})
+</script>
+{{ enrich_editor() }}
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h3 class="hipcooks-script">Add/Edit Studio</h3>
+        <div class="row add-edit">
+            <img src="{{studio.photo_route}}" class="left-pad">
+            <form method="POST" enctype=multipart/form-data class="add-edit">
+                {% for field in form %}
+                    {% if field.name == "csrf_token" %}
+                        {{field}}
+                    {% else %}
+                        {% if field.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="text-danger">{{field.errors[0]}}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-2">
+                                {{field.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-10">
+                                {{field(class_="form-control large-input")}}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="col-md-2">
+                {% if user.can_update('campus') %}
+                    <input class="btn btn-primary btn-sm" type="submit" value="Save">
+                {% endif %}
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}

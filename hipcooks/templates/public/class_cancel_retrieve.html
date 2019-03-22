@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% from "/macros.html" import div_field %}
+{% block title %}Hipcooks: Cancel Class{% endblock %}
+{% block content %}
+<style>
+    #retrieve_form > label {
+        font-weight: normal;
+        font-size: 16px;
+        white-space: nowrap;
+    }
+
+    #retrieve_input .form_box {
+        margin-top: 0px;
+        height: 30px;
+    }
+
+    #retrieve_form button {
+        margin-left: -25px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'classes_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="messages">
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <ul class=flashes>
+              {% for message in messages %}
+                <li class='text-primary'>{{ message }}</li>
+              {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <h4 class="JandaQuickNote-normal">
+                    To retrieve your reservation, enter your Reservation Code or Log into <a class="orange_text" href="{{url_for('.dashboard')}}">My Hipcooks</a>
+                </h4>
+                <form method="POST">
+                    {{form.csrf_token}}
+                    {% if form.code.errors|length > 0 %}
+                        <span class="text-danger">
+                            {{form.code.errors[0]}}
+                        </span>
+                    {% endif %}
+                    <div class="form-group" id="retrieve_form">
+                        {{form.code.label(class_="col-sm-offset-2 col-sm-3")}}
+                        <div class="col-sm-3" id="retrieve_input">
+                            {{form.code(class_="form_box")}}
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" class="form-inline form_button">Retrieve</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <br>
+                <img src="/static/img/cancelpage_photo.jpg">
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+{% endblock %}

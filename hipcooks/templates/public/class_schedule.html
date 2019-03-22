@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks Class Schedule{% endblock %}
+{% macro display_form(form) %}
+    {{form.csrf_token}}
+    {% for field in form if field.short_name not in ("csrf_token", "submit") %}
+        {% if field.errors|length > 0 %}
+        <tr>
+            <td colspan=2>
+                <p class="text-danger">{{field.errors[0]}}</p>
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td class="blue_text">
+                {{field.label(class_="control-label")}}
+            </td>
+            <td>
+                {% if field.type == "BooleanField" %}
+                    {{field()}}
+                {% else %}
+                    {{field(class_="form-control")}}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endmacro %}
+{% macro submit_button(form) %}
+    {% if schedule.floored_remaining_spaces() %}
+        {{form.submit(value="Add to Cart", class_="form_button pull-right")}}
+    {% else %}
+        {{form.submit(value="Waitlist", class_="form_button pull-right")}}
+    {% endif %}
+{% endmacro %}
+
+{% block head %}
+{{super()}}
+<style>
+    input[type=submit] {
+        margin-right: 15px;
+        margin-top: 10px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    .class_details_table {
+        table-layout: fixed;
+    }
+
+    #schedule_info {
+        background-color: #EEF8FC;
+        margin-left: 15px;
+        margin-top: -1px;
+        width: 356px;
+    }
+
+    #description, .description {
+        width: 355px !important;
+    }
+
+    #skills_list, .skills_list {
+        width: 189px;
+    }
+
+    #skills_list ul {
+        padding-left: 12px;
+        font-size: 20px;
+        line-height: 15px;
+    }
+
+    #skills_list li span {
+        font-size: 12px;
+        vertical-align: top;
+    }
+
+    #menu_list, .menu_list {
+        width: 285px;
+    }
+
+    #menu_list ul.jack_bullets {
+        list-style: none;
+    }
+
+    #menu_list ul.jack_bullets li {
+        background: url("/static/img/jacks_small.png") no-repeat 0px -2px;
+        padding-left: 20px;
+        padding-top: 3px;
+        margin: 0 0 7px 0;
+        line-height: 12px;
+        min-height: 16px;
+    }
+
+    #menu_list ul.jack_bullets li span {
+    }
+
+    #class_head th {
+        font-size: 16px;
+        line-height: 16px;
+        font-weight: normal;
+        padding-top: 10px;
+    }
+
+    #returning, #new_cooks {
+        border: solid 1px #BBEFFB;
+        padding: 0px;
+        margin-left: 15px;
+        width: 382px;
+        display: inline-block;
+        float: left;
+        margin-right: 15px;
+    }
+
+    #returning th, #new_cooks th {
+        height: 60px;
+    }
+
+    #returning label, #new_cooks label {
+        font-size: 14px;
+        float: right;
+        text-align: right;
+    }
+
+    #returning th, #newcooks_title {
+        padding-top: 16px;
+    }
+
+    #returning td, #new_cooks td {
+        padding: 5px;
+    }
+
+    #newcooks_disclaimer {
+        padding-left: 15px;
+        padding-bottom: 10px;
+        width: 262px;
+        font-weight: normal;
+        margin-top: -3px;
+    }
+
+    #newcooks_title, #newcooks_disclaimer {
+        display: inline-block;
+        vertical-align: top;
+        height: 60px;
+    }
+
+    .sidebar_img {
+        margin-left: 16px;
+        width: 175px;
+    }
+
+    .to_taste {
+      padding-left: 20px;
+    }
+
+    a#cancel_link {
+        color: #F26200;
+        text-decoration: underline;
+    }
+
+    input.form-control, select {
+        border: solid 1px #03ABD0 !important;
+        border-radius: 0px;
+    }
+
+    #cancellation_policy_text {
+        position: absolute;
+        width: 800px;
+        max-height: 440px;
+        background: white;
+        top: 40px;
+        left: 20px;
+        border: solid 1px #03ABD0;
+        padding: 10px;
+        overflow-y: scroll;
+        display: none;
+    }
+    #cancellation_policy_text h2 {
+        font-size: 20px;
+    }
+    #policy_close:hover {
+        cursor: pointer;
+    }
+
+</style>
+<script>
+$(function() {
+
+  function addGuestFields(obj) {
+
+    var numberOfGuests = parseInt(obj.val());
+    var parentRow = obj.closest('tr');
+
+    obj.closest('tbody').children('.guest-rows').remove();
+    if (numberOfGuests > 0) {
+      var labelRow = $('#guest_labels').find("tr").clone();
+      labelRow.insertAfter(parentRow);
+      for (i = 0; i < numberOfGuests; i++) {
+        var guestFieldRow = $('#guest_fields').find("tr").clone()
+        var inputs = guestFieldRow.find(':input');
+        $(inputs[0]).attr('name', 'guest_name_' + i);
+        $(inputs[1]).attr('name', 'guest_email_' + i);
+        guestFieldRow.insertAfter(labelRow)
+      }
+    }
+  }
+
+  $('#sign-in-guests').change(function () {
+    addGuestFields($(this));
+  });
+  $('#sign-in-guests').trigger('change');
+
+  $('#register-guests').change(function () {
+    addGuestFields($(this));
+  });
+  $('#register-guests').trigger('change');
+
+  $('#guests').change(function () {
+    addGuestFields($(this));
+  });
+  $('#guests').trigger('change');
+
+  $("#cancellation_policy").change(function(){
+      $("#cancellation_policy_text").hide();
+  })
+  $("#cancel_link").on('click', function(event){
+      event.preventDefault();
+      $("#cancellation_policy_text").show();
+  });
+  $("#policy_close").on('click', function(){
+      $("#cancellation_policy_text").hide();
+  });
+
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'classes_sidebar.html' %}
+        {% for photo in details.photos %}
+            <img src="{{photo.url}}" class="sidebar_img">
+        {% endfor %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="class_details_table">
+                    <thead>
+                        <tr id="class_head" class="text16">
+                            <th class="JandaQuickNote-normal description" width="355">
+                                {{details.title}}
+                            </th>
+                            <th class="menu_list" style="padding-top: 5px;">
+                                Menu
+                            </th>
+                            <th class="skills_list">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text12 description" id="description">
+                                {{details.description}}
+                            </td>
+                            <td class="text12 menu_list" id="menu_list">
+                                <ul class="jack_bullets">
+                                    {{details.menu|nl2li}}
+                                    <span class="to_taste">To taste: {{details.wine}}</span>
+                                </ul>
+                            </td>
+                            <td class="text12 skills_list" id="skills_list">
+                                <ul>
+                                    {% if details.knife != "N/A" %}<li class="orange_text"><span>{{details.knife}}</li></span>{% endif %}
+                                    {% if details.veggie != "N/A" %}<li class="green_text"><span>{{details.veggie}}</li></span>{% endif %}
+                                    {% if details.wheat != "N/A" %}<li class="gold_text"><span>{{details.wheat}}</li></span>{% endif %}
+                                    {% if details.dairy != "N/A" %}<li class="blue_text"><span>{{details.dairy}}</li></span>{% endif %}
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="details_blue_border text12" id="schedule_info">
+                <div class="details_left orange_text">Date:&nbsp;</div><div class="details_right blue_text">{{schedule.formatted_date}}</div>
+                <br>
+                <div class="details_left orange_text">Cost:&nbsp;</div><div class="details_right blue_text">${{schedule.cost}}</div>
+                <br>
+                <div class="details_left orange_text">Time:&nbsp;</div><div class="details_right blue_text">{{schedule.time_range}}</div>
+                <br>
+                <div class="details_left orange_text">Available Spots:&nbsp;</div><div class="details_right blue_text">{{schedule.floored_remaining_spaces("WAITLIST ONLY")}}</div>
+                <br>
+                <span class="orange_text"><img src="/static/img/jacks_small.png"> Please no one under age 18 without prior permission</span>
+            </div>
+        </div>
+
+        <br>
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="JandaQuickNote-normal text18">Sign up for this class...</h3>
+            </div>
+        </div>
+
+        {% if user_id is none %}
+        <div class="row">
+            <div id="returning">
+                <form method="POST">
+                    <table class="details_sign_up_table">
+                        <thead>
+                            <tr>
+                                <th class="JandaQuickNote-normal text18" colspan="2">Returning Cooks</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {{display_form(sign_in_form)}}
+                        </tbody>
+                    </table>
+                    {{submit_button(sign_in_form)}}
+                </form>
+            </div>
+            <div class="text-center inline_block pull-left">
+                <br>
+                <h4> OR</h4>
+            </div>
+            <div class="col-sm-6" id="new_cooks">
+                <form method="POST">
+                <table class="details_sign_up_table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">
+                                <span class="JandaQuickNote-normal text18" id="newcooks_title">New Cooks</span>
+                                <span class="text12" id="newcooks_disclaimer">
+                                    This creates a Hipcooks login so you can later access your reservation, make changes, and see the class recipes. We do not share your information with anyone.
+                                    <a href="{{url_for('.policies')}}#privacy" class="orange_text">Privacy Policy.</a>
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{display_form(register_form)}}
+                    </tbody>
+                </table>
+                {{submit_button(register_form)}}
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="row">
+            <div class="col-sm-5">
+                <form method="POST">
+                    <table class="details_sign_up_table">
+                        <thead>
+                            <tr>
+                                <th class="JandaQuickNote-normal" colspan="2">Information</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{display_form(schedule_form)}}
+                        </tbody>
+                    </table>
+                    {{submit_button(schedule_form)}}
+                </form>
+            </div>
+        </div>
+        {% endif %}
+        <div id="cancellation_policy_text">
+            <a id="policy_close" class="pull-right"><span class="glyphicon glyphicon-remove"></span></a>
+            {{include_content("/terms/cancellation/body")}}
+        </div>
+    </div>
+</div>
+<table id="guest_labels" class="hidden">
+  <tr class="guest-rows">
+    <td class="blue_text"><label for="" class="control-label">Guest name(s)</label></td>
+    <td class="blue_text"><label for="" class="control-label">Guest email(s)</label></td>
+  </tr>
+</table>
+<table id="guest_fields" class="hidden">
+  <tr class="guest-rows">
+    <td class="blue_text"><input type="text" class="form-control"></td>
+    <td class="blue_text"><input type="text" class="form-control"></td>
+  </tr>
+</table>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}{% if order.id %}Edit{% else %}Add{% endif %} Order{% endblock %}
+{% block head %}
+{{ super() }}
+{{ enrich_editor() }}
+<script src="/static/js/bootbox.min.js"></script>
+<script>
+$(function() {
+    function addItem(e) {
+        if (e) {
+            e.preventDefault();
+        }
+
+        $("#blank-item")
+            .find("tr")
+            .clone()
+            .insertBefore($("#item-end"));
+        $(".remove-item").off().click(removeItem);
+    }
+
+    function removeItem(e) {
+        e.preventDefault();
+
+        $(e.target)
+            .parents("tr")
+            .remove();
+    }
+
+    $(".add-item").click(addItem);
+    $(".remove-item").click(removeItem);
+
+    $("#email-editor-toggle").click(function(e) {
+        e.preventDefault();
+        $(this).hide();
+        $("#email-editor").toggle();
+    });
+
+    $("#email-form").submit(function(e) {
+        e.preventDefault();
+        form = $(this);
+        $.post(form.attr("action"), form.serialize())
+            .done(function() {
+                $("#email-editor").toggle(false);
+                $("#email-success").toggle(true);
+                $("#email-failure").toggle(false);
+            })
+            .error(function() {
+                $("#email-failure").toggle(true);
+            })
+    })
+
+    $("a.delete-link").click(function(e) {
+        bootbox.confirm("Are you sure?", function(result) {
+          if (result === true) {
+            $('#order-form').append('<input type="hidden" name="delete" value="Delete" /> ');
+            $('#order-form').submit();
+          }
+        });
+    });
+
+});
+</script>
+<style>
+    #guestlist {
+        width: 100%;
+    }
+
+    #guestlist th {
+        padding-bottom: 10px;
+        font-size: 14px;
+    }
+
+    #guestlist input, #guestlist .remove-item {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    #guestlist .cancel_checkbox {
+        margin-left: 30px;
+    }
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h3 class="hipcooks-script">{% if order.id %}Edit{% else %}Add{% endif %} Order</h3>
+        {% if order.id %}
+        <div class="row">
+            <div class="col-lg-9 col-md-8 shopping-list-link">
+                <a id="email-editor-toggle" class="script-link-btn" href="#">Send Confirmation by Email</a>
+                <div id="email-success" hidden>
+                    <b>Successfully sent emails.</b>
+                </div>
+                <div id="email-editor" class="col-md-offset-1 col-md-11" hidden>
+                    <form id="email-form" action="{{url_for('.send_order_confirmation', id=order.id)}}" method="POST">
+                        {{email_form.csrf_token}}
+
+                        <div class="row email-form">
+                            <div class="col-md-2">
+                                {{email_form.from_email.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-10">
+                                {{email_form.from_email(class_="form-control")}}
+                            </div>
+                        </div>
+
+                        {% if email_form.subject.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="text-danger">{{email_form.subject.errors[0]}}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="row email-form">
+                            <div class="col-md-2">
+                                {{email_form.subject.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-10">
+                                {{email_form.subject(class_="form-control")}}
+                            </div>
+                        </div>
+
+                        <div class="row email-form">
+                            <div class="col-md-2">
+                                {{email_form.emails.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-10">
+                                {{email_form.emails(class_="form-control")}}
+                            </div>
+                        </div>
+
+                        {% if email_form.body.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="text-danger">{{email_form.body.errors[0]}}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="row email-form">
+                            <div class="col-md-2">
+                                {{email_form.body.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-10">
+                                {{email_form.body(class_="form-control")}}
+                            </div>
+                        </div>
+
+                        <input class="btn btn-primary" type="submit" value="Send">
+                        <div id="email-failure" hidden>
+                            There was an error sending the emails.
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row add-edit">
+            <form method="POST" enctype=multipart/form-data class="add-edit" id="order-form">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Schedule:</label>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="schedule" class="form-control full-width-input">
+                            {% for schedule in schedules %}
+                            <option value="{{schedule.id}}" {% if schedule.id == order.schedule_id %}selected{% endif %}>
+                                    {{schedule.date.strftime("%a %m/%d/%Y")}} @
+                                    {{schedule.time.strftime("%-I:%M%p")}}
+                                    -- {{schedule.cls.abbr}} @ {{schedule.campus.domain}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                {% for field in form %}
+                    {% if field.name == "csrf_token" %}
+                        {{field}}
+                    {% else %}
+                        {% if field.errors|length> 0 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="text-danger">{{field.errors[0]}}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-2">
+                                {{field.label(class_="control-label")}}
+                            </div>
+                            <div class="col-md-10">
+                              {% if field.name in ('first_name', 'last_name', 'email') %}
+                                {{field(class_="form-control expanded-input" )}}
+                              {% else %}
+                                {{field(class_="form-control" )}}
+                              {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% if order.id %}
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>Code:</label>
+                        </div>
+                        <div class="col-md-10">
+                            {{order.code}}
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row add-edit">
+                    <div class="col-md-6">
+                        <h4>Guests</h4>
+                        <table id="guestlist">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Cancelled</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                            {% for guest in order.guests %}
+                              <tr class="item">
+                                  <td>
+                                      <input type="hidden" name="guest_ids" value="{{guest.id}}" />
+                                      <input type="text" class="form-control expanded-input" name="guest_names" value="{{guest.name}}" />
+                                  </td>
+                                  <td><input type="text" class="form-control expanded-input" name="guest_emails" value="{{guest.email}}" /></td>
+                                  <td><input type="checkbox" class="form-control cancel_checkbox" name="guest_cancellations" value="{{guest.id}}" {% if guest.cancelled %}checked{% endif %} /></td>
+                                  <td class="delete_item">{% if user.can_update('schedule') %}<a href="#" class="remove-item" title="Delete"><i class="glyphicon glyphicon-remove text-danger"></i></a>{% endif %}</td>
+                              </tr>
+                            {% endfor %}
+                            {% if user.can_update('schedule') %}
+                              <tr id="item-end"><td colspan=4><a href="#" class="add-item btn btn-primary btn-sm">Add Guest <i class="glyphicon glyphicon-plus"></i></a></td></tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+                {% if user.can_update('schedule') %}
+                    <div class="col-md-12">
+                        <input class="btn btn-primary btn-sm" type="submit" value="Save">
+                        <input class="btn btn-primary btn-sm" type="submit" name="submit-continue" value="Save and continue editing">
+                        <a class="delete-link" href="#"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete</a>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+<table id="blank-item" class="hidden">
+    <tr class="item">
+        <td>
+            <input type="hidden" name="guest_ids" value="NEW" />
+            <input type="text" class="form-control expanded-input" name="guest_names" value="" />
+        </td>
+        <td><input type="text" class="form-control expanded-input" name="guest_emails" value="" /></td>
+        <td><input type="checkbox" class="form-control cancel_checkbox" name="guest_cancellations"/></td>
+        {% if user.can_update('schedule') %}
+          <td class="delete_item"><a href="#" class="remove-item" title="Delete"><i class="glyphicon glyphicon-remove text-danger"></i></a></td>
+        {% endif %}
+    </tr>
+</table>
+{% endblock %}

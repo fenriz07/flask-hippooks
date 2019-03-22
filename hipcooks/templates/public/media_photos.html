@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Photo Gallery{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/css/magnific-popup.css">
+<script type="text/javascript" src="/static/js/jquery.scrollTo.min.js"></script>
+<style>
+    #photolinks a img {
+        border: solid 1px #00ADCD;
+        max-height: 153px;
+        max-width: 187px;
+    }
+
+    #photolinks a {
+        margin: 0 13px 0 0;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .img_bg {
+        display: inline-block;
+        margin-bottom: 3px;
+    }
+
+    #photolinks a:hover .img_bg {
+        background-color: #FFF;
+    }
+
+    #photolinks a:hover img {
+        opacity: 0.8;
+    }
+
+    #big_photo {
+        border: solid 2px #00ADCD;
+        width: 815px;
+        height: 494px;
+    }
+
+    #big_photo_container {
+        position: relative;
+        width: 815px;
+    }
+    #big_caption {
+        text-align: right;
+        width: 815px;
+        margin-bottom: 20px;
+        min-height: 20px;
+    }
+
+    #prev_box,
+    #next_box {
+        width: 50%;
+        height: 490px;
+        position: absolute;
+        top: 2px;
+        cursor: pointer;
+    }
+
+    #prev_box {
+        left: 2px;
+    }
+
+    #next_box {
+        right: 2px;
+    }
+
+    #prev_button,
+    #next_button {
+        position: absolute;
+        top: 206px;
+        display: none;
+    }
+
+    #next_button {
+        right: 0;
+    }
+
+    .scroll_left,
+    .scroll_right {
+        display: block;
+        float: left;
+        height: 173px;
+        width: 20px;
+        cursor: pointer;
+    }
+
+    .photo_row {
+        width: 798px;
+        padding: 0;
+        display: block;
+        float: left;
+        overflow: hidden;
+        margin-bottom: 15px;
+        margin-top: 5px;
+    }
+
+    .sidebar_box {
+        width: 240px;
+    }
+
+    .main_box {
+        padding-left: 0;
+        padding-right: 0;
+        width: 825px;
+    }
+
+    img.thumbnail {
+        width: 187px;
+        height: 153px;
+    }
+    img.thumbnail:hover {
+        opacity: 0.8;
+    }
+
+    #action_row {
+        margin-left: 33px;
+    }
+
+    .photo_row_inner {
+        display: table-row;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3 sidebar_box">
+        {% include 'media_sidebar.html' %}
+    </div>
+    <div class="col-sm-9 main_box" id="photolinks">
+        <div class="blue_text">
+            <div id="big_photo_container">
+                <img src="" id="big_photo" title="">
+                <div id="prev_box">
+                    <img src="/static/img/gallery_prev.png" id="prev_button">
+                </div>
+                <div id="next_box">
+                    <img src="/static/img/gallery_next.png" id="next_button">
+                </div>
+            </div>
+            <div id="big_caption"></div>
+        </div>
+        <div class="row">
+            <div class="blue_text uppercase text14" style="margin-left: -10px;">
+                Hipcook Studios
+            </div>
+        </div>
+        <div class="row">
+            <img src="/static/img/scroll_left.png" class="scroll_left">
+            <div class="photo_row hor_scrollable nowrap">
+                <div class="photo_row_inner">
+                    {% for photo in studio_photos %}
+                    <a href="{{photo.url}}" class="thumbnail_link {% if loop.last %}last{% endif %}" title="{{photo.caption}}">
+                        <div class="img_bg">
+                            <img src="{{photo.photo|thumbnail_path}}" class="thumbnail">
+                        </div>
+                        <br>
+                        {{photo.caption}}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <img src="/static/img/scroll_right.png" class="scroll_right">
+        </div>
+        {% for album in additional_albums %}
+        <div class="row">
+            <div class="blue_text text14" style="margin-left: -10px;">
+                {{album.name}}
+            </div>
+        </div>
+        <div class="row">
+            <img src="/static/img/scroll_left.png" class="scroll_left">
+                <div class="photo_row hor_scrollable nowrap">
+                    <div class="photo_row_inner">
+                        {% for photo in album.photos %}
+                        <a href="{{photo.url}}" class="thumbnail_link {% if loop.last %}last{% endif %}" title="{{photo.caption}}">
+                            <div class="img_bg">
+                                <img src="{{photo.photo|thumbnail_path}}" class="thumbnail">
+                            </div>
+                            <br>
+                            {{photo.caption}}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            <img src="/static/img/scroll_right.png" class="scroll_right">
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<br>
+<script type="text/javascript">
+    var photoList, currentPhoto = 0;
+    $(function() {
+        $("a.thumbnail_link").on('click', function(e) {
+            target = $(e.currentTarget);
+            targetImg=target.find('img');
+            target.parent().parent().scrollTo(target, 250);
+            // $('.thumbnail').css('border-width','1px');
+            $('.thumbnail').removeAttr("style");
+            // targetImg.css('border-width','5px');
+            targetImg.css('opacity','0.8');
+            currentPhoto = photoList.index(target);
+            e.preventDefault();
+            var bigImage = this.href;
+            var bigTitle = this.title;
+            $("#big_photo").attr("title", bigTitle);
+            $("#big_photo").attr("src", bigImage);
+            $("#big_caption").text(bigTitle);
+        });
+
+        $(".scroll_left").on('click', function() {
+            scroll_left(event.target.nextElementSibling);
+        });
+
+        $(".scroll_right").on('click', function() {
+            scroll_right(event.target.previousElementSibling);
+        });
+
+        $("#prev_box").on('mouseenter', function(){
+            $("#prev_button").show();
+        });
+
+        $("#prev_box").on('mouseleave', function(){
+            $("#prev_button").hide();
+        });
+
+        $("#next_box").on('mouseenter', function(){
+            $("#next_button").show();
+        });
+
+        $("#next_box").on('mouseleave', function(){
+            $("#next_button").hide();
+        });
+
+        $("#prev_box").on('click', function(){
+            previousPhoto();
+        });
+
+        $("#next_box").on('click', function(){
+            nextPhoto();
+        });
+
+        photoList = $(".thumbnail_link");
+        photoList[0].click();
+    });
+
+    function nextPhoto(){
+        if (currentPhoto < photoList.length -1){
+            currentPhoto += 1;
+            photoList[currentPhoto].click();
+        }
+    }
+
+    function previousPhoto(){
+        if (currentPhoto > 0){
+            currentPhoto -= 1;
+            photoList[currentPhoto].click();
+        }
+    }
+
+    function scroll_left(row) {
+        var thumbnailMargin = parseInt($(row).children().children().css("margin-right").replace("px", ""));
+        var distance = $(row).width()+thumbnailMargin;
+        var leftPos = $(row).scrollLeft();
+        $(row).animate({
+            scrollLeft: leftPos - distance
+        }, 800);
+    }
+
+    function scroll_right(row) {
+        var thumbnailMargin = parseInt($(row).children().children().css("margin-right").replace("px", ""));
+        var fullWidth =$(row).children().width();
+        var distance = $(row).width()+thumbnailMargin;
+        var leftPos = $(row).scrollLeft();
+        if(fullWidth - (leftPos + distance) < distance) {
+            var rightmost = fullWidth - distance - 3;
+            $(row).animate({
+                scrollLeft: rightmost
+            }, 800);
+        } else {
+            $(row).animate({
+                scrollLeft: leftPos + distance
+            }, 800);
+        }
+    }
+</script>
+{% endblock %}

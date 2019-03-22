@@ -1,0 +1,56 @@
+{% extends "/base.html" %}
+{% from "/macros.html" import div_field %}
+{% block title %}Hipcooks: Update Info{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <h3 class="JandaQuickNote-normal info-header">Change my account info</h3>
+        <form method="POST" class="form-horizontal form_user_info">
+            <div class="form_box">
+                <div class="form-group">
+                    {{form.csrf_token}}
+                    {% for field in form if field.short_name not in ("csrf_token", "subscriber") %}
+                        {{div_field(field, class_="form_box form-control blue_border")}}
+                    {% endfor %}
+                    <div class="row bottom_select">
+                        {% if form.subscriber.errors|length > 0 %}
+                        <div class="col-sm-12">
+                            <span class="text-danger">
+                                {{form.subscriber.errors[0]}}
+                            </span>
+                        </div>
+                        {% endif %}
+                        <div class="form-group">
+                            {{form.subscriber.label(class_="col-sm-4 control-label small")}}
+                            <div class="col-sm-7">
+                                {{form.subscriber()}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input name="form-submit" type=submit value="Update Account" class="form_button pull-right">
+        </form>
+
+    </div>
+</div>
+
+
+{% endblock %}

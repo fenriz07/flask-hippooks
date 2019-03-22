@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Cancel/Reschedule a Class{% endblock %}
+{% block content %}
+<style>
+    #reschedule-submit, #refund-submit {
+        margin-right: .5em;
+    }
+</style>
+<script>
+    $(function() {
+        $("form").submit(function(e) {
+            var cancelling = false;
+            $("input[type=checkbox]").each(function(i, obj) {
+                if ($(obj).prop("checked")) {
+                    cancelling = true;
+                }
+            });
+            if (!cancelling) {
+                $("#must_select").removeClass("hidden");
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+<div class="row">
+    <div class="col-sm-3">
+        {% include 'classes_sidebar.html' %}
+    </div>
+    <div class="col-sm-9">
+        <div class="row">
+            <div class="col-sm-11">
+                <h2 class="JandaQuickNote-normal text-center">Cancel / Reschedule a Class</h2>
+                <h3 class="JandaQuickNote-normal"><img src="/static/img/jacks1.png" class="jacks"> Reservation</h3>
+                <table class="info_table">
+                    <tbody>
+                        <tr>
+                            <td>{{ cls.title }}</td>
+                            <td>{{ schedule.formatted_date }}</td>
+                            <td>{{ campus.name }}</td>
+                            <td>{{ 1 + guests|length() }}</td>
+                            <td>{{order.paid_with}}: ${{ order.purchase.amount }}</td>
+                            <td>{{ order.code }}</td>
+                        </tr>
+                    </tbody>
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Spots</th>
+                            <th>Payment</th>
+                            <th>Res Code</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="row">
+                <div class="col-sm-6">
+                    <input name="csrf_token" type="hidden" value="{{ csrf_token() }}"/>
+                    <h3 class="JandaQuickNote-normal"><img src="/static/img/jacks2.png" class="jacks"> Who is canceling from this class?</h3>
+                    <table class="info_table">
+                        <tbody>
+                        {% if not order.cancelled %}
+                            <tr>
+                                <td>{{ order.user.first_name }}
+                                    {{ order.user.last_name }}</td>
+                                <td class="text-center" width="10%"><input name="order_cancel" type="checkbox" value="{{ order.id }}"/></td>
+                            </tr>
+                        {% endif %}
+                        {% for guest in guests|rejectattr("cancelled") %}
+                            <tr>
+                                <td>Guest</td>
+                                <td class="text-center" width="10%"><input name="guest_cancel" type="checkbox" value="{{ guest.id }}"/></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Cancel</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div id="must_select" class="col-sm-12 error hidden">
+                    You must select a reservation to cancel a class.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <h3 class="JandaQuickNote-normal"><img src="/static/img/jacks3.png" class="jacks"> What would you like to do?</h3>
+                    <div>
+                        <input id="reschedule-submit" name="reschedule-submit" type="submit" value="Reschedule" class="form_button pull-left">
+                        We'll immediately issue you a gift certificate code. Use any time you like for
+                        whatever class you want.
+                        <br>
+                        (This is not redeemable for cash in the future)<br><br>
+                        {% if show_refund_option %}
+                          <input id="refund-submit" name="refund-submit" type="submit" value="Refund" class="form_button pull-left">
+                          We'll issue you a refund within 3 business days. (Minus $5 per spot cancellation fee)
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+{% endblock %}

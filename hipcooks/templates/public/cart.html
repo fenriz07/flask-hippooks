@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Your Cart{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="/static/DataTables/datatables.css">
+<script src="static/DataTables/datatables.js"></script>
+<script src="/static/js/bootbox.min.js"></script>
+<script>
+$(function() {
+
+    if (window.location.href.indexOf('timedOut=True') > 0) {
+         setTimeout(function() {
+           window.location.href = "{{url_for('.store')}}";
+         }, 5000);
+    }
+
+    if (window.location.href.indexOf('itemAddedToCart=True') > 0) {
+      bootbox.alert('<h3 class="JandaQuickNote-normal text-center">\
+                        Thank you! This item has been added to your cart!<br>\
+                    </h3>\
+                    <div>\
+                        <img class="modal-image" src="/static/img/gift_certificate_graphic.jpg">\
+                    </div>');
+    }
+
+    var csrf = "{{ csrf_token() }}"
+    var pickup = {{ cart.pickup|lower }};
+    var update_amounts = function(data) {
+        $("#product-tax").html("$" + data.product_tax);
+        $("#product-subtotal").html("$" + data.product_subtotal);
+        $("#classes-subtotal").html("$" + data.classes_subtotal);
+        $("#applied-gift-subtotal").html("-$" + data.applied_gift_subtotal);
+        $("#total-class-cost").html("$" + data.total_class_cost);
+        pickup = data.pickup;
+        table.ajax.reload();
+    }
+    hide_tables = function() {
+        has_products = table.rows().count() > 0;
+        has_classes = $("#classes-info .cart-item").length > 0;
+        $("#product-info").toggle(has_products);
+        $("#classes-info").toggle(has_classes);
+        $("#checkout-buttons").toggle(has_products || has_classes);
+        $("#empty-cart").toggle(!(has_products || has_classes));
+    }
+    var render_money = function(data, type, full, meta) {
+        return "$"+data
+    };
+    table = $("#product_list_table").DataTable({
+        "paging": false,
+        "ordering": false,
+        "info": false,
+        "searching": false,
+        "ajax": {
+            "url": "{{url_for('.cart_product_info')}}",
+            "data": function(d) {
+                return { "draw": d.draw };
+            },
+        },
+        "serverSide": true,
+        "columns": [
+            {"data": "product_id", "class": "hidden", "render": function(data, type, full, meta) {
+                return '<input name="product_id" value="'+(+data)+'" hidden>'
+            }},
+            {"data": "name", "class": "JandaQuickNote-normal", "width": "50%"},
+            {"data": "price", "render": render_money},
+            {"data": "quantity", "render": function(data, type, full, meta) {
+                return (
+                    '<input name="quantity" class="form_box xs up7" value="'+(+data)+'">' + '<br>' +
+                    '<a href="#" class="orange_text quantity-form-submit small_text">update</a>'
+                )
+            }},
+            {"data": "shipping", "class": "shipping", "render": render_money},
+            {"data": "product_id", "class": "text-center", "render": function(data, type, full, meta) {
+                return '<a class="product-remove remove glyphicon glyphicon-remove" href="{{url_for('.cart_product_remove')}}'+(+data)+'"></a>'
+            }},
+            {"data": "total", "render": render_money, "class": "text-right"},
+        ]
+    });
+    table.on("draw", function(e) {
+        $(".quantity-form-submit").click(function(e) {
+            e.preventDefault();
+            $("#quantity-form").submit();
+        });
+        $(".product-remove").click(function(e) {
+            e.preventDefault();
+            $.post($(e.target).attr("href"), data={
+                csrf_token: csrf
+            }, success=update_amounts)
+        })
+        if (pickup) {
+            table.column(".shipping").nodes().to$().wrapInner("<del></del>");
+            $("#pickup_label").addClass("checked");
+        }
+        hide_tables();
+    });
+    $(".class-remove").click(function(e) {
+        e.preventDefault();
+        $.post($(e.target).attr("href"), data={
+            csrf_token: csrf
+        }, success=function(data) {
+            $(e.target).parents(".cart-item").remove();
+            update_amounts(data);
+        });
+        hide_tables();
+    });
+    $("#gift-apply").click(function(e) {
+        e.preventDefault();
+
+        $.post("{{ url_for('.apply_gift_certificate') }}", data={
+            csrf_token: csrf,
+            gift_code: $("#gift-code").val()
+        }, success=update_amounts);
+    });
+    $("#quantity-form").submit(function(e) {
+        e.preventDefault();
+        var form = $(e.target);
+        $.post("{{url_for('.cart_product_quantity_update')}}", data=table.$('input').add("#csrf_token").serialize(), success=update_amounts);
+    });
+    $("#pickup").change(function(e) {
+        var checked = $(e.target).is(":checked");
+        $.post("{{url_for('.cart_pickup_set')}}", data={
+            csrf_token: csrf,
+            pickup: checked,
+        }, success=update_amounts);
+    })
+    $(".remove").show()
+});
+</script>
+<style>
+    #product_list_table th, #class_list_table th {
+        font-family: inherit;
+        text-transform: uppercase;
+        font-weight: normal;
+        font-size: 16px;
+    }
+
+    #product_list_table td {
+        padding-top: 15px;
+    }
+
+    .subtotal_offset {
+        padding-top: 11px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 20px;
+        padding-right: 40px;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div>
+    <div class="col-sm-8" id="content_div">
+        <div class="messages">
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <ul class=flashes>
+              {% for message in messages %}
+                <li class='text-primary'>{{ message }}</li>
+              {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
+        </div>
+        <div id="product-info"{% if cart.products|length == 0 %}hidden{% endif %}>
+            <div class="row">
+            <form id="quantity-form">
+                <input id="csrf_token" name="csrf_token" value="{{csrf_token()}}" hidden>
+                <table class="table table-striped" id="product_list_table">
+                    <thead>
+                        <tr>
+                            <th hidden></th>
+                            <th>Items From Our Store</th>
+                            <th>Cost</th>
+                            <th>QTY</th>
+                            <th>Shipping</th>
+                            <th>Remove?</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product, quantity in cart.products %}
+                            <tr class="cart-item">
+                                <td hidden>{{product.id}}</td>
+                                <td width="100%"><span class="JandaQuickNote-normal">{{product.name}}</span></td>
+                                <td>${{product.price}}</td>
+                                <td>{{quantity}}</td>
+                                <td class="text-center">
+                                    <span class="shipping">
+                                        ${{product.shipping_price(quantity, cart.pickup)}}
+                                    </span>
+                                </td>
+                                <td hidden></td>
+                                <td class="item-subtotal text-right">${{"{:0.2f}".format(product.base_price(quantity))}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+            </div>
+            <div class="row">
+                <div class="col-sm-7 col-sm-offset-4 text-right">
+                    <span class="uppercase">Tax</span>
+                </div>
+                <div class="col-sm-1 text-right">
+                    <span id="product-tax" class="text-right">${{'{:0.2f}'.format(cart.product_tax)}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <br>
+                <br>
+
+                <div class="col-sm-7 col-sm-offset-4 text-right">
+                    <span class="uppercase">Subtotal</span>
+                </div>
+                <div class="col-sm-1 text-right">
+                    <span id="product-subtotal">${{'{:0.2f}'.format(cart.product_total)}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <br>
+                <br>
+                <div class="col-sm-7 col-sm-offset-4 text-right">
+                    <span class="uppercase">
+                        Avoid shipping costs!
+                    </span>
+                    <br>
+                    <span class="small_text">
+                        Pick-up your items at Hipcooks. They’ll be set aside waiting for you.<br>
+                        <span class="blue_text">
+                            Most orders are delivered within 5-7 business days using Standard Service. Please email us for other shipping requests.
+                        </span>
+                    </span>
+                </div>
+                <div class="col-sm-1">
+                    <br>
+                    <label for="pickup" id="pickup_label" class="control-label blue_text gc_orange_radio_label">
+                        <input class="form-control gc_orange_checkbox" id="pickup" type="checkbox" {% if cart.pickup %}checked{% endif %}>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div id="classes-info" {% if cart.classes|length == 0 and cart.gift_certificates|length == 0 %}hidden{% endif %}>
+            <div class="row">
+                <table class="table table-striped" id="class_list_table">
+                    <thead>
+                        <tr>
+                            <th>Classes</th>
+                            <th>Remove?</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cls in cart.classes %}
+                        <tr class="cart-item">
+                            <td class="JandaQuickNote-normal" width="100%">{{cls.title}}
+                                for {{cls.guests + 1}}</td>
+                            <td class="text-center"><a class="class-remove remove glyphicon glyphicon-remove" href="{{ url_for('.cart_schedule_remove', id=cls['uuid']) }}" style="display: none;"></a></td>
+                            <td>${{'{:0.2f}'.format(cls.total_price)}}</td>
+                        </tr>
+                        {% endfor %}
+                        {% for cert_order in cart.gift_certificates %}
+                        <tr class="cart-item">
+                            <td class="JandaQuickNote-normal" width="100%">Gift Certificate for {{cert_order['recipient_name']}}
+                            {% set cert_amount = cert_order['amount_to_give']|int %}
+                            {% if cert_amount % campus.base_cost == 0 %}
+                                , {{(cert_amount / campus.base_cost) | int}} spots
+                            {% endif %}</td>
+                            <td class="text-center"><a class="class-remove remove glyphicon glyphicon-remove" href="{{ url_for('.cart_gift_cert_remove', id=cert_order['uuid']
+        ) }}" style="display: none;"></a></td>
+                            <td>${{'{:.2f}'.format(cert_order.amount_to_give|float)}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-sm-7 col-sm-offset-4 text-right">
+                    <span class="uppercase">Subtotal</span>
+                </div>
+                <div class="col-sm-1">
+                    <span id="classes-subtotal">${{'{:.2f}'.format(cart.classes_subtotal|float)}}</span>
+                </div>
+                <br>
+                <br>
+            </div>
+            <div class="row">
+                <div class="col-sm-11 text-right">
+                    <span class="uppercase">Gift certificate or make-up code</span>
+                    <input id="gift-code" class="form_box small">
+                    <br>
+                    <a href="#" class="orange_text" id="gift-apply">update</a>
+                </div>
+                <div class="col-sm-1 subtotal_offset">
+                    <span id="applied-gift-subtotal" class="nowrap">-${{'{:.2f}'.format(cart.applied_gift_subtotal)}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-7 col-sm-offset-4 text-right">
+                    <span class="uppercase">Other code</span>
+                    <input id="other-code" class="form_box small">
+                    <br>
+                    <a href="#" class="orange_text" id="other-apply">update</a>
+                </div>
+                <div class="col-sm-1 subtotal_offset">
+                    <span id="other-total">$0.00</span>
+                </div>
+            </div>
+            <div class="row">
+                <br>
+                <div class="col-sm-7 col-sm-offset-4 text-right uppercase">
+                    Total Class Cost
+                </div>
+                <div class="col-sm-1">
+                    <div id="total-class-cost">${{'{:.2f}'.format(cart.total_class_cost)}}</div>
+                </div>
+            </div>
+        </div>
+        <div id="checkout-buttons" class="row" {% if cart.size == 0 %}hidden{% endif %}>
+            <div class="col-sm-8 col-sm-offset-4 text-right">
+                <br>
+                <a href="{{continue_url}}" class="btn form_button inverted">Continue Shopping</a>
+                <a href="{{url_for('.checkout')}}" class="btn form_button">Check Out</a>
+            </div>
+        </div>
+        <div id="empty-cart" {% if cart.size > 0 %}hidden{% endif %}>
+            <div class="row">
+                Your cart is empty
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+<script>
+    $("#pickup").change(function(){
+        $("#pickup_label").toggleClass("checked");
+    })
+</script>
+
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Monika's Story{% endblock %}
+{% block content %}
+<style>
+    #monika_header {
+        margin-bottom: 0px;
+    }
+    #signature {
+        width: 100px;
+        display: block;
+        text-align: right;
+        line-height: 35px;
+    }
+    .the_story {
+        padding-left:45px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'media_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-9 col-sm-offset-3 the_story">
+                <h3 class="JandaQuickNote-normal orange_text" id="monika_header">Monika's Story</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <br>
+                <img src="/static/img/monika_pic_1.jpg">
+                <br><br>
+                <img src="/static/img/monika_pic_2.jpg">
+                <br><br>
+                <img src="/static/img/monika_pic_3.jpg">
+            </div>
+            <div class="col-sm-8 the_story">
+                <img src="/static/img/monika_jet_rule.png">
+                <br><br>
+                <p>
+                    <strong>
+                        The founder of Hipcooks, the school famous for not using recipes, is now sharing recipes of her own? Go on, poke your fun.
+                    </strong>
+                </p>
+                <p>
+                    With a father from Argentina, I grew up with summers of long afternoon asado's. My dad and uncle would make a day of it, tending the fire and told the calls were the perfect meat cooking temperature. At a dining table filled with friends and family, out came course after course. If I could ask my abuelo in properly pronounced Spanish for "un poco mas de vino por favor,” my little glass got filled–the perfect motivation for learning a new language.
+                </p>
+                <p>
+                    My German mother is happiest in the kitchen or in the garden–and she creates masterpieces in each. The tenth child born into a war-torn family, she and her brothers and sisters scattered like dandelion seeds all over the globe. One sister flew to Iran, and I have a gaggle of blue-eyed Iranian cousins who love to eat almost as much as they love to laugh.
+                </p>
+                <p>
+                    It's safe to say, I have the travel bug and me. And it has led my palate. At age 15, I went on a solo adventure to Europe, and I've been exploring–and eating–around the world ever since.
+                </p>
+                <p>
+                    After graduate school in England, I wandered to Venezuela, where I met a couple from Kentucky. They had spent twenty years building a sailboat in their backyard–hull, sales, and all. Never missing a chance to go exploring. I excepted an opportunity abroad and learned about the Spice Islands, picking up allspice, nutmeg, and cinnamon along the way.
+                </p>
+                <p>
+                    My favorite part of Morocco was getting lost in the medinas. In a narrow passageway I'd be brushed by a stinky, sweaty donkey, only to turn the corner and discover, to my olfactory delight, a woman with a cart full of fresh mint for sale.
+                </p>
+                <p>
+                    On the Greek Islands, squinting in the sun and watching fishermen tenderize octopus against the seaside rocks, I realized that all you need to be happy in life is a little salt, olive oil, and lemon juice. Then, on the heels of a particularly bad break up, I enrolled in cooking school in Thailand and learned you can heal your heart with fish sauce.
+                </p>
+                <p>
+                    Now, "all grown up” with a beautiful red-headed daughter, Lucia, I have found that traveling the globe has taken a backseat to raising a family. Physically, that is–we do our globetrotting in the kitchen. There, we let the world come to us. No jet lag necessary.
+                </p>
+                <h3 class="JandaQuickNote-normal orange_text" id="signature">
+                    With love, <br>
+                    Monika
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+{% endblock %}

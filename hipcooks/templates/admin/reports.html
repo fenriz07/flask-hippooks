@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="container dashboard-page">
+<div class="col-md-4 admin-col">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h3 class="hipcooks-script">Reports</h3>
+            <div class="list-group">
+                <a href="{{url_for('.reports_gift_cert')}}" class="list-group-item">Gift Certificate Report</a>
+                <a href="{{url_for('.reports_number_of_events')}}" class="list-group-item">Number of Events Report</a>
+                <a href="{{url_for('.reports_classes_and_occupancy')}}" class="list-group-item">Number of Classes and Occupancy Rates Report</a>
+                <a href="{{url_for('.reports_private_class')}}" class="list-group-item">Private Class Report</a>
+                <a href="{{url_for('.reports_classes_taught')}}" class="list-group-item">Classes Taught by Class Abbreviation</a>
+                <a href="{{url_for('.reports_schedule_page')}}" class="list-group-item">Schedule Page Reports</a>
+                <a href="{{url_for('.reports_sales')}}" class="list-group-item">Sales Report</a>
+                <a href="{{url_for('.reports_sales_of_the_day')}}" class="list-group-item">Sales of the Day Report</a>
+                <a href="{{url_for('.reports_newsletter_subscribers')}}" class="list-group-item">Newsletter Subscribers Report</a>
+                <a href="{{url_for('.reports_inventory_adjustments')}}" class="list-group-item">Inventory Adjustments Report</a>
+                <a href="javascript:window.open('{{url_for('.classes_report')}}','Classes By Order Report','width=600,height=800')" class="list-group-item">Classes By Order Report</a>
+            </di
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

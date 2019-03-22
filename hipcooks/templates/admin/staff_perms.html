@@ -1,0 +1,87 @@
+{% extends "/admin/base.html" %}
+{% block title %}Staff{% endblock %}
+{% block content %}
+<script>
+    var preset_settings = {{presets|tojson}};
+
+    $(function() {
+        $("#campus_select").change(function() {
+            var id = $("#campus_select option:selected").val();
+            window.location.href="{{url_for('.staff_permissions', id=teacher.user_id)}}/campus/" + id;
+        });
+
+        $("#preset_select").change(function() {
+            var name = $("#preset_select option:selected").val();
+            if (name != "") {
+                $(preset_settings).each(function(idx, preset_obj) {
+                    if (preset_obj.name == name) {
+                        $("input[name=permissions]").prop("checked", false);
+                        for (perm_key in preset_obj.perms) {
+                            var perm_obj = preset_obj.perms[perm_key];
+                            $("#" + perm_key + "_view").prop("checked", perm_obj.view);
+                            $("#" + perm_key + "_edit").prop("checked", perm_obj.update);
+                        }
+                    }
+                });
+                $("input[name=role_name]").val(name);
+//                $("#preset_select option:selected").prop("selected", false);
+//                $($("#preset_select option")[0]).prop("selected", true);
+            }
+        });
+    });
+</script>
+<div class="container">
+    <div class="panel panel-default">
+      <div class="panel-body">
+          <div class="row add-edit">
+            <h3 class="hipcooks-script">Permissions for {{teacher.user.first_name}} {{teacher.user.last_name}}</h3>
+            <div class="form-inline add-edit">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="campus_select" class="control-label">Studio:</label>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="campus_select" class="form-control">
+                            {% for teacher_campus in teacher.campuses %}
+                            <option value="{{teacher_campus.id}}" {% if campus.id == teacher_campus.id %}selected{% endif %}>{{teacher_campus.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-inline add-edit">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="preset_select" class="control-label">Preset:</label>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="preset_select" class="form-control">
+                            <option value="">--Select--</option>
+                            {% for preset in presets %}
+                            <option value="{{preset.name}}" {% if selected_preset == preset.name %}selected{% endif %}>{{preset.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <form method="POST" class="add-edit">
+                <input type="hidden" name="role_name" value="" />
+                <div class="col-md-12">
+                    <table class="table" border=0>
+                    <tr><th>Permission</th><th>View</th><th>Edit</th></tr>
+                    {% for permtype, perm in perms %}
+                    <tr>
+                        <td width="250">{{permtype.name}}</td>
+                        <td width="50"><input type="checkbox" id="{{permtype.key}}_view" name="permissions" value="{{permtype.id}}_view" {% if perm and perm.can_view %}checked{% endif %} /></td>
+                        <td><input type="checkbox" id="{{permtype.key}}_edit" name="permissions" value="{{permtype.id}}_edit" {% if perm and perm.can_update %}checked{% endif %} /></td>
+                    </tr>
+                    {% endfor %}
+                    </table>
+                    <input type="submit" value="Save" class="btn btn-primary btn-sm">
+                </div>
+            </form>
+        </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Class report for {{assistant.user.first_name}} {{assistant.user.last_name}}{% endblock %}
+{% block head %}
+{{ super() }}
+<script src="/static/js/admin-styles.js"></script>
+<style>
+    #classes_table td {
+      border: none;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-8">
+            <h3>Class report for {{assistant.user.first_name}} {{assistant.user.last_name}}</h3>
+            <h4>Classes assisted by {{assistant.user.first_name}} {{assistant.user.last_name}}</h4>
+            <table class="table table-striped" id="classes_table">
+                <tr>
+                    <th>Class</th><th>Time</th><th>Teacher(s)</th><th>Assistant(s)</th>
+                </tr>
+            {% for class in assistant.schedule_undeleted_classes %}
+                <tr>
+                    <td>{{class.date.strftime("%b %-d %Y")}} - {{class.cls.title}}</td>
+                    <td>{{class.start_time.strftime('%-I:%M %p')}} - {{class.end_time.strftime('%-I:%M %p')}}</td>
+                    <td>{{ class.teachers | map(attribute='user') | map(attribute='first_name') | join(', ') }}</td>
+                    <td>{{ class.assistants | join(', ') }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

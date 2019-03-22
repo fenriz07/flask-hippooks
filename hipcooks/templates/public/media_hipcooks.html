@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: The Hipcooks Story{% endblock %}
+{% block content %}
+<style>
+    #story_header {
+        margin-bottom: 0px;
+    }
+
+    #signature {
+        width: 100px;
+        display: block;
+        text-align: right;
+        line-height: 35px;
+    }
+
+    .the_story {
+        padding-left: 62px;
+    }
+
+    #the_title span{
+        vertical-align: bottom;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+</style>
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'media_sidebar.html' %}
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <div class="row">
+            <div class="col-sm-9 col-sm-offset-3 the_story" id="the_title">
+                <h3 class="JandaQuickNote-normal orange_text uppercase inline_block" id="story_header">The Hipcooks Story ... </h3><span class="JandaQuickNote-normal orange_text large_text"> How it all got started.</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <br>
+                <img src="/static/img/hc_story1.jpg">
+                <br><br>
+                <img src="/static/img/hc_story2.jpg">
+            </div>
+            <div class="col-sm-8 the_story">
+                <img src="/static/img/monika_jet_rule.png">
+                <br><br>
+                <p>
+                    <strong>
+                        Hipcooks was "founded" in 2003, at a dinner party (surprise, surprise!) in a Los Angeles loft.
+                    </strong>
+                </p>
+                <p>
+                    My sisters boyfriend had just finished a lifelong dream of directing his first feature film. He wanted to celebrate with a dinner party and he needed help. His "spacious" loft was sparsely finished – not even a dining table. And oh, he didn't cook.
+                </p>
+                <p>
+                    My sister called me for help. The first thing I did was to take the mattress off his bed, turning The intricately carved wooden platform into a gorgeous table. Hanging silk saris from the walls and windows and scattering rose petals, candles, and pillows around the table, we transform the spartan space and do a lush and romantic setting in one afternoon.
+                </p>
+                <p>
+                    Dinner was a blast. On the heels of a trip to Morocco, I threw together a menu spiced with cinnamon, parsley, dates, and wine. A lovely young woman walked into the kitchen. "This smells amazing! This food is fantastic! Can I help you?" ignoring my protest for her to go enjoy the party, she insisted. "Put me to work! This looks like fun! "So I gave her a few quick pointers on how to use a chefs knife, and we were off.
+                </p>
+                <p>
+                    We had a ball, even when the charming host came into the kitchen and said, "Monika, remember how I said it would be a dinner for twenty? Well, I think I have about 30 people here. "On his way out he mumbled, "Um, I hope you weren't planning to use the oven. It doesn't work." That's when I turned to my new cooking partner and said, "Now the fun begins!"
+                </p>
+                <p>
+                    I cooked "Hipcooks–style" before Hipcooks existed, making up dishes as I went along. Smiling, laughing, and tasting along the way, we turned flavors that were ho-hum into ones that made our feet tap. A squeeze of lemon here, more garlic there, a flick of Maldon salt to top it all off.
+                </p>
+                <p>
+                    At the end of the night, my new friend said, "I loved that! You have to teach me how to cook."
+                </p>
+                <p>
+                    "But I just did! You saw how I made that dinner. You can create that again."
+                </p>
+                <p>
+                    "Oh, no." She said. "I want to learn to cook like you. You never stressed. You never freaked out when ten more people arrived. You made the food out of nothing. Teach me that."
+                </p>
+                <p>
+                    And <span class="orange_text JandaQuickNote-normal large_text">Hipcooks was born.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+{% endblock %}

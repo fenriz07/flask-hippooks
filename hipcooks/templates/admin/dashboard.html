@@ -1,0 +1,143 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<script>
+$(function() {
+    $("#view-team-notes").on("click", function(e) {
+        e.preventDefault;
+        $("#team-view").css("display","block");
+        $("#monika-view").css("display", "none")
+        return false;
+    })
+    $("#edit-team-notes").on("click", function(e) {
+        e.preventDefault;
+        $("#monika-view").css("display","block");
+        $("#team-view").css("display", "none")
+        return false;
+    })
+});
+</script>
+
+
+<div class="container-fluid dashboard">
+    <div class="row dashboard-content">
+        <div class="col-sm-12" id="menu-title">
+            <h3 class="JandaQuickNote-normal text-center">What you got cooking?</h3>
+        </div>
+        <div class="col-sm-8 dashboard-menu">
+            <div class="row">
+                <div class="row menu-row">
+                    <div class="col-sm-5">
+                        <h4>Teaching Awesome Classes:</h4>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="list-group">
+                            {% if user.can_view('classes') %}<a href="{{url_for('.class_list')}}" class="list-group-item">Classes</a>{% endif %}
+                            {% if user.can_view('schedule') %}<a href="{{url_for('.schedule_list')}}" class="list-group-item">Class Schedule</a>{% endif %}
+                            {% if user.can_view('class_setups') %}<a href={{url_for('.setup_list')}} class="list-group-item">Set-ups</a>{% endif %}
+                            {% if user.can_view('preprep') %}<a href={{url_for('.preprep_list_list')}} class="list-group-item">Pre-Prep Lists</a>{% endif %}
+                            {% if user.can_view('class_recipes') %}<a href={{url_for('.recipe_list')}} class="list-group-item">Recipes</a>{% endif %}
+                            {% if user.can_view('shoplist') %}<a href="{{url_for('.class_shopping_list_list')}}" class="list-group-item">Shopping Lists</a>{% endif %}
+                            {% if user.can_view('shoplist') %}<a href="{{url_for('.shopping_list_list')}}" class="list-group-item">Go Shopping</a>{% endif %}
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row menu-row">
+                    <div class="col-sm-5">
+                        <h4>Retail, Baby!</h4>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="list-group">
+                            {% if user.can_view('make_sale') %}<a href="{{url_for('.teacher_sales')}}" class="list-group-item">Make a sale</a>{% endif %}
+                            <a href="{{url_for('.sales_list')}}" class="list-group-item">View a sale</a>
+                            {% if user.can_view('product') %}<a href="{{url_for('.product_list')}}" class="list-group-item">Tinker in the store</a>{% endif %}
+                            {% if user.can_view('product') %}<a href="{{url_for('.product_inventory_list')}}" class="list-group-item">Product Inventory</a>{% endif %}
+                            {% if user.can_view('product') %}<a href="{{url_for('.product_inventory_log')}}" class="list-group-item">Product Inventory Log</a>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row menu-row">
+                    <div class="col-sm-5">
+                        <h4>Official Business:</h4>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="list-group">
+                          {% if user.can_view('staff') %}<a href="{{url_for('.assistant_list')}}" class="list-group-item">Assistants</a>{% endif %}
+                          {% if user.can_view('schedule') %}<a href="{{url_for('.order_list')}}" class="list-group-item">Orders</a>{% endif %}
+                          {% if user.can_view('giftcertificate') %}<a href="{{url_for('.gift_certificate_list')}}" class="list-group-item">Gift Certificates</a>{% endif %}
+                          {% if user.can_view('giftcertificate') %}<a href="{{url_for('.gift_certificate_block_list')}}" class="list-group-item">Gift Certificate Blocks</a>{% endif %}
+                          {% if user.can_view('staff') %}<a href="{{url_for('.staff_list')}}" class="list-group-item">Staff List</a>{% endif %}
+                          {% if user.can_view('staff') %}<a href="{{url_for('.studio_list')}}" class="list-group-item">Studios</a>{% endif %}
+                          {% if user.can_view('reports') %}<a href="{{url_for('.reports')}}" class="list-group-item">Reports</a>{% endif %}
+                          {% if user.is_superuser %}<a href="{{wiki_url}}" class="list-group-item">Edit Wiki</a>{% endif %}
+                          {% if user.can_view('content') %}<a href="{{url_for('.album_list')}}" class="list-group-item">Edit Photo Albums</a>{% endif %}
+                          {% if user.can_view('content') %}<a href="{{url_for('.content_list')}}" class="list-group-item">Edit Website Texts</a>{% endif %}
+                          {% if user.can_view('subscriber_list') %}<a href="{{url_for('.subscriber_list')}}" class="list-group-item">Newsletter Subscribers</a>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-default" id="team-notes">
+
+                <!-- IF MONIKA LOGGED IN -->
+              <div class="panel-body" id="monika-view" style="display:none">
+                  <a href="" id="view-team-notes">view</a>
+                <div class="row">
+                    <div class="col-xs-10 col-xs-offset-1">
+                        <h3 class="JandaQuickNote-normal text-center">Notes From Monika</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <form method="POST" class="team-notes-form" action="{{url_for('.save_note')}}">
+                            <div class="row">
+                                <div class="col-xs-10 col-xs-offset-1">
+                                    <textarea name="note" class="form-control owner-notes"></textarea>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="col-xs-10 col-xs-offset-1">
+                                    <input class="btn btn-primary btn-sm" type="submit" value="Save">
+                                </div>
+                            </div>
+                    </form>
+                </div>
+              </div>
+
+              <!-- IF TEAM MEMBER LOGGED IN -->
+              <div class="panel-body" id="team-view">
+                  {% if user.is_superuser %}
+                  <a href="" id="edit-team-notes">edit</a>
+                  {% endif %}
+                <div class="row">
+                    <div class="col-xs-10 col-xs-offset-1"><h3 class="JandaQuickNote-normal text-center">Notes From Monika</h3></div>
+                </div>
+                <div class="row">
+                    <p>{% if latest_note %}{{latest_note.note.replace('\n', '<br />')|safe}}{% endif %}</p>
+                </div>
+              </div>
+              <!-- END IF -->
+
+            </div>
+        </div>
+    </div>
+    <div class="container text-center">
+        <div class="row dashboard-footer">
+            <div class="col-lg-11">
+                <ul class="nav nav-pills nav-justified">
+                    <!--li><a href="{{wiki_url}}">WikiWikiWiki</a></li-->
+                    <li><a href="#">Studio Care</a></li>
+                    <li><a href="#">Private Classes</a></li>
+                    <li><a href="#">Draft Emails</a></li>
+                    <li><a href="#">My To-Do List</a></li>
+                    <li><a href="{{url_for('.change_password')}}">Change Password</a></li>
+                    <li><a href="{{url_for('admin.logout')}}">Log Out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

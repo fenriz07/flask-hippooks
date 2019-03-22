@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% from "/macros.html" import div_field, div_field_inline %}
+{% block title %}Hipcooks: Private Classes{% endblock %}
+{% block head %}
+{{ super() }}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+{% block content %}
+<style>
+    /* overriding default bootstrap stuff based on screenshot */
+    input.form-control, textarea.form-control {
+        border-radius: 0;
+        border: none;
+        margin-left: -20px;
+        background-color: #D0EFFA;
+        width: 325px;
+    }
+    .input_note {
+        display: block;
+        margin-left: -20px;
+        width: 325px;
+    }
+    #confirmations {
+        margin-left: 18px;
+        width: 375px;
+    }
+    #confirmations input {
+        margin-right: 40px;
+    }
+    .captcha_input {
+        height: 30px;
+        border: 1px solid #f26200;
+        margin-right: 1px;
+    }
+    #captcha_container {
+        width: 472px;
+        margin-right: 90px;
+    }
+    #captcha_instructions {
+        margin-top: -10px;
+        display: inline-block;
+        position: absolute;
+        right: 193px;
+    }
+    #captcha-img {
+        margin-left: 18px;
+    }
+    #captcha_submit {
+        margin-right: 26px;
+    }
+    #side_pictures img {
+        margin-bottom: 20px;
+        margin-left: -20px;
+    }
+    #side_pictures > :first-child {
+        margin-top: -70px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 5px;
+        display: inline-block;
+    }
+    #cssmenu ul li a{
+        border: 1px solid #03ABD0;
+        padding: 6px;
+        margin-bottom: -1px;
+        font-size: 13px;
+        padding-left: 18px;
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 5px;
+    }
+
+    ul.jack_bullets.bluesmall li {
+        margin-bottom: 3px;
+    }
+
+    #class_form {
+         width: 468px;
+    }
+
+    #class_form label.col-sm-3 {
+        width: 155px;
+    }
+
+    #policy_paragraph {
+        line-height: 14px;
+    }
+
+    .content-div { width: 500px;}
+
+</style>
+
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'classes_sidebar.html' %}
+        <div class="col-sm-3" id="side_pictures" style="margin-top: 90px">
+            <img src="/static/img/private_classes_right_3.jpg">
+            <br>
+            <img src="/static/img/private_classes_right_2.jpg">
+            <!-- pictures go here -->
+        </div>
+    </div>
+    <div class="col-sm-9" id="content_div">
+        <img src="/static/img/private_classes_header.jpg" style="width:100%">
+        <p>
+          {% if studio.private_class_page_text %}{{eval(studio.private_class_page_text)}}{% endif %}
+        </p>
+		<div class="JandaQuickNote-normal">
+			<h3>Hop to it, grasshopper!<br><br>Please fill out this form and let's get cooking!</h3>
+		</div>
+        <br>
+        <div class="row">
+            <div class="col-sm-9">
+
+                <form method="POST" class="form form-horizontal" id="class_form">
+                    {{form.csrf_token}}
+        			{{div_field(form.name)}}
+        			{{div_field(form.email)}}
+        			{{div_field(form.phone)}}
+        			<span class="nowrap">{{div_field(form.dates, extra_field_args={"rows": 2})}}</span>
+        			{% call div_field(form.menus, extra_field_args={"rows": 3}) %}
+        				<span class="input_note">(If you have no idea, you can write "I'd like advice!" and we'll help you decide!)</span>
+        			{% endcall %}
+        			{% call div_field(form.type) %}
+                        <span class="input_note">(i.e. teambuilding, birthday, etc.)</span>
+                    {% endcall %}
+                    {% call div_field_inline() %}
+                        {% if form.contact.errors %}
+                            <div class="col-sm-12">
+                                <div class="text-danger">
+                                    {{form.contact.errors[0]}}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div id="confirmations">
+                        {% for subfield in form.contact if subfield.short_name != "csrf_token" %}
+        					{{subfield.label()}} {{subfield()}}
+                        {% endfor %}
+                        </div>
+        			{% endcall %}
+                    {{div_field(form.recaptcha)}}
+                    <div align="right"><input class="btn btn-primary btn-sm" type="submit" value="Send Request"></div>
+                </form>
+            </div>
+            <div class="blue_text">Corporate Clients Include</div>
+            <img src="/static/img/private_classes_clients.png" alt="Our Clients" id="clients_list">
+        </div>
+
+    </div>
+</div>
+{% endblock %}

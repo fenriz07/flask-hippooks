@@ -1,0 +1,43 @@
+{% extends "/admin/base.html" %}
+{% from "/macros.html" import enrich_editor %}
+{% block title %}Shopping List for {{cls.title}}{% endblock %}
+{% block header %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row hipcooks-data-header">
+        <div class="row hipcooks-title">
+            <div class="col-lg-9 col-md-8">
+                <h2 class="hipcooks-script">Shopping List: {{cls.title}}</h2>
+        </div>
+    </div>
+        <!--div class="panel-body"-->
+            <h4 class="shoppinglist-header"><strong>Menu</strong></h4>
+            <div class="row">
+                <div class="col-md-12">
+                        {{cls.menu|replace('\n', '<br/>')|safe}}
+                </div>
+            </div>
+            {% for cat in items.values() %}
+            <h5 class="shoppinglist-header"><strong>{{cat.name}}</strong></h5>
+            {% if cat.shop_items|length == 0 %}
+            <div class="row">
+                <div class="col-md-12">
+                    &nbsp;&nbsp;&nbsp;&nbsp;No items in this category.
+                </div>
+            </div>
+            {% else %}
+            {% for item in cat.shop_items %}
+            <div class="row shoppinglist-row">
+                <div class="col-md-12">
+                    {{item.name}} - {{item.number|mixed}} {{item.unit}} {% if item.notes %}({{ item.notes }}){% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+&nbsp;&nbsp;
+{% endblock %}

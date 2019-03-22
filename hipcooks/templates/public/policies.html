@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Policies, FAQ, and Terms of Service{% endblock %}
+{% block content %}
+<style>
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 850px;
+        padding-left: 25px;
+        padding-right: 50px;
+        display: inline-block;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-3" id="sidebar_div">
+        {% include 'sidebar.html' %}
+    </div>
+    <div class="row menu-row dashboard-menu">
+    <div class="col-sm-7">
+      <div class="list-group">
+          <p><a href="#class_policies" class="list-group-item">CLASS POLICIES</a></p>
+          <p><a href="#cancellation" class="list-group-item">CANCELLLATION & MAKE-UP POLICY</a></p>
+          <p><a href="#gift_certificate" class="list-group-item">GIFT CERTIFICATE POLICY</a></p>
+          <p><a href="#faqs" class="list-group-item">FAQS</a></p>
+          <p><a href="#privacy" class="list-group-item">PRIVACY POLICY</a></p>
+          <p><a href="#terms" class="list-group-item">TERMS OF SERVICE</a></p>
+      </div>
+
+      <div id="class_policies" class="policy-section">
+        {{include_content("/terms/class-policies/body")}}
+      </div>
+
+      <div id="cancellation" class="policy-section">
+        {{include_content("/terms/cancellation/body")}}
+      </div>
+
+      <div id="gift_certificate" class="policy-section">
+        {{include_content("/terms/gift-certificate/body")}}
+      </div>
+
+      <div id="faqs" class="policy-section">
+        {{include_content("/terms/faqs/body")}}
+      </div>
+
+      <div id="privacy" class="policy-section">
+        {{include_content("/terms/privacy/body")}}
+      </div>
+
+      <div id="terms" class="policy-section">
+        {{include_content("/terms/service/body")}}
+      </div>
+
+    </div>
+</div>
+</div>
+{% endblock %}

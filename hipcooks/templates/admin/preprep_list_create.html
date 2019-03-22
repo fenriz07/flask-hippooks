@@ -1,0 +1,57 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Create New Pre-Prep List{% endblock %}
+{% block head %}
+{{ super() }}
+<script>
+$(function() {
+  $('#submit').click(function() {
+    $('#form').submit();
+  })
+});
+</script>
+{% endblock %}
+{% block content %}
+<style>
+  .chosen-container {
+    width: 400% !important;
+  }
+</style>
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h3 class="hipcooks-script">Create New Pre-Prep List
+        </h3>
+          <div class="row add-edit">
+                {% if classes %}
+                <form method="POST" class="form-inline" id="form">
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            <label for="name">List Name</label>
+                            <input class="form-control" type="text" name="name" placeholder="Enter a Name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-md-6">
+                        <label for="classes">Classes</label>
+                        <select multiple class="form-control chosen-select" name="classes" id="chosen-select">
+                          {% for class in classes %}
+                            <option value="{{class.id}}">{{class.abbr}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                      <br>
+                      <a class="JandaQuickNote-normal shop-list-btn" type="submit"id="submit" style="margin-top: 20px;">Create the Pre-Prep List</a>
+                    </div>
+                </form>
+                {% else %}
+                    <h4>There are no classes with shopping lists at present. You might need to add some.</h4>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

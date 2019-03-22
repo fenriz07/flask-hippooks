@@ -1,0 +1,3 @@
+[console_scripts]
+fixture = fixture.command.generate:main
+

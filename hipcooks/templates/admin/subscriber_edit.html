@@ -1,0 +1,56 @@
+{% extends "/admin/base.html" %}
+{% block title %}{% if subscriber.email %}Edit{% else %}Add{% endif %} Newsletter Subscriber{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="/static/css/bootstrap-datepicker.min.css">
+<script src="/static/js/bootstrap-datepicker.min.js"></script>
+<script>
+$(function() {
+
+  $(".date").datepicker({
+      format: "mm/dd/yyyy",
+      autoclose: true,
+      startDate: new Date()
+  });
+
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h3 class="hipcooks-script">{% if subscriber.email %}Edit{% else %}Add{% endif %} Newsletter Subscriber</h3>
+        <form method="POST" enctype=multipart/form-data>
+
+          {% for field in form %}
+              {% if field.name == "csrf_token" %}
+                  {{field}}
+              {% else %}
+                  {% if field.errors|length> 0 %}
+                  <div class="row">
+                      <div class="col-md-12">
+                          <span class="text-danger">{{field.errors[0]}}</span>
+                      </div>
+                  </div>
+                  {% endif %}
+                  <div class="row">
+                      <div class="col-md-2">
+                          {{field.label(class_="control-label")}}
+                      </div>
+                      <div class="col-md-3">
+                          {{field(class_="form-control")}}
+                      </div>
+                  </div>
+              {% endif %}
+          {% endfor %}
+
+          <div class="row left-pad">
+            <input class="btn btn-primary btn-sm" type="submit" value="Save">
+          </div>
+
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock %}

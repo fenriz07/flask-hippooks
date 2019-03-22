@@ -1,0 +1,132 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Product Inventory{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/css/admin-sm-table-print.css">
+<script src="/static/js/admin-styles.js"></script>
+<script>
+    sortButtonMacro();
+
+    $(document).ready(function() {
+
+      $(".dropdown-menu li a").click( function() {
+          var selectVal = $(this).text();
+          window.location.search = 'show=' + selectVal;
+      });
+
+      $('.cancel-noprint').children('.noprint').removeClass('noprint');
+
+      $('#pagination-show-all').click(function(e) {
+          e.preventDefault();
+          window.location.search = 'show=' + 'All';
+      });
+
+      $("#update-campus").click(function(e) {
+          e.preventDefault();
+          $('#select').submit();
+      });
+
+    })
+
+</script>
+<style>
+    .menu-list {
+        padding-left: 15px;
+    }
+
+    #show-select {
+      margin-bottom: 5px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row hipcooks-data-header">
+        <div class="row hipcooks-title noprint">
+            <div class="col-md-12">
+              <h2 class="hipcooks-script">Product Inventory</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-9 col-md-8 button-row">
+              {% if user.can_update("product") %}
+              <div>
+                <a class="script-link-btn noprint" role="button" href="{{url_for('.new_product_inventory')}}">Add Product Inventory</a>
+              </div>
+              {% endif %}
+        </div>
+    </div>
+    <div class="row hipcooks-data-wrapper">
+        <div class="col-sm-12 hipcooks-data">
+            <div class="data-inner auto-width">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            {% set page = pagination.page %}
+                            <th class="cancel-noprint">{{ macros.column_sort_toggle("Product", ".product_inventory_list", "name", page=page) }}</th>
+                            <th class="cancel-noprint">{{ macros.column_sort_toggle("Type", ".product_inventory_list", "type", page=page) }}</th>
+                            <th class="cancel-noprint">{{ macros.column_sort_toggle("Studio", ".product_inventory_list", "studio", page=page) }}</th>
+                            <th class="cancel-noprint">{{ macros.column_sort_toggle("Amount in Stock", ".product_inventory_list", "stock", page=page) }}</th>
+                            <th class="cancel-noprint">{{ macros.column_sort_toggle("Price", ".product_inventory_list", "price", page=page) }}</th>
+                            <th class="noprint">&nbsp;</th>
+                        </tr>
+                    </thead>
+                    {% for studio, product, inventory in pagination.items %}
+                    <tr>
+                        <td>{{product.name}}</td>
+                        <td>{{product.type}}</td>
+                        <td>{{studio.name}}</td>
+                        <td {% if inventory and inventory.quantity_stocked < inventory.quantity_to_stock %}style="color: #ff0000"{% endif %}>{{inventory.quantity_stocked|default(0)}}</td>
+                        <td>${{product.price}}</td>
+                        <td class="noprint">{% if user.can_update('product') %}<a href="{{url_for('.product_inventory', campus_id=studio.id, product_id=product.id)}}">adjust inventory</a>{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {{ macros.render_pagination(pagination, "admin.product_inventory_list", show_all=True) }}
+        </div>
+        <div class="col-sm-3 sidebar hipcooks-side noprint">
+            <div class="nav nav-sidebar">
+              <div class="well">
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                          <div class="messages">
+                          {% for type, message in messages %}
+                              <div class="message_{{type}}">{{message}}</div>
+                          {% endfor %}
+                          </div>
+                      {% endif %}
+                  {% endwith %}
+                  <p>
+                      {% if active_campuses | length > 0 %}
+                          <form method=POST action="{{url_for('.set_campus')}}" id="select" class="form-inline">
+                              {{campus_select_form.csrf_token}}
+                              <div class="form-group">
+                                  {{campus_select_form.header_campuses}}
+                              </div>
+                              <br>
+                              <a href="#" id="update-campus" class="hipcooks-script">Update</a>
+                          </form>
+                      {% else %}
+                          No Allowed Campuses
+                      {% endif %}
+                  </p>
+              </div>
+                <div class="filter">
+                    <ul id="paid-with-filter">
+                        <li {% if request.args.get("active", "") == "All" %}class="active"{% endif %}><a href="{{url_for('.product_inventory_list', page=1, product=request.args.get("product", ""), active='All')}}">All</a></li>
+                        <li {% if request.args.get("active", "") == "True" or not request.args.get("active", "") %}class="active"{% endif %}><a href="{{url_for('.product_inventory_list', page=1, product=request.args.get("product", ""), active=True)}}">Active</a></li>
+                        <li {% if request.args.get("active", "") == "False" %}class="active"{% endif %}><a href="{{url_for('.product_inventory_list', page=1, product=request.args.get("product", ""), active=False)}}">Inactive</a></li>
+                    </ul>
+                </div>
+                <div class="filter">
+                    <ul id="name-filter">
+                        <li {% if request.args.get("product", "") == "all" or request.args.get("product", "") == "" %}class="active"{% endif %}><a href="{{url_for('.product_inventory_list', page=1, active=request.args.get("active", ""))}}">All</a></li>
+                        {% for name in product_names %}
+                            <li {% if request.args.get("product", "") == name %}class="active"{% endif %}><a href="{{url_for('.product_inventory_list', page=1, product=name, active=request.args.get("active", ""))}}">{{ name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

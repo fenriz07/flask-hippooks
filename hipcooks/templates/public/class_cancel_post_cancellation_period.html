@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Hipcooks: Cancel/Reschedule a Class{% endblock %}
+{% block content %}
+<style>
+    #go-back, #cancel-submit {
+        margin-right: .5em;
+    }
+</style>
+<script>
+$(function() {
+
+    $("form").submit(function(e) {
+        var cancelling = false;
+        var submitBtn = $(document.activeElement);
+        if (submitBtn.attr('id') === 'cancel-submit') {
+          $("input[type=checkbox]").each(function(i, obj) {
+              if ($(obj).prop("checked")) {
+                  cancelling = true;
+              }
+          });
+          if (!cancelling) {
+              $("#must_select").removeClass("hidden");
+              e.preventDefault();
+          }
+        }
+    });
+
+});
+</script>
+<div class="row">
+    <div class="col-sm-3">
+        {% include 'classes_sidebar.html' %}
+    </div>
+    <div class="col-sm-9">
+        <div class="row">
+            <div class="col-sm-11">
+                <h2 class="JandaQuickNote-normal text-center">Cancel / Reschedule a Class</h2>
+                <p>
+                  We're sorry, but the class reservation that you are wishing to cancel or make-up is past the 48-hour deadline for refunds or a make-up number! Please note that you can send someone in your place if you wish. We'll still send you the recipes. If you will NOT be attending and cannot find a replacement, we'd appreciate your clicking the appropriate checkboxes below.
+                </p>
+                <h3 class="JandaQuickNote-normal"><img src="/static/img/jacks1.png" class="jacks"> Reservation</h3>
+                <table class="info_table">
+                    <tbody>
+                        <tr>
+                            <td>{{ cls.title }}</td>
+                            <td>{{ schedule.formatted_date }}</td>
+                            <td>{{ campus.name }}</td>
+                            <td>{{ 1 + guests|length() }}</td>
+                            <td>${{ order.purchase.amount }}</td>
+                            <td>{{ order.code }}</td>
+                        </tr>
+                    </tbody>
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th># of spots</th>
+                            <th>Payment amount</th>
+                            <th>Reservation Code</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="row">
+                <div class="col-sm-6">
+                    <input name="csrf_token" type="hidden" value="{{ csrf_token() }}"/>
+                    <h3 class="JandaQuickNote-normal"><img src="/static/img/jacks2.png" class="jacks"> Who is canceling from this class?</h3>
+                    <table class="info_table">
+                        <tbody>
+                        {% if not order.cancelled %}
+                            <tr>
+                                <td>{{ order.user.first_name }}
+                                    {{ order.user.last_name }}</td>
+                                <td class="text-center" width="10%"><input name="order_cancel" type="checkbox" value="{{ order.id }}"/></td>
+                            </tr>
+                        {% endif %}
+                        {% for guest in guests|rejectattr("cancelled") %}
+                            <tr>
+                                <td>Guest</td>
+                                <td class="text-center" width="10%"><input name="guest_cancel" type="checkbox" value="{{ guest.id }}"/></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Cancel</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div id="must_select" class="col-sm-12 error hidden">
+                    You must select a reservation to cancel a class.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <h3 class="JandaQuickNote-normal"><img src="/static/img/jacks3.png" class="jacks"> What would you like to do?</h3>
+                    <div>
+                        <input id="go-back" name="go-back" type="submit" value="Go Back" class="form_button pull-left">
+                        <input id="cancel-submit" name="cancel-submit" type="submit" value="Cancel Selected Spots" class="form_button pull-left">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+{% endblock %}

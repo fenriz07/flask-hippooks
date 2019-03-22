@@ -1,0 +1,341 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Scheduled Classes{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="/static/DataTables/datatables.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script>
+
+function gotIt (btn) {
+  var btn = $(btn);
+  btn.closest('tr').toggleClass('gotit');
+  var hiddenGotitInput = $(btn.siblings('.gotit_data')[0]);
+  hiddenGotitInput.val(hiddenGotitInput.val() === '1' ? '0' : '1');
+}
+
+$(function() {
+
+    var markets = [
+      {% for market in markets %}"{{market|safe}}", {% endfor %}
+    ]
+
+
+    function removeItem(e) {
+        e.preventDefault();
+
+        var v = $(e.target)
+            .closest("td")
+            .find("input.gotit_data");
+        if (v.val()==1) {
+            v.val(0);
+            v.closest("tr").removeClass("gotit");
+        } else {
+            v.val(1);
+            v.closest("tr").addClass("gotit");
+        }
+    }
+
+    $(".remove-item").click(removeItem);
+
+    $("#add-item").click(function() {
+      $("#blank-item")
+          .find("tr")
+          .clone(true)
+          .insertBefore($('#button-row'));
+          $('#itemlist > tbody').find(".new_item_market")
+                                .last()
+                                .autocomplete({source: markets,
+                                               autoFocus: true});
+    });
+
+    $("#save").click(function() {
+      var errors = false;
+      $('.new_item_market').each(function () {
+        var value = $(this).val();
+        if (!value && $(this).closest('table').attr('id') == 'itemlist') {
+          $(this).after('<span class="text-danger">You must enter a market.</span>')
+          errors = true;
+        }
+      });
+      if (!errors) {
+        $('#form').submit();
+      }
+    });
+
+
+    $(".add-sl").click(addSl);
+    $(".remove-sl").click(removeSl);
+
+
+    $("#itemlist").DataTable( {
+        "bInfo": false,
+        "paging": false,
+        "searching": false,
+        "order": [[ 0, "asc" ], [ 2, "asc" ], [ 3, "asc" ]],
+        "columns": [
+            null,
+            { "orderable": false },
+            null,
+            null,
+            { "orderable": false },
+            { "orderable": false },
+            { "orderable": false },
+            null,
+            { "orderable": false },
+        ],
+    });
+
+    $('#default-sort').click(function() {
+       $('#itemlist').DataTable().order([0, 'asc'], [2, 'asc'], [3, 'asc']).draw();
+    });
+
+
+    function addSl(e) {
+        e.preventDefault();
+        $("#blank-sl")
+            .find("tr")
+            .clone(true, true)
+            .insertBefore($("#item-end"));
+        $(".remove-item").off().click(removeItem);
+    }
+
+    function removeSl(e) {
+      e.preventDefault();
+        $(e.target)
+            .parents("tr")
+            .remove();
+    }
+
+    $('.item-markets').autocomplete({
+        source: markets,
+        autoFocus: true,
+    });
+
+});
+</script>
+<style>
+.qty-column {
+  width: 5% !important;
+}
+</style>
+{% endblock %}
+{% block content %}
+<form method="POST" id="form" class="shopping-list">
+<div class="container-fluid add-edit-page">
+    <div class="panel panel-default">
+        <div class="panel-body">
+          <h3 class="hipcooks-script">Check the List</h3>
+              <div class="form-group">
+                <a class="script-link-btn" name="go_shopping" id="default-sort" style="float: right;">Default Sort</a>
+                  <table id="itemlist" class="check-list">
+                      <thead>
+                          <tr>
+                              <th>Studio <span class="glyphicon glyphicon-sort"></span></th>
+                              <th>Class</th>
+                              <th>Category <span class="glyphicon glyphicon-sort"></span></th>
+                              <th>Item <span class="glyphicon glyphicon-sort"></span></th>
+                              <th class="qty-column">Qty</th>
+                              <th>Unit</th>
+                              <th>Notes</th>
+                              <th>Market <span class="glyphicon glyphicon-sort"></span></th>
+                              <th>&nbsp;</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for item in shopping_list.get_items() %}
+                          <tr class="item {% if item.got_it %}gotit{% endif %}">
+                              <td>{{item.campus.name}}</td>
+                              <td>{{item.class_abbr}}</td>
+                              <td>{{item.category_str}}</td>
+                              <td><textarea type="text" name="item_names" class="form-control">{{item.name}}</textarea></td>
+                              <td class="shopping-qty qty-column"><textarea type="text" name="item_nums" class="form-control number-input">{{item.number|mixed}}</textarea></td>
+                              <td><textarea type="text" name="item_units" class="form-control units-input">{{item.unit}}</textarea></td>
+                              <td><textarea type="text" name="item_notes" class="form-control">{{item.notes}}</textarea></td>
+                              <td data-search={{item.market}} data-order={{item.market}}><input type="text" name="item_markets" class="form-control item-markets" value="{{item.market}}" /></td>
+                              <td>
+                                  <input type="hidden" class="gotit_data" name="item_gotits" value="{% if item.got_it %}1{% endif %}" />
+                                  <input type="hidden" name="item_ids" value="{{item.id }}" />
+                                  <a href="#" class="remove-item btn remove">Got It</a>
+                              </td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                      </table>
+                      <!--tr id="button-row">
+                        <td colspan=6-->
+                          <button class="btn btn-primary generate" name="go_shopping" type="submit" value="Go Shopping">Back to Go Shopping</button>
+                          <input class="btn btn-primary generate" name="save" id="save" value='Save'>
+                          <button type="button" class="btn btn-primary generate" id="add-item">Add item</button>
+                          <button type="button" class="btn btn-primary generate" data-toggle="modal" data-target="#merge-list-modal">Merge another class list</button>
+                          <!--button type="button" class="btn btn-primary generate" data-toggle="modal" data-target="#by-store-modal">Create Shop List By Store</button-->
+                          {% if user.can_view('shoplist_shop') %}
+                            <a type="button" class="btn btn-primary generate" data-id="{{shopping_list.id}}" data-markets="{{shopping_list.markets|join(',')}}" href="{{url_for('.shopping_list_display', id=shopping_list.id)}}">Create Shop List By Store</a>
+                          {% endif %}
+                        <!--/td>
+                      </tr>
+                  </table-->
+              </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="merge-list-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalLabel">Merge another shopping list</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row add-edit">
+              {% if classes %}
+                  <div class="form-group">
+                      <table id="create_shop_list" class="create-shop-list">
+                          <tr><th>Studio</th><th>Class</th><th>How Many</th><th>&nbsp;</th></tr>
+                          <tr class="item">
+                              <td>
+                                  <select name="campuses-merge" class="form-control">
+                                      {% for campus in campuses %}
+                                      <option {% if campus.id == current_campus %}selected{% endif %} value="{{campus.id}}">{{campus.name}}</option>
+                                      {% endfor %}
+                                  </select>
+                              </td>
+                              <td>
+                                  <select name="classes-merge" class="form-control">
+                                      {% for class in classes %}
+                                      <option value="{{class.id}}">{{class.abbr}}</option>
+                                      {% endfor %}
+                                  </select>
+                              </td>
+                              <td>
+                                  <select name="qtys-merge" class="form-control">
+                                      {% for num in range(1,21) %}
+                                      <option value="{{num}}">{{num}}</option>
+                                      {% endfor %}
+                                  </select>
+                              </td>
+                              <td><a href="#" class="remove-sl btn remove">Remove</a></td>
+                          </tr>
+                          <tr id="item-end"><td colspan=4><a href="#" class="add-sl btn btn-primary shop-list-btn">Add Shopping List <i class="glyphicon glyphicon-plus"></i></a></td></tr>
+                      </table>
+                  </div>
+              {% else %}
+                  <h4>There are no classes with shopping lists at present. You might need to add some.</h4>
+              {% endif %}
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" name="merge-lists">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="by-store-modal" tabindex="-1" role="dialog" aria-labelledby="storeModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="storeModalLabel">Create shop list by store</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row add-edit">
+              <!--div class="form-group left-pad">
+                <label for="by_store_name">New List Name</label>
+                <input type="text" class="form-control" name="by_store_name">
+              </div-->
+              <div class="form-group left-pad">
+                <label for="by_store">Select stores</label>
+              </div>
+              {% if markets %}
+                  <div class="form-group left-pad">
+                    {% for market in markets %}
+                      <label class="checkbox-inline">
+                        <input checked type="checkbox" name="by_store" class="market-select" value="{{market}}"> {{market}}
+                      </label>
+                    {% endfor %}
+                  </div>
+              {% else %}
+                  <h4>There are no items on this list.</h4>
+              {% endif %}
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" name="by-store">Create Shop List</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</form>
+
+<table id="blank-item" class="hidden">
+    <tr class="item">
+        <td>
+            <select name="new_item_campus" class="form-control">
+                <option value="">--Select--</option>
+                {% for campus in campuses %}
+                <option {% if campus.id == current_campus %}selected{% endif %} value="{{campus.id}}">{{campus.name}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="new_item_class" class="form-control" >
+                <option value="">--Select--</option>
+                {% for x in classes %}
+                <option value="{{x.id}}">{{x.abbr}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="new_item_category" class="form-control" >
+                <option value="">--Select--</option>
+                {% for key, value in shoppinglist_categories.items() %}
+                <option value="{{key}}">{{value}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td><input type="text" name="new_item_name" class="form-control" value="" /></td>
+        <td><input type="text" name="new_item_qty" class="form-control" value="" /></td>
+        <td><input type="text" name="new_item_unit" class="form-control" value="" /></td>
+        <td><input type="text" name="new_item_notes" class="form-control" value="" /></td>
+        <td><input type="text" name="new_item_market" class="form-control new_item_market"/></td>
+        <td>
+            <input type="hidden" class="gotit_data" name="new_item_gotit" value="" />
+            <button type="button" class="btn btn-link" onclick="gotIt(this);">Got It</button>
+        </td>
+    </tr>
+</table>
+
+<table id="blank-sl" class="hidden">
+    <tr class="item">
+        <td>
+            <select name="campuses-merge" class="form-control">
+                {% for campus in campuses %}
+                <option {% if campus.id == current_campus %}selected{% endif %} value="{{campus.id}}">{{campus.name}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="classes-merge" class="form-control">
+                {% for class in classes_with_lists %}
+                <option value="{{class.id}}">{{class.abbr}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="qtys-merge" class="form-control">
+                {% for num in range(1,21) %}
+                <option value="{{num}}">{{num}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td><a href="#" class="remove-sl btn remove">Remove</a></td>
+    </tr>
+</table>
+{% endblock %}

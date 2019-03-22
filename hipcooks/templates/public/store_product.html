@@ -1,0 +1,175 @@
+{% extends "/base.html" %}
+{% block title %}Hipcooks: {{product.name}}{% endblock %}
+{% block head %}
+<script type="text/javascript">
+$(function () {
+    $(".related-product").click(function (e) {
+        e.preventDefault();
+        product_id = e.target.dataset.id;
+        product_type = e.target.dataset.type;
+        $.get("{{url_for('.store_product_details')}}", data={
+            id: product_id,
+        }, success=function (data) {
+            console.log(data);
+            $("#icon").attr("src", data.image_url);
+            $("#price").html(data.price);
+            $("#product_name").text(data.type + ' ' + data.name);
+            $("#description").html(data.description);
+            if (data.quantity > 0) {
+                dropdown = $("<select id='quantity' name='quantity' class='form-control'></select>")
+                for (var i = 1; i <= data.quantity; i++) {
+                    dropdown.append("<option value="+i+">"+i+"</option>");
+                }
+                $("#quantity").replaceWith(dropdown);
+                $("#has-stock").show()
+                $("#out-of-stock").hide()
+            } else {
+                $("#has-stock").hide()
+                $("#out-of-stock").show()
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+{% block content %}
+<style>
+    #icon {
+        max-width: 100%;
+        border: 1px solid black;
+        margin-left: 35px;
+        display: inline-block;
+
+    }
+
+    #first_row {
+        margin-top: 40px;
+    }
+
+    #second_row {
+        margin-top: 40px;
+        margin-left: 20px;
+        margin-bottom: 100px;
+    }
+
+    #sidebar_div {
+        width: 229px;
+        display: inline-block;
+        float: left;
+    }
+
+    #content_div {
+        width: 100%;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    #product_info {
+        display: inline-block;
+        margin-right: 40px;
+        float: right;
+        vertical-align: top;
+        width: 320px;
+    }
+
+    #has-stock {
+        position: absolute;
+        bottom: 0;
+        right: 55px;
+    }
+
+    #has-stock .form-inline {
+        margin-bottom: 0px;
+        display: block;
+    }
+
+    #has-stock .form_button {
+        display: inline-block;
+        height: 32px;
+    }
+
+    #has-stock #quantity {
+        vertical-align: top;
+    }
+
+    .product-block {
+        position: relative;
+        display: inline-block;
+        float: left;
+        margin-right: 13px;
+        margin-bottom: 13px;
+        width: 130px;
+        height: 106px;
+        overflow: hidden;
+        border: 1px solid black;
+    }
+
+    .product-block:hover {
+        border: 1px solid #03ABD0;
+    }
+
+    #product_price {
+        float: right;
+        padding: 10px;
+    }
+
+    .stock_out {
+        color: #F26200;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+</style>
+<div class="row" id="first_row">
+    <div class="col-sm-12">
+        <img src="{{product.url}}" id="icon">
+        <div id="product_info">
+            <br>
+            <div id="product_price">
+                <span class="JandaQuickNote-normal text18">$<span id="price">{{product.price}}</span></span>
+                <div id="out-of-stock"{% if remaining > 0 %}hidden{% endif %}>
+                    <span class="pull-right stock_out">Out of Stock</span>
+                </div>
+            </div>
+            <div class="JandaQuickNote-normal text18" id="product_name">
+                {{product.name}}
+            </div>
+            <div id="description">
+                {{product.description|safe}}
+            </div>
+            <div id="has-stock" {% if remaining <= 0 %}hidden{% endif %}>
+                <form class="form-inline pull-right" method="POST">
+                    <div class="form-group">
+                        {{form.csrf_token}}
+                        Qty:
+                        <select id="quantity" name="quantity" class="form-control">
+                            {% for i in range(1, remaining+1) %}
+                                <option value="{{i}}">
+                                    {{i}}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="form_button inverted">Add to Cart</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if related_products.count() > 1 %}
+<div class="row" id="second_row">
+    <div class="col-sm-12">
+        {% for product in related_products %}
+        <div class="inline_block text-center product-block">
+            <a href="#" class="related-product" title="{{product.type}}">
+                <img src="{{product.thumbnail_url}}" data-id="{{product.id}}">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "/admin/base.html" %}
+{% import "/macros.html" as macros %}
+{% block title %}Photo Albums{% endblock %}
+{% block content %}
+<style>
+    .menu-list {
+        padding-left: 15px;
+    }
+</style>
+<script>
+    $(function() {
+        $("div.search button").click(function() {
+            var search_text = $("div.search input").val();
+
+            window.location.href = "{{url_for('.album_list')}}?q=" + search_text;
+        });
+
+        $("div.search input").keypress(function(e) {
+            if (e.which == 13) {
+                $("div.search button").click();
+            }
+        });
+    });
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h2 class="hipcooks-script">Photo Albums</h2>
+                {% if user.can_update('content') %}
+                <div>
+                  <a class="script-link-btn" role="button" href="{{url_for('.album_edit')}}">Add New Photo Album</a>
+                </div>
+                {% endif %}
+        </div>
+        <div class="col-sm-4 search-top">
+            <br>
+            <div class="input-group search">
+                <input class="form-control" placeholder="Search..." type="text" value="{{searched_field}}">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button">&nbsp;<i class="glyphicon glyphicon-search"></i></button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row hipcooks-data-wrapper">
+        <div class="col-sm-12 hipcooks-data hipcooks-data-no-sidebar">
+            <div class="data-inner auto-width">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th><th>Studio</th><th>Active</th>
+                        </tr>
+                    </thead>
+                    {% for album in pagination.items %}
+                    <tr>
+                        <td><a href="{{url_for('.album_edit', id=album.id)}}">{{album.name}}</a></td>
+                        <td>{{album.campus.name}}</td>
+                        <td>{{album.active}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {{ macros.render_pagination(pagination, "admin.album_list") }}
+        </div>
+    </div>
+</div>
+{% endblock %}

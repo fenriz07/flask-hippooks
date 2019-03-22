@@ -1,0 +1,178 @@
+<html>
+<head>
+    <title>{{report.schedule.teachers[0]}}'s Class Report: {{report.schedule.cls.abbr}} on {{report.schedule.date.strftime('%m/%d/%y')}} @ {{report.schedule.campus}}</title>
+</head>
+<body>
+<table>
+<tr colspan=2>
+<td><b>Hipcooks Teacher Class Report</b></td>
+</tr>
+<tr colspan=2>
+<td><b>Class: {{report.schedule.cls.title}} @ {{report.schedule.campus}}</b></td>
+</tr>
+<tr colspan=2>
+<td><b>{{report.schedule.date.strftime('%a %b. %-d %Y')}} @ {{report.schedule.time.strftime('%-H:%M %p')}}</b></td>
+</tr>
+<tr colspan=2>
+<td>Teacher(s): {{report.schedule.teachers|join(', ')}}</td>
+</tr>
+<tr colspan=2>
+<td>Assistant(s): {{report.schedule.assistants|join(', ')}}</td>
+</tr>
+<tr>
+<td>Number of Students Attended:</td>
+<td>{{report.schedule.total_attendees}}</td>
+</tr>
+{% if "0" in report.attendance_rating_list %}
+<tr colspan=2>
+<td>All present and accounted for!</td>
+</tr>
+{% endif %}
+{% if "1" in report.attendance_rating_list %}
+<tr>
+<td>No Shows:</td>
+<td>{{report.schedule.no_shows|join(', ')}}</td>
+</tr>
+{% endif %}
+{% if "2" in report.attendance_rating_list %}
+<tr>
+<td>Extra People:</td>
+<td>
+    {% for student in report.schedule.extra_students %}
+        {{student.name}} &gt;{{student.email}}&lt; (paid via {{student.how_paid}})<br />
+    {% endfor %}
+</td>
+</tr>
+{% endif %}
+{% if "4" in report.attendance_rating_list %}
+<tr>
+<td>Someone sent another in their place:</td>
+<td>
+    {% for student in report.schedule.substitutes %}
+        {{student.name}} &gt;{{student.email}}&lt; (substituting for {{original.user}})<br />
+    {% endfor %}
+</td>
+</tr>
+{% endif %}
+{% if "8" in report.attendance_rating_list %}
+<tr>
+<td>Someone is interested in assisting:</td>
+<td>
+    {% for student in report.schedule.orders %}
+        {% if student.interested_in_assisting %}
+        {{student.name}} &gt;{{student.email}}&lt;<br />
+        {% endif %}
+    {% endfor %}
+</td>
+</tr>
+{% endif %}
+<tr>
+<td>Overall, how was your class?</td>
+<td>
+    {{class_rating}}
+</td>
+</tr>
+<tr>
+<td>How rockin' was your assistant?</td>
+<td>
+    {{assistant_rating}}
+</td>
+</tr>
+<tr colspan=2>
+<td>How was the food? What menu items worked well, what didn't?</td>
+<td>
+    {{report.food_comments}}
+</td>
+</tr>
+<tr>
+<td>How was the overall pacing of the class?</td>
+<td>
+    {{pacing_rating}}
+</td>
+</tr>
+<tr colspan=2>
+<td>&nbsp;</td>
+<td>
+    {{report.pacing_comments}}
+</td>
+</tr>
+<tr colspan=2>
+<td>&nbsp;</td>
+<td>
+    You reviewed the prep, set up & teaching notes before class. Any suggestions to improve these? Do you have questions or need clarification so that you (&amp; everyone!) can teach this class more better!
+</td>
+</tr>
+<tr>
+<tr colspan=2>
+<td>&nbsp;</td>
+<td>
+    {{report.setup_review}}
+</td>
+</tr>
+<tr>
+<td>What tasting portions have you saved? We love to give compliments and comments!</td>
+<td>
+    {{tasting_rating}}
+</td>
+</tr>
+<tr colspan=2>
+<td>&nbsp;</td>
+<td>
+    {{report.tasting_comments}}
+</td>
+</tr>
+<tr>
+<td>Any problems/issues with ingredients/amounts? (Also, list any extra ingredients worth noting)</td>
+<td>
+    {% if report.ingredients_problems == True %}Yup!{% else %}Nope!{% endif %}
+</td>
+</tr>
+<tr colspan=2>
+<td>&nbsp;</td>
+<td>
+    {{report.ingredients_comments}}
+</td>
+</tr>
+<tr>
+<td>How was your pre-prep?</td>
+<td>
+    {{preprep_rating}}
+</td>
+</tr>
+<tr colspan=2>
+<td>&nbsp;</td>
+<td>
+    {{report.preprep_comments}}
+</td>
+</tr>
+<tr>
+<td>Any breakages, burnt pans, broken equipment?</td>
+<td>
+    {{breakage_rating}}
+</td>
+</tr>
+<tr colspan=2>
+<td>&nbsp;</td>
+<td>
+    {{report.breakage_comments}}
+</td>
+</tr>
+<tr>
+<td>Were your sales all correct?</td>
+<td>
+    {{sales_rating}}
+</td>
+</tr>
+<tr colspan=2>
+<td>&nbsp;</td>
+<td>
+    {{report.sales_comments}}
+</td>
+</tr>
+</table>
+<br />
+<p>
+    <a href="{{report_url}}">I would like to comment on this report!</a>
+</p>
+</body>
+</html>

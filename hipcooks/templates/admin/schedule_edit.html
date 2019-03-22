@@ -1,0 +1,212 @@
+{% extends "/admin/base.html" %}
+{% block title %}Schedule Edit{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="/static/css/bootstrap-datepicker.min.css">
+<script src="/static/js/bootbox.min.js"></script>
+<script type="text/javascript">
+$(function () {
+
+    var privateClassFields = ['contact_name', 'contact_email', 'contact_phone', 'company_name', 'event_reason'];
+
+    var default_times = {
+        "__None": "{{form.time_info.choices[0][0]}}",
+        {% for studio in studios %}
+            "{{studio.id}}": "{{studio.start_time.strftime('%H:%M')}}",
+        {% endfor %}
+    };
+    var default_durations = {
+        "__None": "",
+        {% for studio in studios %}
+            "{{studio.id}}": "{{studio.duration}}",
+        {% endfor %}
+    };
+
+    var default_sizes = {
+        "__None": "",
+        {% for studio in studios %}
+            "{{studio.id}}": "{{studio.class_size}}",
+        {% endfor %}
+    };
+
+    var studioTeacherMap = {
+      {% for studio, teachers in studio_teacher_map %}
+          "{{studio}}": [
+            {% for teacher in teachers %}
+            ["{{ teacher.user_id}}", "{{teacher.user.first_name}}"],
+            {% endfor %}
+          ],
+      {% endfor %}
+    };
+
+    var studioAssistantMap = {
+      {% for studio, assistants in studio_assistant_map %}
+          "{{studio}}": [
+            {% for assistant in assistants %}
+            ["{{ assistant.id}}", "{{assistant.full_name}}"],
+            {% endfor %}
+          ],
+      {% endfor %}
+    };
+
+    function togglePrivateClassFields() {
+      if (!$("#is_public").is(':checked') || $("#is_an_event").is(':checked')) {
+        $.each(privateClassFields, function(index, value) {
+          $('#' + value).closest('.row').show();
+        });
+      } else {
+        $.each(privateClassFields, function(index, value) {
+          $('#' + value).closest('.row').hide();
+        });
+      }
+    };
+
+    function updateTeacherChoices() {
+      var studioId = parseInt($('#campus').val());
+      var currentTeacherChoices = $('#teachers').val();
+      var currentAssistantChoices = $('#assistants').val();
+
+      $('#teachers').children('option').remove();
+      $('#assistants').children('option').remove();
+
+      $('#teachers').trigger("chosen:updated");
+      $('#assistants').trigger("chosen:updated");
+
+      if (!studioId) {
+        return
+      }
+
+      var studioTeacherChoices = studioTeacherMap[studioId];
+      var studioAssistantChoices = studioAssistantMap[studioId];
+
+      $.each(studioTeacherChoices, function(key, value) {
+          var teacherId = value[0];
+          var teacherName = value[1];
+          $('#teachers').append($("<option></option>")
+                         .attr("value",teacherId)
+                         .text(teacherName));
+      });
+
+      $.each(studioAssistantChoices, function(key, value) {
+          var assistantId = value[0];
+          var assistantName = value[1];
+          $('#assistants').append($("<option></option>")
+                         .attr("value",assistantId)
+                         .text(assistantName));
+      });
+
+      if (currentTeacherChoices) {
+        $('#teachers').val(currentTeacherChoices);
+      }
+
+      if (currentAssistantChoices) {
+        $('#assistants').val(currentAssistantChoices);
+      }
+
+      $('#teachers').trigger("chosen:updated");
+      $('#assistants').trigger("chosen:updated");
+
+
+    }
+
+    $("#campus").change(function(event, params) {
+        $("#time_info").val(default_times[params.selected]);
+        $("#duration").val(default_durations[params.selected]);
+        $("#spaces").val(default_sizes[params.selected]);
+    });
+
+    $("#is_an_event").change(function(event, params) {
+        togglePrivateClassFields();
+    });
+
+    $("#is_public").change(function(event, params) {
+        togglePrivateClassFields();
+    });
+
+    $("#campus").change(function(event, params) {
+        updateTeacherChoices();
+    });
+
+    $('.submit').click(function(e) {
+      e.preventDefault();
+      var submitButtonName = $(this).attr('name');
+
+      if ($('#deleted').is(':checked')) {
+        bootbox.confirm("Are you sure you want to mark this schedule as deleted?", function(result) {
+          if (result === true) {
+            $('#form').append('<input type="hidden" name="' + submitButtonName + '" value="true"/> ');
+            $('#form').submit();
+          }
+        });
+      } else {
+        $('#form').append('<input type="hidden" name="' + submitButtonName + '" value="true"/> ');
+        $('#form').submit();
+      }
+
+    });
+
+    togglePrivateClassFields();
+    updateTeacherChoices();
+});
+</script>
+<style>
+    textarea#comments.form-control {
+        width: 100%;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container add-edit-page">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row add-edit">
+                <h3 class="hipcooks-script">{% if schedule.id %}Edit{% else %}Add{% endif %} Schedule</h3>
+                <div class="col-xs-12">
+                    <form enctype="multipart/form-data" class="add-edit" method="POST" id="form">
+                        {% for field in form %}
+                            {% if field.name == "csrf_token" %}
+                                {{field}}
+                            {% else %}
+                                {% if field.errors|length> 0 %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <span class="text-danger">{{field.errors[0]}}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        {{field.label(class_="control-label")}}
+                                    </div>
+                                    <div class="col-md-3">
+                                        {{field(class_="form-control full-width-input ")}}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class="col-md-7">
+                            {% if user.can_update('schedule') %}
+                            <input class="btn btn-primary btn-sm submit" name="save" type="submit" value="Save">&nbsp;
+                            <input class="btn btn-primary btn-sm submit" name="save_continue" type="submit" value="Save and Continue">&nbsp;
+                            <input class="btn btn-primary btn-sm submit" name="save_add" type="submit"  value="Save and Add Another">
+                            <input class="btn btn-primary btn-sm submit" name="deleteSchedule" type="submit"  value="Delete Schedule">
+                            {% endif %}
+                            {% if schedule.id %}
+                            <a href="{{url_for('.schedule_reservations', id=schedule.id)}}" class="btn btn-primary btn-sm" role="button">Reservations</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/bootstrap-datepicker.min.js"></script>
+<script>
+$("#date").datepicker({
+    format: "mm/dd/yyyy",
+    autoclose: true,
+    startDate: new Date()
+});
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% if form.date.errors|length > 0 %}
+<div class="row">
+    <div class="col-md-12">
+        <span class="text-danger">{{form.date.errors[0]}}</span>
+    </div>
+</div>
+{% endif %}
+<script>
+$(function() {
+
+  $('.date-form-submit').click(function(e) {
+    e.preventDefault;
+    obj = $(this);
+    var inputName = obj.data('type');
+    $('#date-selection').val(inputName);
+    obj.closest("form").submit();
+
+  });
+
+});
+</script>
+{{form.date.selection}}
+<div id="month-year-select" class="col-md-offset-2 col-md-2">
+    <div class="row">
+        <label class="control-label">By month and year</label>
+    </div>
+    <div class="row">
+        {{form.date.month_year_select.month.label(class_="control-label")}}
+        {{form.date.month_year_select.month(class="form-control")}}
+    </div>
+    <div class="row">
+        {{form.date.month_year_select.year.label(class_="control-label")}}
+        {{form.date.month_year_select.year(class="form-control")}}
+    </div>
+    <div class="date-create-row">
+        <a class="script-link-btn hipcooks-script date-form-submit" data-type="month_year" role="button" href="#">Create</a>
+    </div>
+</div>
+<div id="quarter-year-select" class="col-md-2">
+    <div class="row">
+        <label class="control-label">By quarter and year</label>
+    </div>
+    <div class="row">
+        {{form.date.quarter_year_select.quarter.label(class_="control-label")}}
+        {{form.date.quarter_year_select.quarter(class="form-control")}}
+    </div>
+    <div class="row">
+        {{form.date.quarter_year_select.year.label(class_="control-label")}}
+        {{form.date.quarter_year_select.year(class="form-control")}}
+    </div>
+    <div class="date-create-row">
+      <a class="script-link-btn hipcooks-script date-form-submit" data-type="quarter_year" role="button" href="#">Create</a>
+    </div>
+</div>
+<div id="year-select" class="col-md-2">
+    <div>
+        <label class="control-label">By year</label>
+    </div>
+    <div class="row">
+        {{form.date.year_select.year.label(class_="control-label")}}
+        {{form.date.year_select.year(class="form-control")}}
+    </div>
+    <div class="date-create-row">
+      <a class="script-link-btn hipcooks-script date-form-submit" data-type="year" role="button" href="#">Create</a>
+    </div>
+</div>
+<div class="col-md-3">
+    <div>
+        <label class="control-label">By custom date range</label>
+    </div>
+    {{form.date.custom_date_select.custom_dates(class="form-control")}}
+    <i id="rangecal" class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+    <script src="/static/js/moment.js"></script>
+    <script src="/static/js/bootstrap-daterangepicker-master/daterangepicker.js"></script>
+    <link rel="stylesheet" href="/static/js/bootstrap-daterangepicker-master/daterangepicker.css">
+    <script type="text/javascript">
+        $(function() {
+            $('#{{form.date.custom_date_select.custom_dates.id}}').daterangepicker({
+                "showDropdowns": true,
+                "minDate": new moment("2008", "YYYY"),
+                "maxDate": new moment(),
+                "startDate": new moment().subtract(1, 'y'),
+                "endDate": new moment(),
+                "opens": "left",
+            });
+        });
+    </script>
+    <div class="date-create-row">
+      <a class="script-link-btn hipcooks-script date-form-submit" data-type="custom" role="button" href="#">Create</a>
+    </div>
+</div>
